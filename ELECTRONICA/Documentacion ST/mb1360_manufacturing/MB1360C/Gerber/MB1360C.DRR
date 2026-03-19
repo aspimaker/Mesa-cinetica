@@ -1,0 +1,23 @@
+----------------------------------------------------------------------------------------------------------------------------------
+NCDrill File Report For: MB1360.PcbDoc   6/19/2018  1:54:25 PM
+----------------------------------------------------------------------------------------------------------------------------------
+
+Layer Pair : Top Layer to Bottom Layer
+ASCII Plated RoundHoles File : MB1360C-RoundHoles-Plated.TXT
+ASCII Non-Plated RoundHoles File : MB1360C-RoundHoles-NonPlated.TXT
+ASCII Plated SlotHoles File : MB1360C-SlotHoles-Plated.TXT
+
+Tool       Hole Size               Hole Tolerance               Hole Type       Hole Count   Plated         Tool Travel
+----------------------------------------------------------------------------------------------------------------------------------
+T1      0.203mm (8mil)                                            Round             398       PTH        1491.24mm (58.71inch)
+T2      0.305mm (12mil)                                           Round             18        PTH        125.23mm (4.93inch)
+T3      0.6mm (24mil)                                             Slot              2         PTH        15.43mm (0.61inch)
+T4      0.9mm (35mil)                                             Round             2         PTH        5.00mm (0.20inch)
+T5      1mm (39mil)                                               Round             104       PTH        540.72mm (21.29inch)
+T6      1.1mm (43mil)                                             Round             32        PTH        207.31mm (8.16inch)
+T7      1mm (39mil)                                               Round             2         NPTH       6.20mm (0.24inch)
+T8      3.2mm (126mil)                                            Round             3         NPTH       109.93mm (4.33inch)
+----------------------------------------------------------------------------------------------------------------------------------
+Totals                                                                              561
+
+Total Processing Time (hh:mm:ss) : 00:00:01
