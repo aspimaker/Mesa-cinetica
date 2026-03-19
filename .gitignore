@@ -1,0 +1,38 @@
+# VSCode-PlatformIO
+CODIGO/.pio/
+CODIGO/.pioenvs/
+CODIGO/.piolibdeps/
+CODIGO/.vscode/.browse.c_cpp.db*
+CODIGO/.vscode/c_cpp_properties.json
+CODIGO/.vscode/launch.json
+CODIGO/.vscode/ipch
+CODIGO/.history/
+
+# Dependencias
+lib_deps/
+
+# Archivos temporales
+*.o
+*.d
+*.elf
+*.bin
+*.hex
+.DS_Store
+Thumbs.db
+
+# KiCad
+ELECTRONICA/PCB/*.bak
+ELECTRONICA/PCB/*.bck
+ELECTRONICA/PCB/*.kicad_pcb-bak
+ELECTRONICA/PCB/Mesa cinetica-backups
+ELECTRONICA/PCB/fp-info-cache
+ELECTRONICA/PCB/_fp-info-cache
+ELECTRONICA/PCB/.history
+
+# Archivos 3D
+HARDWARE/*.stl
+HARDWARE/*.3mf
+HARDWARE/*.step
+HARDWARE/*.stp
+HARDWARE/__pycache__/
+HARDWARE/*.py[cod]
