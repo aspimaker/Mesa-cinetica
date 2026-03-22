@@ -52,11 +52,11 @@ Este proyecto nace con la idea de transformar una mesa convencional en una super
 ### Objetivos:
 
 - desarrollar un sistema de control de motores paso a paso preciso y silencioso
-- diseñar una PCB que integre la placa de desarrollo ST NUCLEO G071RB junto con el resto de componentes (drivers de motores, control de leds, reproductor MP3 (), amplificador, fuente alimentación...)
+- diseñar una PCB que integre la placa de desarrollo ST NUCLEO G071RB junto con el resto de componentes (drivers de motores, control de leds, bluetooth, reproductor MP3, amplificador, fuente alimentación...)
 - modelar piezas 3D funcionales y estéticas
 - crear patrones de movimiento modulables por software
 
-() Con la finalidad hacer accesible el proyecto a todos los makers, el reproductor MP3 será un módulo independiente que tiene su propia tarjeta SD. En futuras versiones el decodificador será el VS1053 y todo lo gestionará el microcontrolador.
+Para hacer accesible el proyecto a todos los makers, los drivers de los motores, módulo bluetooth y el reproductor MP3 serán componentes independientes. En futuras versiones toda la electrónica estará en una única pcb gestionada por el microcontrolador y se utilizsará el decodificador MP3 VS1053.
 
 ---
 
