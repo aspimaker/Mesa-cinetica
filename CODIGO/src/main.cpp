@@ -15,13 +15,14 @@ Funcionalidades:
     - Aplicación móvil para controlar la mesa cinética
 
 Comunicación:
-    - bluetooth BLE para recibir comandos de un dispositivo móvil
+    - bluetooth clásico para recibir comandos de un dispositivo móvil
 
 Hardware:
     - placa de desarrollo STM32 NUCLEO-64 G071RB (https://www.st.com/en/evaluation-tools/nucleo-g071rb.html)
     - motores paso a paso
     - sistema de movimiento polar
-    - bluetooth BLE
+    - bluetooth clásico
+    - leds RGB
     - amplificador de audio y altavoces
     - bola de acero
     - estructura de la mesa cinética

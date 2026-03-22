@@ -1,4 +1,4 @@
-# MESA CINÉTICA 🪄✨
+# MESA CINÉTICA 🌀✨🎵
 
 Estado y licencia  
 ![version](https://img.shields.io/badge/version-1.0.0-blue?style=for-the-badge) ![estado](https://img.shields.io/badge/estado-activo-brightgreen?style=for-the-badge) ![Estado](https://img.shields.io/badge/estado-en%20desarrollo-yellow?style=for-the-badge) ![Licencia](https://img.shields.io/badge/Creative%20Commons-CC%20BY--NC--SA%204.0-blue?style=for-the-badge)
@@ -23,7 +23,6 @@ Comunicaciones
 
 Componentes  
 ![TMC2209](https://img.shields.io/badge/Driver%20motor-TMC2209-brightgreen?style=for-the-badge) ![DFPlayer](https://img.shields.io/badge/Audio%20MP3-DFPlayer%20Mini-red?style=for-the-badge) ![WS2812B](https://img.shields.io/badge/LEDs_RGB-WS2812B-brightgreen?style=for-the-badge)
-
 
 **MESA CINÉTICA** es un proyecto de mobiliario interactivo que integra el arte y la tecnología combinando electrónica, programación para microcontroladores, diseño e impresión 3D y desarrollo de una app Android.
 
@@ -63,14 +62,12 @@ Este proyecto nace con la idea de transformar una mesa convencional en una super
 
 ## ⚙️ Componentes principales
 
-
 | Carpeta       | Tecnología       | Descripción                                                                             |
 | ------------- | ---------------- | --------------------------------------------------------------------------------------- |
 | `ANDROID`     | C# MAUI          | App para gestionar el movimiento de la mesa, leds RGB, enviar diseños, reproduir MP3... |
 | `CODIGO`      | C++ / PlatformIO | Lógica de movimiento, control de motores y comunicación con la aplicación de Android    |
 | `ELECTRONICA` | KiCad 10         | Esquemático, diseño de PCB, gerbers...                                                  |
 | `HARDWARE`    | onshape          | Piezas estructurales, soportes...                                                       |
-
 
 ---
 
@@ -94,7 +91,6 @@ cd mesa-cinetica
 
 ## ⚡Electrónica
 
-
 | Componente                 | Modelo / Especificación | Cantidad | Función                                               |
 | -------------------------- | ----------------------- | -------- | ----------------------------------------------------- |
 | **Microcontrolador**       | STM32 Nucleo-G071RB     | 1        | Gestión del sistema: control de motores, LEDs y audio |
@@ -107,7 +103,6 @@ cd mesa-cinetica
 | **Fuente de alimentación** | 24V / 5A                | 1        | Alimentación para motores y amplificador              |
 | **Conversor DC-DC**        | LM2596                  | 1        | Conversión 24V → 5V para DFPlayer, leds y otros       |
 | **Iluminación LED**        | Tira LED RGB (WS2812B)  | 1        | Efectos de luz sincronizados con movimiento y música  |
-
 
 ---
 
