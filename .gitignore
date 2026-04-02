@@ -1,38 +1,81 @@
-# VSCode-PlatformIO
-CODIGO/.pio/
-CODIGO/.pioenvs/
-CODIGO/.piolibdeps/
-CODIGO/.vscode/.browse.c_cpp.db*
-CODIGO/.vscode/c_cpp_properties.json
-CODIGO/.vscode/launch.json
-CODIGO/.vscode/ipch
-CODIGO/.history/
+# ─────────────────────────────────────────
+#  aspimaker
+# ─────────────────────────────────────────
+**/aspimaker
 
-# Dependencias
-lib_deps/
+# ─────────────────────────────────────────
+#  ANDROID  —  Visual Studio / C# / MAUI
+# ─────────────────────────────────────────
+ANDROID/bin/
+ANDROID/obj/
+ANDROID/.vs/
+ANDROID/**/*.user
+ANDROID/**/*.suo
+ANDROID/**/*.userprefs
+ANDROID/**/TestResults/
+ANDROID/**/.idea/
+ANDROID/**/*.binlog
 
-# Archivos temporales
-*.o
-*.d
-*.elf
-*.bin
-*.hex
+# NuGet
+ANDROID/**/packages/
+ANDROID/**/*.nupkg
+ANDROID/**/.nuget/
+
+# Publicación
+ANDROID/**/publish/
+
+# ─────────────────────────────────────────
+#  CODIGO  —  VS Code + PlatformIO
+# ─────────────────────────────────────────
+.pio
+.vscode/.browse.c_cpp.db*
+.vscode/c_cpp_properties.json
+.vscode/launch.json
+.vscode/ipch
+
+
+# ─────────────────────────────────────────
+#  ELECTRONICA  —  KiCad
+# ─────────────────────────────────────────
+
+# Backups automáticos
+ELECTRONICA/**/*-bak
+ELECTRONICA/**/*.bak
+ELECTRONICA/**/*.kicad_pcb-bak
+ELECTRONICA/**/*.kicad_sch-bak
+ELECTRONICA/**/~$*
+
+# Historial
+ELECTRONICA/**/.history/
+
+# Archivos de bloqueo
+ELECTRONICA/**/*.lck
+
+# Carpetas de salida generadas
+ELECTRONICA/**/gerbers/
+ELECTRONICA/**/fabrication/
+ELECTRONICA/**/output/
+ELECTRONICA/**/bom/
+
+# Cache
+ELECTRONICA/**/__pycache__/
+ELECTRONICA/**/*.pyc
+
+# ─────────────────────────────────────────
+#  PIEZAS  —  STL y modelos 3D
+# ─────────────────────────────────────────
+
+# Archivos temporales y de bloqueo comunes
+PIEZAS/**/*.lock
+PIEZAS/**/*.bak
+PIEZAS/**/*recovery*
+
+# ─────────────────────────────────────────
+#  GLOBAL
+# ─────────────────────────────────────────
 .DS_Store
 Thumbs.db
-
-# KiCad
-ELECTRONICA/PCB/*.bak
-ELECTRONICA/PCB/*.bck
-ELECTRONICA/PCB/*.kicad_pcb-bak
-ELECTRONICA/PCB/Mesa cinetica-backups
-ELECTRONICA/PCB/fp-info-cache
-ELECTRONICA/PCB/_fp-info-cache
-ELECTRONICA/PCB/.history
-
-# Archivos 3D
-HARDWARE/*.stl
-HARDWARE/*.3mf
-HARDWARE/*.step
-HARDWARE/*.stp
-HARDWARE/__pycache__/
-HARDWARE/*.py[cod]
+desktop.ini
+*.log
+*.tmp
+*.temp
