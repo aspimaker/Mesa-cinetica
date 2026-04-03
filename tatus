@@ -1,0 +1,44 @@
+* [33mb85c2e1[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m Estructura inicial
+[31m|[m * [33m012f587[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Actualización de readme.md
+[31m|[m * [33mb499317[m Actualización de readme.md
+[31m|[m * [33mcb7be3a[m Actualización de readme.md
+[31m|[m * [33m6c8c393[m Actualización del README.md
+[31m|[m * [33m0fc5b4e[m Actualización de readme.md
+[31m|[m * [33m4c7285a[m Actualización de readme.md
+[31m|[m * [33m01b6646[m Actualización de readme.md
+[31m|[m * [33md949927[m Actualización de readme.md
+[31m|[m * [33mfc74e55[m Actualización de readme.md
+[31m|[m * [33m0849084[m Actualización de readme.md
+[31m|[m *   [33m3d38aa6[m Merge branch 'main' of https://github.com/aspimaker/MESA-CINETICA
+[31m|[m [33m|[m[34m\[m  
+[31m|[m [33m|[m * [33m3545e16[m Update project status badge in README.md
+[31m|[m [33m|[m * [33mc55236c[m Update badge for project status in README
+[31m|[m * [34m|[m [33m6c2b599[m Actualización de readme.md
+[31m|[m * [34m|[m [33m8d25612[m Actualización de readme.md
+[31m|[m [34m|[m[34m/[m  
+[31m|[m * [33mbc7ae10[m Se añade la carpeta FOTOS
+[31m|[m * [33m1cb5d29[m Añadida la carpeta FOTOS
+[31m|[m *   [33m2ab49d9[m Merge branch 'main' of https://github.com/aspimaker/MESA-CINETICA
+[31m|[m [35m|[m[36m\[m  
+[31m|[m [35m|[m * [33m7341c34[m Change 3D Printing badge from STL to STEP and 3MF
+[31m|[m [35m|[m * [33m395b0f0[m Update STM32 badge in README.md
+[31m|[m * [36m|[m [33ma854f26[m Se añade la carpeta FOTOS
+[31m|[m [36m|[m[36m/[m  
+[31m|[m * [33mf1a8427[m Prueba de iconos de la barra de estado
+[31m|[m * [33m500add6[m Aplicar .gitignore
+[31m|[m * [33m040b3cb[m Aplicar .gitignore
+[31m|[m * [33md4fed43[m Conexión con módulo Bluetooth y configuración automática
+[31m|[m * [33m992a8d7[m Actualziar README.md
+[31m|[m * [33md480e17[m Actualizar README.me
+[31m|[m * [33mc202927[m Actualización de README.md
+[31m|[m[31m/[m  
+* [33m2ae3d5f[m Estructura inicial del proyecto
+*   [33m8c2d477[m[33m ([m[1;35mrefs/stash[m[33m)[m WIP on main: 24a061e Añadida documentación ST
+[1;31m|[m[1;32m\[m  
+[1;31m|[m * [33m506d7d1[m index on main: 24a061e Añadida documentación ST
+[1;31m|[m[1;31m/[m  
+* [33m24a061e[m Añadida documentación ST
+* [33m57f95c4[m Añadida documentación oficial de ST
+* [33mfe1ba34[m Comentarios iniciales
+* [33m60b965d[m añadir ficheros README.md en las carpetas
+* [33m0d3d745[m Estructura inicial del proyecto
