@@ -1,17 +1,27 @@
-// colores
+// colores personalizados para la pantalla TFT ST7735
 #pragma once
 
-// ST77XX_NAVY
-#define ST77XX_NAVY color565(0, 0, 128)
+#define _COLOR565(r,g,b) ((uint16_t)(((r & 0xF8) << 8) | ((g & 0xFC) << 3) | (b >> 3)))
 
-// ST77XX_DARKCYAN
-#define ST77XX_DARKCYAN color565(0, 139, 139)
 
-// ST77XX_DARKGREEN
-#define ST77XX_DARKGREEN color565(0, 100, 0)
+// ST7735_NAVY
+#define ST7735_NAVY _COLOR565(0, 0, 128)
 
-// ST77XX_ORANGE
-#define ST77XX_ORANGE color565(255, 165, 0)
+// ST7735_DARKCYAN
+#define ST7735_DARKCYAN _COLOR565(0, 139, 139)
+
+// ST7735_DARKGREEN
+#define ST7735_DARKGREEN _COLOR565(0, 100, 0)
+
+// ST7735_ORANGE
+#define ST7735_ORANGE _COLOR565(255, 165, 0)
+
+#define ST7735_NARANJA _COLOR565(255, 166, 0)
+
+#define ST7735_PURPURA _COLOR565(107, 105, 238)
+
+#define ST7735_GREY 0x7BEF
+
 
 /*
     RGBColor rgb565[] = {
