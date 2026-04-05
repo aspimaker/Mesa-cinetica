@@ -114,6 +114,7 @@
                 "STM32G0xx",
                 "STM32G071xx",
                 "DEBUG",
+                "_DEBUG",
                 "ARDUINO_NUCLEO_G071RB",
                 "STM32G0xx",
                 "ARDUINO=10808",

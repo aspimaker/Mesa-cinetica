@@ -1,4 +1,18 @@
 #include "bluetooth.h"
+#include "alarma.h"
+#include "pantalla.h"
+#include "leds.h"
+#include "audio.h"
+#include "configuracion.h"
+
+// ── Objetos globales ──────────────────────────────────────────
+HardwareSerial BTSerial(BT_RX, BT_TX);
+Bluetooth bt;
+char nombreBT[30];
+String comandoBluetoothRecibido = "";
+
+extern Configuracion config;
+extern DFRobotDFPlayerMini myDFPlayer;
 
 // ── Inicialización ────────────────────────────────────────────
 void Bluetooth::begin(HardwareSerial &serial, uint32_t baudrate)
@@ -9,12 +23,6 @@ void Bluetooth::begin(HardwareSerial &serial, uint32_t baudrate)
     _rxBuffer = "";
 }
 
-bool Bluetooth::enableNotifications()
-{
-    String response;
-    return sendAT("AT+NOTI1", response);
-}
-
 // ── Update (llamar en cada loop) ──────────────────────────────
 void Bluetooth::update()
 {
@@ -23,49 +31,28 @@ void Bluetooth::update()
         char c = (char)_serial->read();
         _rxBuffer += c;
 
-        // Procesar cuando llega fin de línea o la cadena es reconocible
         if (c == '\n' || _rxBuffer.length() >= BT_BUFFER_SIZE)
-        {
             _processBuffer();
-        }
     }
 
-    // También procesar si llevamos un rato sin recibir más datos
-    // (el HM-05 no siempre manda '\n' al final de la notificación)
     if (_rxBuffer.length() > 0 && !_serial->available())
-    {
         _processBuffer();
-    }
 }
 
 void Bluetooth::_processBuffer()
 {
     if (_rxBuffer.indexOf(BT_NOTIFY_CONN) >= 0)
-    {
         _connected = true;
-    }
     else if (_rxBuffer.indexOf(BT_NOTIFY_LOST) >= 0)
-    {
         _connected = false;
-    }
+
     _rxBuffer = "";
 }
 
 // ── Envío ─────────────────────────────────────────────────────
-void Bluetooth::sendString(const char *str)
-{
-    _serial->print(str);
-}
-
-void Bluetooth::sendString(const String &str)
-{
-    _serial->print(str);
-}
-
-void Bluetooth::sendByte(uint8_t byte)
-{
-    _serial->write(byte);
-}
+void Bluetooth::sendString(const char *str)  { _serial->print(str); }
+void Bluetooth::sendString(const String &str) { _serial->print(str); }
+void Bluetooth::sendByte(uint8_t byte)        { _serial->write(byte); }
 
 void Bluetooth::sendData(const uint8_t *data, uint16_t len)
 {
@@ -88,13 +75,19 @@ String Bluetooth::readLine()
     return _serial->readStringUntil('\n');
 }
 
+String Bluetooth::readString()
+{
+    String result = "";
+    while (_serial->available())
+        result += (char)_serial->read();
+    return result;
+}
+
 String Bluetooth::readAll()
 {
     String result = "";
     while (_serial->available())
-    {
         result += (char)_serial->read();
-    }
     return result;
 }
 
@@ -116,7 +109,6 @@ bool Bluetooth::sendAT(const char *cmd, String &response, uint16_t timeout)
         {
             char c = (char)_serial->read();
             response += c;
-
             if (response.indexOf("OK") >= 0 || response.indexOf("ERROR") >= 0)
                 break;
         }
@@ -144,7 +136,6 @@ bool Bluetooth::setBaudrate(uint8_t baudrate)
     String cmd = String("AT+UART") + baudrate;
     String response;
     return sendAT(cmd.c_str(), response);
-
     /*
     1 ->   1200
     2 ->   2400
@@ -158,10 +149,7 @@ bool Bluetooth::setBaudrate(uint8_t baudrate)
 }
 
 // ── Estado ────────────────────────────────────────────────────
-bool Bluetooth::isConnected()
-{
-    return _connected;
-}
+bool Bluetooth::isConnected() { return _connected; }
 
 void Bluetooth::reset()
 {
@@ -169,15 +157,13 @@ void Bluetooth::reset()
     sendAT("AT+RESET", response);
 }
 
-// ── Autoconfiguración ─────────────────────────────────────
+// ── Autoconfiguración ─────────────────────────────────────────
 bool Bluetooth::autoConfig(char *name, const char *pin)
 {
     String response;
     bool found = false;
 
     Serial.println("[BT] Probando 9600");
-
-    // 1. Probar a 9600
     _serial->end();
     _serial->begin(BT_BAUD_DEFAULT);
     delay(500);
@@ -186,12 +172,11 @@ bool Bluetooth::autoConfig(char *name, const char *pin)
     {
         Serial.println("[BT] Encontrado a 9600, migrando a 115200...");
         sendAT("AT+BAUD8", response);
-        delay(500); // más margen tras cambio de baudrate
+        delay(500);
         found = true;
     }
 
     Serial.println("[BT] Probando 115200");
-    // 2. Verificar a 115200
     _serial->end();
     _serial->begin(BT_BAUD_TARGET);
     delay(500);
@@ -207,25 +192,11 @@ bool Bluetooth::autoConfig(char *name, const char *pin)
     if (!found)
     {
         Serial.println("[BT] Modulo no encontrado");
-        return false; // salida temprana
+        return false;
     }
 
-    // 3. Aplicar configuración
     bool ok = true;
     String cmd;
-
-    /*
-    Serial.println("cambiando a 9600");
-    delay(1000);
-    cmd = String("AT+DEFAULT");
-    sendAT(cmd.c_str(), response);
-    Serial.print(response);
-    cmd = String("AT+RESET");
-    sendAT(cmd.c_str(), response);
-    Serial.print(response);
-    Serial.print("TERMINADO");
-    delay(500000);
-*/
 
     cmd = String("AT+DEFAULT");
     ok &= sendAT(cmd.c_str(), response);
@@ -249,6 +220,132 @@ bool Bluetooth::autoConfig(char *name, const char *pin)
     Serial.println(response);
 
     Serial.println(ok ? "[BT] Configuración aplicada" : "[BT] Error aplicando configuración");
-
     return ok;
+}
+
+// ── Funciones de comandos ─────────────────────────────────────
+
+bool hayComandoBluetooth()
+{
+    if (bt.available())
+    {
+        comandoBluetoothRecibido = bt.readString();
+        comandoBluetoothRecibido.trim();
+        return comandoBluetoothRecibido.length() > 0;
+    }
+    return false;
+}
+
+String leerComandoBluetooth()
+{
+    return comandoBluetoothRecibido;
+}
+
+void procesarComandosBluetooth()
+{
+    if (!hayComandoBluetooth()) return;
+
+    String cmd = leerComandoBluetooth();
+    Serial.print("[BT] Comando recibido: ");
+    Serial.println(cmd);
+
+    // ── Alarma ────────────────────────────────────────────────
+    if (cmd.equalsIgnoreCase("ALARMA ON"))
+    {
+        activarAlarma();
+        bt.sendString("OK:ALARMA_ON\n");
+    }
+    else if (cmd.equalsIgnoreCase("ALARMA OFF"))
+    {
+        desactivarAlarmaPorUsuario();
+        bt.sendString("OK:ALARMA_OFF\n");
+    }
+
+    // ── Audio ─────────────────────────────────────────────────
+    else if (cmd.equalsIgnoreCase("MP3 PLAY"))
+    {
+        reproducirPista(config.get().ultimaPista, config.get().ultimaCarpeta);
+        bt.sendString("OK:MP3_PLAY\n");
+    }
+    else if (cmd.equalsIgnoreCase("MP3 STOP"))
+    {
+        detenerMP3();
+        bt.sendString("OK:MP3_STOP\n");
+    }
+    else if (cmd.equalsIgnoreCase("MP3 NEXT"))
+    {
+        uint16_t pista = config.get().ultimaPista + 1;
+        reproducirPista(pista, config.get().ultimaCarpeta);
+        bt.sendString("OK:MP3_NEXT\n");
+    }
+    else if (cmd.equalsIgnoreCase("MP3 PREV"))
+    {
+        uint16_t pista = config.get().ultimaPista;
+        reproducirPista(pista > 1 ? pista - 1 : 1, config.get().ultimaCarpeta);
+        bt.sendString("OK:MP3_PREV\n");
+    }
+    else if (cmd.startsWith("VOL "))
+    {
+        int nivel = cmd.substring(4).toInt();
+        nivel = constrain(nivel, 0, 30);
+        volumenMP3((uint8_t)nivel);
+        config.setVolumen((uint8_t)nivel);
+        bt.sendString("OK:VOL_" + String(nivel) + "\n");
+    }
+    else if (cmd.equalsIgnoreCase("VOL UP"))
+    {
+        subirVolumenMP3();
+        bt.sendString("OK:VOL_UP\n");
+    }
+    else if (cmd.equalsIgnoreCase("VOL DOWN"))
+    {
+        bajarVolumenMP3();
+        bt.sendString("OK:VOL_DOWN\n");
+    }
+
+    // ── LEDs ──────────────────────────────────────────────────
+    else if (cmd.equalsIgnoreCase("LED ON"))
+    {
+        config.setLedModo(2);
+        actualizarLEDs();
+        bt.sendString("OK:LED_ON\n");
+    }
+    else if (cmd.equalsIgnoreCase("LED OFF"))
+    {
+        config.setLedModo(0);
+        actualizarLEDs();
+        bt.sendString("OK:LED_OFF\n");
+    }
+    else if (cmd.startsWith("LED BRILLO "))
+    {
+        int brillo = cmd.substring(11).toInt();
+        config.setLedBrillo((uint8_t)constrain(brillo, 0, 255));
+        actualizarLEDs();
+        bt.sendString("OK:LED_BRILLO_" + String(brillo) + "\n");
+    }
+
+    // ── Sistema ───────────────────────────────────────────────
+    else if (cmd.equalsIgnoreCase("APAGAR"))
+    {
+        bt.sendString("OK:APAGANDO\n");
+        apagarSistema();
+    }
+    else if (cmd.equalsIgnoreCase("ENCENDER"))
+    {
+        encenderSistema();
+        bt.sendString("OK:ENCENDIDO\n");
+    }
+    else if (cmd.equalsIgnoreCase("STANDBY"))
+    {
+        bt.sendString("OK:STANDBY\n");
+        entrarEnStandby();
+    }
+
+    // ── Desconocido ───────────────────────────────────────────
+    else
+    {
+        Serial.print("[BT] Comando no reconocido: ");
+        Serial.println(cmd);
+        bt.sendString("ERR:CMD_DESCONOCIDO\n");
+    }
 }

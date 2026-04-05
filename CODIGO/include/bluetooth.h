@@ -1,20 +1,18 @@
-#ifndef BLUETOOTH_H
-#define BLUETOOTH_H
+#pragma once
 
 #include <Arduino.h>
+#include "pines.h"
+#include "globals.h"
 
-extern char nombreBT[30];
-extern const char *pinBT;
+// ── Bluetooth (HM-05 / HC-06 compatible) ─────────────────────
 
-#define BT_BAUDRATE 115200
-#define BT_BUFFER_SIZE 128
-#define BT_TIMEOUT 1000
+#define BT_BAUDRATE     115200
+#define BT_BUFFER_SIZE  128
+#define BT_TIMEOUT      1000
 
-// Baudrates a probar en orden
 #define BT_BAUD_DEFAULT 9600
-#define BT_BAUD_TARGET 115200
+#define BT_BAUD_TARGET  115200
 
-// Cadenas de notificación del HM-05
 #define BT_NOTIFY_CONN "OK+CONN"
 #define BT_NOTIFY_LOST "OK+LOST"
 
@@ -23,10 +21,8 @@ class Bluetooth
 public:
     // ── Inicialización ────────────────────────────────────────
     void begin(HardwareSerial &serial, uint32_t baudrate = BT_BAUDRATE);
-    bool enableNotifications(); // Envía AT+NOTI1
-    
-    // ── Autoconfiguración ─────────────────────────────────────
-   // bool autoConfig(const char *name = nombreBT, const char *pin = pinBT);
+    void autoConfig(const char *nombre, const char *pin);
+    String readString();
 
     bool autoConfig(char *name, const char *pin = "123456");
 
@@ -42,7 +38,7 @@ public:
     String readLine();
     String readAll();
 
-    // ── Llama a esto en cada iteración del loop() ─────────────
+    // ── Loop ──────────────────────────────────────────────────
     void update();
 
     // ── Comandos AT ───────────────────────────────────────────
@@ -58,9 +54,16 @@ public:
 private:
     HardwareSerial *_serial;
     bool _connected;
-
     String _rxBuffer;
     void _processBuffer();
 };
 
-#endif // BLUETOOTH_H
+extern HardwareSerial BTSerial;
+extern Bluetooth bt;
+extern char nombreBT[30];
+extern String comandoBluetoothRecibido;
+
+// ── Funciones de procesamiento (implementadas en bluetooth.cpp) ──
+void procesarComandosBluetooth();
+bool hayComandoBluetooth();
+String leerComandoBluetooth();

@@ -1,4 +1,4 @@
-#include "BarraProgreso.h"
+#include "barraProgreso.h"
 
 BarraProgreso::BarraProgreso(Adafruit_ST7735 &pantalla,
                              int x, int y, int ancho, int alto,
@@ -34,6 +34,7 @@ BarraProgreso::BarraProgreso(Adafruit_ST7735 &pantalla,
 // Método begin
 void BarraProgreso::begin()
 {
+
     if (!_pantalla)
     {
         Serial.println("BarraProgreso::begin() - ERROR: _pantalla es NULL");
