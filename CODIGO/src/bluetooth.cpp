@@ -50,9 +50,9 @@ void Bluetooth::_processBuffer()
 }
 
 // ── Envío ─────────────────────────────────────────────────────
-void Bluetooth::sendString(const char *str)  { _serial->print(str); }
+void Bluetooth::sendString(const char *str) { _serial->print(str); }
 void Bluetooth::sendString(const String &str) { _serial->print(str); }
-void Bluetooth::sendByte(uint8_t byte)        { _serial->write(byte); }
+void Bluetooth::sendByte(uint8_t byte) { _serial->write(byte); }
 
 void Bluetooth::sendData(const uint8_t *data, uint16_t len)
 {
@@ -172,14 +172,14 @@ bool Bluetooth::autoConfig(char *name, const char *pin)
     {
         Serial.println("[BT] Encontrado a 9600, migrando a 115200...");
         sendAT("AT+BAUD8", response);
-        delay(500);
+        delay(250);
         found = true;
     }
 
     Serial.println("[BT] Probando 115200");
     _serial->end();
     _serial->begin(BT_BAUD_TARGET);
-    delay(500);
+    delay(250);
 
     if (sendAT("AT", response) && response.indexOf("OK") >= 0)
     {
@@ -187,7 +187,7 @@ bool Bluetooth::autoConfig(char *name, const char *pin)
         found = true;
     }
 
-    Serial.println(response);
+    // Serial.println(response);
 
     if (!found)
     {
@@ -198,26 +198,25 @@ bool Bluetooth::autoConfig(char *name, const char *pin)
     bool ok = true;
     String cmd;
 
-    cmd = String("AT+DEFAULT");
+    cmd = String("AT+DEFAULT"); // valores por defecto
     ok &= sendAT(cmd.c_str(), response);
-    Serial.print(response);
+
+    sendAT("AT+BAUD8", response); //115200
+    delay(250);
 
     cmd = String("AT+NAME") + name;
     ok &= sendAT(cmd.c_str(), response);
-    Serial.print(response);
 
     cmd = String("AT+PIN") + pin;
     ok &= sendAT(cmd.c_str(), response);
-    Serial.print(response);
 
     ok &= sendAT("AT+TYPE0", response);
-    Serial.print(response);
 
     ok &= sendAT("AT+ROLE0", response);
-    Serial.print(response);
 
-    ok &= sendAT("AT+NOTI1", response);
-    Serial.println(response);
+    ok &= sendAT("AT+NOTI1", response); //envía comandos cuando se conecta o desconecta un dispositivo
+
+    ok &= sendAT("AT+RESET", response); // para guardar los valores de forma permanente
 
     Serial.println(ok ? "[BT] Configuración aplicada" : "[BT] Error aplicando configuración");
     return ok;
@@ -243,7 +242,8 @@ String leerComandoBluetooth()
 
 void procesarComandosBluetooth()
 {
-    if (!hayComandoBluetooth()) return;
+    if (!hayComandoBluetooth())
+        return;
 
     String cmd = leerComandoBluetooth();
     Serial.print("[BT] Comando recibido: ");

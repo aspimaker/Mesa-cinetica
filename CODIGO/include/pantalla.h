@@ -22,7 +22,8 @@
 
 // Funciones de pantalla
 void iniciarPantalla();
-//void mostrarSplash(unsigned long duracion);
+void actualizarReloj();
+// void mostrarSplash(unsigned long duracion);
 void mostrarSplash();
 void barraEstado();
 void redibujarTodo();

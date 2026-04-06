@@ -19,13 +19,13 @@
 #define PIN_WS2812B D7
 
 // ── Botones táctiles TTP223 (activo HIGH) ────────────────────
-// El TTP223 en modo pulsador da HIGH al tocar y LOW en reposo.
 // Usar pinMode(PIN, INPUT), sin pull-up interno.
-#define BTN_OK       D4   // Play / Pausa / Confirmar menú
-#define BTN_NEXT     D5   // Siguiente pista
-#define BTN_PREV     A2   // Pista anterior
-#define BTN_UP       A3   // Subir (volumen / menú arriba)
-#define BTN_DOWN     A4   // Bajar  (volumen / menú abajo)
+#define BTN_OK        D4   // Play / Pausa / Confirmar menú
+#define BTN_DERECHA   D5   // Siguiente pista
+#define BTN_IZQUIERDA A2   // Pista anterior
+#define BTN_ARRIBA    A3   // Subir (volumen / menú arriba)
+#define BTN_ABAJO     A4   // Bajar  (volumen / menú abajo)
 
 // Alias para la alarma: el botón OK la desactiva
 #define BOTON_DESACTIVAR BTN_OK
+

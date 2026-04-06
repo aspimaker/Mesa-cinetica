@@ -62,7 +62,7 @@ struct __attribute__((packed)) DatosConfiguracion
         ledColor = 0x00FF00;
         ledVelocidad = 100;
         autoApagado = 0;
-        alarmaHora = 7;
+        alarmaHora = 10;
         alarmaMinuto = 0;
         alarmaActivada = false;
         checksum = 0;
@@ -89,10 +89,6 @@ struct __attribute__((packed)) DatosConfiguracion
         checksum = calcularChecksum();
     }
 };
-
-// ============================================
-// CLASE CONFIGURACION
-// ============================================
 
 class Configuracion
 {
@@ -143,69 +139,19 @@ private:
         }
     }
 
-    void _inicializarRTC()
-    {
-        HAL_PWR_EnableBkUpAccess();
-
-        // Habilitar LSI como fuente de clock del RTC (G071 no siempre tiene LSE)
-        // Si hay un cristal de 32768 Hz conectado a PC14/PC15, se puede usar LSE en lugar de LSI para mayor precisión.
-        RCC_OscInitTypeDef RCC_OscInitStruct = {0};
-        RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI;
-        RCC_OscInitStruct.LSIState = RCC_LSI_ON;
-        HAL_RCC_OscConfig(&RCC_OscInitStruct);
-
-        // Seleccionar LSI como fuente del RTC y habilitarlo
-        RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
-        PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_RTC;
-        PeriphClkInit.RTCClockSelection = RCC_RTCCLKSOURCE_LSI;
-        HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit);
-
-        __HAL_RCC_RTC_ENABLE();
-
-        if (HAL_RTCEx_BKUPRead(&rtc, RTC_BKP_DR1) != 0x32F2)
-        {
-            rtc.Instance = RTC;
-            rtc.Init.HourFormat = RTC_HOURFORMAT_24;
-            rtc.Init.AsynchPrediv = 127;
-            rtc.Init.SynchPrediv = 255;
-            rtc.Init.OutPut = RTC_OUTPUT_DISABLE;
-            rtc.Init.OutPutRemap = RTC_OUTPUT_REMAP_NONE;
-            rtc.Init.OutPutPolarity = RTC_OUTPUT_POLARITY_HIGH;
-            rtc.Init.OutPutType = RTC_OUTPUT_TYPE_OPENDRAIN;
-
-            if (HAL_RTC_Init(&rtc) != HAL_OK)
-            {
-                Serial.println("Error inicializando RTC");
-                return;
-            }
-
-            RTC_TimeTypeDef sTime = {0};
-            RTC_DateTypeDef sDate = {0};
-
-            sTime.Hours = 12;
-            sTime.Minutes = 0;
-            sTime.Seconds = 0;
-            HAL_RTC_SetTime(&rtc, &sTime, RTC_FORMAT_BIN);
-
-            sDate.Year = 26;
-            sDate.Month = 1;
-            sDate.Date = 1;
-            sDate.WeekDay = RTC_WEEKDAY_THURSDAY;
-            HAL_RTC_SetDate(&rtc, &sDate, RTC_FORMAT_BIN);
-
-            HAL_RTCEx_BKUPWrite(&rtc, RTC_BKP_DR1, 0x32F2);
-        }
-
-        _rtcInicializado = true;
-    }
+   
+ 
 
 public:
-    Configuracion() : _rtcInicializado(false), _cargada(false) {}
+    Configuracion() : _rtcInicializado(false), _cargada(false)
+    {
+    }
 
     void begin()
     {
         if (!_rtcInicializado)
-            _inicializarRTC();
+            Serial.println("*******************");
+        // _inicializarRTC();
         _cargarDesdeBackup();
     }
 
@@ -281,7 +227,7 @@ public:
     }
 
     void getDateTime(uint8_t &hora, uint8_t &minuto, uint8_t &segundo,
-                     uint8_t &dia, uint8_t &mes, uint8_t &anio)
+                     uint8_t &dia, uint8_t &mes, uint16_t &año)
     {
         RTC_TimeTypeDef sTime;
         RTC_DateTypeDef sDate;
@@ -293,31 +239,12 @@ public:
         segundo = sTime.Seconds;
         dia = sDate.Date;
         mes = sDate.Month;
-        anio = sDate.Year;
+        año = sDate.Year;
     }
-
-    void setDateTime(uint8_t hora, uint8_t minuto, uint8_t segundo,
-                     uint8_t dia, uint8_t mes, uint8_t anio)
-    {
-        RTC_TimeTypeDef sTime = {0};
-        RTC_DateTypeDef sDate = {0};
-
-        sTime.Hours = hora;
-        sTime.Minutes = minuto;
-        sTime.Seconds = segundo;
-        HAL_RTC_SetTime(&rtc, &sTime, RTC_FORMAT_BIN);
-
-        sDate.Year = anio;
-        sDate.Month = mes;
-        sDate.Date = dia;
-        HAL_RTC_SetDate(&rtc, &sDate, RTC_FORMAT_BIN);
-
-        save();
-    }
-
+    
     void aplicarConfiguracion()
     {
-        analogWrite(TFT_BLK, _datos.brillo); //brillo de la pantalla tft
+        analogWrite(TFT_BLK, _datos.brillo); // brillo de la pantalla tft
 
         myDFPlayer.volume(_datos.volumen);
         myDFPlayer.EQ(_datos.ecualizador);

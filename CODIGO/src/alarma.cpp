@@ -1,8 +1,12 @@
 #include "alarma.h"
+#include "menu.h"
+#include "pantalla.h"
+#include "globals.h" // Añadir esta línea
 
 extern Configuracion config;
 extern DFRobotDFPlayerMini myDFPlayer;
 extern Adafruit_NeoPixel rgb;
+extern Menu menu;
 
 void verificarAlarma()
 {
@@ -11,8 +15,9 @@ void verificarAlarma()
     if (!sistemaEncendido)
         return;
 
-    uint8_t hora, minuto, segundo, dia, mes, anio;
-    config.getDateTime(hora, minuto, segundo, dia, mes, anio);
+    uint8_t hora, minuto, segundo, dia, mes;
+    uint16_t año;
+    config.getDateTime(hora, minuto, segundo, dia, mes, año);
 
     if (config.get().alarmaActivada &&
         hora == config.get().alarmaHora &&
@@ -37,6 +42,9 @@ void activarAlarma()
 
     uint8_t volumenOriginal = config.get().volumen;
 
+    // Mostrar mensaje de alarma en la barra de estado
+    menu.dibujarBarraEstado("!!! ALARMA !!!");
+
     // Subir volumen gradualmente
     for (int v = 0; v <= config.get().volumen; v++)
     {
@@ -45,10 +53,11 @@ void activarAlarma()
     }
 
     // Reproducir sonido de alarma
-    myDFPlayer.play(999);
+    reproducirPista(3, 1);
 
-    // LEDs rojo pulsante
+    // LEDs rojo pulsante y verificar desactivación
     unsigned long inicio = millis();
+
     while (alarmaSonando && millis() - inicio < 300000) // 5 minutos máximo
     {
         rgb.fill(rgb.Color(255, 0, 0));
@@ -68,24 +77,37 @@ void activarAlarma()
     myDFPlayer.volume(volumenOriginal);
     myDFPlayer.stop();
     alarmaSonando = false;
+
+    // Restaurar la interfaz
+    redibujarInterfaz();
 }
 
 bool desactivarAlarmaPorUsuario()
 {
-    // Verificar botón físico
-    if (digitalRead(BOTON_DESACTIVAR) == LOW)
+    // Verificar botón físico BTN_OK (TTP223 activo HIGH)
+    if (digitalRead(BOTON_DESACTIVAR) == HIGH)
     {
+        Serial.println("Alarma desactivada por botón OK");
         return true;
     }
 
     // Verificar comando Bluetooth
     if (comandoBluetoothRecibido == "STOP_ALARM")
     {
-        comandoBluetoothRecibido = ""; // Limpiar comando
+        comandoBluetoothRecibido = "";
+        Serial.println("Alarma desactivada por Bluetooth");
         return true;
     }
 
     return false;
+}
+
+void redibujarInterfaz()
+{
+    tft.fillScreen(ST7735_BLACK);
+    menu.dibujarBarraEstado("MENU PRINCIPAL");
+    menu.dibujarIconos();
+    menu.dibujarSeleccion(menu.getIconoActivo());
 }
 
 void verificarApagadoProgramado()
@@ -95,7 +117,7 @@ void verificarApagadoProgramado()
     if (!sistemaEncendido)
         return;
 
-    unsigned long tiempoEncendido = (millis() - tiempoInicio) / 60000; // en minutos
+    unsigned long tiempoEncendido = (millis() - tiempoInicio) / 60000;
 
     if (tiempoEncendido >= config.get().autoApagado)
     {
@@ -109,8 +131,9 @@ void verificarEncendidoProgramado()
     if (sistemaEncendido)
         return;
 
-    uint8_t hora, minuto, segundo, dia, mes, anio;
-    config.getDateTime(hora, minuto, segundo, dia, mes, anio);
+    uint8_t hora, minuto, segundo, dia, mes;
+    uint16_t año;
+    config.getDateTime(hora, minuto, segundo, dia, mes, año);
 
     if (config.get().alarmaActivada &&
         hora == config.get().alarmaHora &&
@@ -129,7 +152,7 @@ void encenderSistema()
 
     brilloPantalla(config.get().brillo);
     rgb.setBrightness(config.get().ledBrillo);
-    redibujarTodo();
+    redibujarInterfaz();
 }
 
 void apagarSistema()

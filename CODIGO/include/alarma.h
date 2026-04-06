@@ -17,3 +17,4 @@ void verificarEncendidoProgramado();
 void encenderSistema();
 void apagarSistema();
 void entrarEnStandby();
+void redibujarInterfaz();
