@@ -4,7 +4,8 @@
 #include "pines.h"
 
 // Definición de objetos globales de audio
-SoftwareSerial mp3Serie(DFPLAYER_RX, DFPLAYER_TX);
+//SoftwareSerial mp3Serie(DFPLAYER_RX, DFPLAYER_TX);
+HardwareSerial mp3Serie(DFPLAYER_RX, DFPLAYER_TX);
 DFRobotDFPlayerMini myDFPlayer;
 
 extern Configuracion config;
@@ -15,6 +16,8 @@ extern Configuracion config;
 // Carpeta 01 reservada para avisos del sistema; usuario: 02-99.
 static uint8_t carpetaActual = 2;
 
+static uint8_t pasoVolumen = 1; // paso de aumento/disminución de volumen
+
 uint8_t getCarpetaActual()
 {
     return carpetaActual;
@@ -23,6 +26,8 @@ uint8_t getCarpetaActual()
 void iniciarMP3()
 {
     mp3Serie.begin(9600);
+
+    pinMode(DFPLAYER_BUSY, INPUT); //para saber el estado del reproductor.
 
     // ACK desactivado (false) porque puede causar problemas con algunos módulos
     if (!myDFPlayer.begin(mp3Serie, false, true))
@@ -79,8 +84,8 @@ void subirVolumenMP3()
     int vol = myDFPlayer.readVolume();
     if (vol < 30)
     {
-        myDFPlayer.volume(vol + 5);
-        config.setVolumen(vol + 5);
+        myDFPlayer.volume(vol + pasoVolumen);
+        config.setVolumen(vol + pasoVolumen);
     }
 }
 
@@ -89,8 +94,8 @@ void bajarVolumenMP3()
     int vol = myDFPlayer.readVolume();
     if (vol > 0)
     {
-        myDFPlayer.volume(vol - 5);
-        config.setVolumen(vol - 5);
+        myDFPlayer.volume(vol - pasoVolumen);
+        config.setVolumen(vol - pasoVolumen);
     }
 }
 
@@ -105,4 +110,9 @@ void volumenMP3(uint8_t nivel)
         nivel = 30;
     myDFPlayer.volume(nivel);
     config.setVolumen(nivel);
+}
+
+bool reproduciendoMP3()
+{
+    return digitalRead(DFPLAYER_BUSY) == LOW;
 }

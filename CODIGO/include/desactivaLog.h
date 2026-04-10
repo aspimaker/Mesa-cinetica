@@ -1,23 +1,38 @@
 #pragma once
 
+// desactivaLog.h — Elimina t
+
 #ifdef RELEASE
-#undef Serial
-    class DummySerial
-{
-public:
-    void begin(unsigned long) {}
-    template <typename T>
-    void print(const T &) {}
-    template <typename T>
-    void println(const T &) {}
-    void println() {}
-    void printf(const char *, ...) {}
-    void write(const char *) {}
-    void write(int) {}
-    void flush() {}
-    int available() { return 0; }
-    int read() { return -1; }
-    operator bool() { return false; }
-};
-DummySerial Serial;
-#endif
+
+// Silencia todas las llamadas a Serial.*
+// do { } while(0) es el idioma estándar para macros multi-statement
+// seguras dentro de if/else sin llaves.
+
+#define Serial_begin(baud)      do { } while(0)
+
+// Reemplaza el objeto Serial completo con un struct vacío inline.
+// Al ser 'static const', cada .cpp obtiene su propia copia pero
+// el compilador la elimina completamente (zero overhead).
+namespace _log_sink {
+    struct Sink {
+        void begin(unsigned long)           const {}
+        template<typename T>
+        void print(const T &)               const {}
+        template<typename T>
+        void println(const T &)             const {}
+        void println()                      const {}
+        void printf(const char *, ...)      const {}
+        void write(const char *)            const {}
+        void write(int)                     const {}
+        void flush()                        const {}
+        int  available()                    const { return 0; }
+        int  read()                         const { return -1; }
+        explicit operator bool()            const { return false; }
+    };
+    static const Sink sink;
+}
+
+// Redirige Serial al sink vacío sin tocar el objeto real
+#define Serial (_log_sink::sink)
+
+#endif // RELEASE

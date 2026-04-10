@@ -24,7 +24,7 @@
 #include "alarma.h"
 #include "bluetooth.h"
 
-// ── Último siempre ────────────────────────────────────────────
+#include "controles.h"
 #include "desactivaLog.h"
 
 extern Menu menu;
@@ -44,7 +44,7 @@ Configuracion config;
 bool sistemaEncendido = true;
 bool alarmaSonando = false;
 unsigned long tiempoInicio = 0;
-String comandoBluetoothRecibido = "";
+// String comandoBluetoothRecibido = "";
 EstadoSistema estadoActual = ESTADO_MENU_PRINCIPAL;
 unsigned long ultimoTiempoBoton = 0;
 
@@ -83,15 +83,6 @@ void activar_reloj_LSE()
     RTC_InitRTC_LSE();
 }
 
-void configurarPulsadoresTTP223()
-{
-    pinMode(BTN_OK, INPUT);
-    pinMode(BTN_DERECHA, INPUT);
-    pinMode(BTN_IZQUIERDA, INPUT);
-    pinMode(BTN_ARRIBA, INPUT);
-    pinMode(BTN_ABAJO, INPUT);
-}
-
 void mostrarPistaActual()
 {
     char buffer[32];
@@ -128,7 +119,8 @@ void setup()
 
     mostrarSplash(); // mientras se muestra, hacemos otras cosas...
 
-    configurarPulsadoresTTP223();
+    // configurarPulsadoresTTP223();
+    iniciarBotonesTTP223();
 
     // Inicializar LEDs WS2812B
     iniciarLEDs();
@@ -172,6 +164,15 @@ void loop()
 {
     unsigned long ahora = millis();
 
+    // ACTUALIZAR INTERFAZ (si es necesario)
+    static unsigned long ultimaActualizacionUI = 0;
+    if (ahora - ultimaActualizacionUI >= 100)
+    {
+        ultimaActualizacionUI = ahora;
+        actualizarInterfaz();
+    }
+
+    
     // ==============================================
     // LECTURA DE BOTONES TTP223
     // ==============================================
@@ -184,8 +185,6 @@ void loop()
     // ==============================================
     // CONTROL SEGÚN ESTADO ACTUAL
     // ==============================================
-    extern EstadoSistema estadoActual;
-
     if (estadoActual == ESTADO_MENU_PRINCIPAL)
     {
         // NAVEGACIÓN DEL MENÚ PRINCIPAL
@@ -276,7 +275,7 @@ void loop()
         else if (ok_presionado && estadoActual != ESTADO_MENU_PRINCIPAL)
         {
             // Play/Pausa (solo si no estamos en el menú)
-            if (myDFPlayer.isPlaying())
+            if (reproduciendoMP3())
             {
                 myDFPlayer.pause();
                 menu.dibujarBarraEstado("Pausa");
@@ -316,14 +315,7 @@ void loop()
     // PROCESAR REPRODUCCIÓN MP3
     procesarMP3();
 
-    // ACTUALIZAR INTERFAZ (si es necesario)
-    static unsigned long ultimaActualizacionUI = 0;
-    if (ahora - ultimaActualizacionUI >= 100)
-    {
-        ultimaActualizacionUI = ahora;
-        actualizarInterfaz();
-    }
-
+    
     // PEQUEÑO DELAY para no saturar el CPU
     delay(10);
 }

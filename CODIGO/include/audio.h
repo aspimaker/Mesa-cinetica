@@ -2,7 +2,12 @@
 
 #include <Arduino.h>
 #include <DFRobotDFPlayerMini.h>
-#include <SoftwareSerial.h>
+// #include <SoftwareSerial.h>
+
+extern HardwareSerial mp3Serie;
+extern DFRobotDFPlayerMini myDFPlayer;
+
+bool mp3Reproduciendo();
 
 // Funciones de audio
 void iniciarMP3();
@@ -12,4 +17,5 @@ void subirVolumenMP3();
 void bajarVolumenMP3();
 void detenerMP3();
 void volumenMP3(uint8_t nivel);
+bool reproduciendoMP3();
 uint8_t getCarpetaActual();

@@ -8,7 +8,14 @@
 */
 
 #include "pantalla.h"
-#include "menu.h" 
+#include "menu.h"
+#include "configuracion.h"
+#include "audio.h"
+#include "pines.h"
+#include "rtc.h"
+#include "globals.h"
+
+extern Configuracion config;
 
 // crera objeto tft
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
@@ -81,8 +88,7 @@ void actualizarReloj()
 
     FechaHora fh;
     RTC_GetFechaHora(fh);
-
-    // Serial.printf("RTC: %02d:%02d:%02d %02d:%02d:%02d\n", fh.dia, fh.mes, fh.año, fh.horas, fh.minutos, fh.segundos);
+    //Serial.printf("RTC: %02d:%02d:%02d %02d:%02d:%02d\n", fh.dia, fh.mes, fh.año, fh.horas, fh.minutos, fh.segundos);
 
     // Los 6 dígitos de la hora: HH MM SS
     uint8_t digitos[6] = {

@@ -139,9 +139,6 @@ private:
         }
     }
 
-   
- 
-
 public:
     Configuracion() : _rtcInicializado(false), _cargada(false)
     {
@@ -170,21 +167,21 @@ public:
     {
         _datos.brillo = (uint8_t)constrain(valor, 0, 255);
         analogWrite(TFT_BLK, _datos.brillo);
-        save();
+        // save();
     }
 
     void setVolumen(uint8_t valor)
     {
         _datos.volumen = (uint8_t)constrain(valor, 0, 30);
         myDFPlayer.volume(_datos.volumen);
-        save();
+        // save();
     }
 
     void setUltimaPista(uint16_t pista, uint16_t carpeta)
     {
         _datos.ultimaPista = pista;
         _datos.ultimaCarpeta = carpeta;
-        save();
+        // save();
     }
 
     uint16_t getUltimaPista() { return _datos.ultimaPista; }
@@ -199,7 +196,7 @@ public:
     void setLedModo(uint8_t modo)
     {
         _datos.ledModo = (uint8_t)constrain(modo, 0, 4);
-        save();
+        // save();
     }
 
     void setAlarma(uint8_t hora, uint8_t minuto, bool activar)
@@ -226,6 +223,7 @@ public:
         save();
     }
 
+    /*
     void getDateTime(uint8_t &hora, uint8_t &minuto, uint8_t &segundo,
                      uint8_t &dia, uint8_t &mes, uint16_t &año)
     {
@@ -241,7 +239,8 @@ public:
         mes = sDate.Month;
         año = sDate.Year;
     }
-    
+    */
+
     void aplicarConfiguracion()
     {
         analogWrite(TFT_BLK, _datos.brillo); // brillo de la pantalla tft
@@ -272,7 +271,7 @@ public:
     void setLedBrillo(uint8_t brillo)
     {
         _datos.ledBrillo = brillo;
-        save();
+        // save();
     }
     uint8_t getLedBrillo() { return _datos.ledBrillo; }
     bool isCargada() { return _cargada; }

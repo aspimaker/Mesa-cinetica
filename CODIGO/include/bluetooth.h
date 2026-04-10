@@ -21,10 +21,10 @@ class Bluetooth
 public:
     // ── Inicialización ────────────────────────────────────────
     void begin(HardwareSerial &serial, uint32_t baudrate = BT_BAUDRATE);
-    void autoConfig(const char *nombre, const char *pin);
+    //void autoConfig(const char *nombre, const char *pin);
     String readString();
 
-    bool autoConfig(char *name, const char *pin = "123456");
+    bool autoConfig(char *nombre, const char *pin);
 
     // ── Envío ─────────────────────────────────────────────────
     void sendString(const char *str);

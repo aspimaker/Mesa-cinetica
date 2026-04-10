@@ -1,4 +1,5 @@
 #include "leds.h"
+#include "configuracion.h"
 
 // Definición del objeto global de LEDs
 Adafruit_NeoPixel rgb(NUMERO_LEDS_WS2812B, PIN_WS2812B, NEO_GRB + NEO_KHZ800);

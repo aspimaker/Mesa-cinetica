@@ -10,6 +10,7 @@
 // DFPlayer
 #define DFPLAYER_RX D2
 #define DFPLAYER_TX D3
+#define DFPLAYER_BUSY  A5   // LOW = reproduciendo, HIGH = parado
 
 // bluetooth
 #define BT_RX A1

@@ -1,12 +1,17 @@
 #include "alarma.h"
+#include "globals.h"
 #include "menu.h"
 #include "pantalla.h"
-#include "globals.h" // Añadir esta línea
+#include "audio.h"
+#include "leds.h" 
+#include "pantalla.h"
+#include "menu.h" 
+#include "configuracion.h"
 
 extern Configuracion config;
 extern DFRobotDFPlayerMini myDFPlayer;
-extern Adafruit_NeoPixel rgb;
-extern Menu menu;
+//extern Adafruit_NeoPixel rgb;
+//extern Menu menu;
 
 void verificarAlarma()
 {
@@ -15,13 +20,17 @@ void verificarAlarma()
     if (!sistemaEncendido)
         return;
 
-    uint8_t hora, minuto, segundo, dia, mes;
-    uint16_t año;
-    config.getDateTime(hora, minuto, segundo, dia, mes, año);
+        FechaHora t;
+
+    //RTC_SetFechaHora(hora, minuto, segundo, dia, mes, año, diaSemana);
+    RTC_GetFechaHora(t);
+
 
     if (config.get().alarmaActivada &&
-        hora == config.get().alarmaHora &&
-        minuto == config.get().alarmaMinuto)
+        t.horas == config.get().alarmaHora &&
+        t.minutos == config.get().alarmaMinuto)
+        //diaSemana // de momento no se controla
+
     {
         if (!alarmaDisparada)
         {
@@ -131,13 +140,24 @@ void verificarEncendidoProgramado()
     if (sistemaEncendido)
         return;
 
-    uint8_t hora, minuto, segundo, dia, mes;
+    FechaHora fh;
+
+    uint8_t horas, minutos, segundos, dia, mes, diaSemana;
     uint16_t año;
-    config.getDateTime(hora, minuto, segundo, dia, mes, año);
+
+    RTC_GetFechaHora(fh);
+
+    dia = fh.dia;
+    mes = fh.mes;
+    año = fh.año;
+    horas = fh.horas;
+    minutos = fh.minutos;
+    segundos = fh.segundos;
+    diaSemana = fh.diaSemana;
 
     if (config.get().alarmaActivada &&
-        hora == config.get().alarmaHora &&
-        minuto == config.get().alarmaMinuto)
+        horas == config.get().alarmaHora &&
+        minutos == config.get().alarmaMinuto)
     {
         Serial.println("Encendido programado activado");
         encenderSistema();
