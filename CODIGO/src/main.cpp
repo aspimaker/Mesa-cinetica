@@ -163,11 +163,32 @@ void setup()
     tiempoInicio = millis();
 
     Serial.println("Setup finalizado");
-    reproducirPista(1, 2);
+    reproducirPista(2, 2);
+    subirVolumenMP3();
+    subirVolumenMP3();
+    /*subirVolumenMP3();
+    subirVolumenMP3();
+    subirVolumenMP3();
+    subirVolumenMP3();
+    subirVolumenMP3();
+    subirVolumenMP3();
+    subirVolumenMP3();
+    subirVolumenMP3();
+    subirVolumenMP3();
+    subirVolumenMP3();
+   subirVolumenMP3();
+    subirVolumenMP3();
+    subirVolumenMP3();
+    subirVolumenMP3();
+    subirVolumenMP3();
+    subirVolumenMP3();
+    subirVolumenMP3();
+    subirVolumenMP3();
+    subirVolumenMP3();
+ */
+    // delay(6000);
 
-    delay(6000);
-
-    myDFPlayer.stop();
+    //myDFPlayer.stop();
 }
 
 void loop()
