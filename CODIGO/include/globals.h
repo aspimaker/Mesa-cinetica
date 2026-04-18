@@ -4,10 +4,6 @@
 #include <DFRobotDFPlayerMini.h>
 #include "rtc.h"
 
-////#include <SoftwareSerial.h>
-// #include <Adafruit_NeoPixel.h>
-// #include <Adafruit_ST7735.h>
-// #include "pines.h"
 
 const unsigned long DEBOUNCE_DELAY = 150;
 
@@ -37,15 +33,6 @@ enum EstadoSistema
     ESTADO_CONFIGURACION
 };
 
-// Estructura para botones TTP223
-struct BotonTTP223
-{
-    int pin;
-    bool estadoActual;
-    bool estadoAnterior;
-    unsigned long ultimoDebounce;
-};
-
 // El .cpp que necesite usar BarraProgreso debe incluir barraProgreso.h explícitamente.
 class BarraProgreso;
 class Menu;
@@ -58,13 +45,6 @@ extern unsigned long tiempoInicio;
 extern EstadoSistema estadoActual;
 extern unsigned long ultimoTiempoBoton;
 extern String comandoBluetoothRecibido;
-
-// botones
-extern BotonTTP223 botonOK;
-extern BotonTTP223 botonDerecha;
-extern BotonTTP223 botonIzquierda;
-extern BotonTTP223 botonArriba;
-extern BotonTTP223 botonAbajo;
 
 // Barras de progreso
 extern BarraProgreso barraVolumen;
@@ -81,6 +61,4 @@ extern char nombreBT[30];
 // extern Adafruit_ST7735 tft;
 // extern HardwareSerial BTSerial;
 
-void iniciarBotonesTTP223();
-bool leerBotonTTP223(BotonTTP223 &boton);
 void mostrarPistaActual();

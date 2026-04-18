@@ -131,24 +131,23 @@ void RTC_InitRTC_LSE()
 
 void RTC_GetFechaHora(FechaHora &t)
 {
-/*
-    // Esperar sincronización — obligatorio antes de leer TR/DR
-    RTC->WPR = 0xCA;
-    RTC->WPR = 0x53;
-    RTC->ICSR &= ~RTC_ICSR_RSF;          // limpiar flag
-    RTC->WPR = 0xFF;
+    /*
+        // Esperar sincronización — obligatorio antes de leer TR/DR
+        RTC->WPR = 0xCA;
+        RTC->WPR = 0x53;
+        RTC->ICSR &= ~RTC_ICSR_RSF;          // limpiar flag
+        RTC->WPR = 0xFF;
 
-    uint32_t timeout = HAL_GetTick();
-    while (!(RTC->ICSR & RTC_ICSR_RSF))
-    {
-        if (HAL_GetTick() - timeout > 200)
+        uint32_t timeout = HAL_GetTick();
+        while (!(RTC->ICSR & RTC_ICSR_RSF))
         {
-            Serial.println("RTC: timeout RSF");
-            return;
+            if (HAL_GetTick() - timeout > 200)
+            {
+                Serial.println("RTC: timeout RSF");
+                return;
+            }
         }
-    }
-*/
-
+    */
 
     // Leer PRIMERO TR, LUEGO DR — regla de hardware STM32
     uint32_t tr = RTC->TR;
@@ -196,5 +195,5 @@ void RTC_SetFechaHora(uint8_t d, uint8_t mes, uint16_t a, uint8_t h, uint8_t min
 
 void _fechaHoraPorDefecto()
 {
-    RTC_SetFechaHora(6, 4, 2026, 3, 20, 12, 1);
+    RTC_SetFechaHora(6, 4, 2026, 12, 0, 0, 1);
 }

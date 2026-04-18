@@ -4,19 +4,16 @@
 #include "pines.h"
 
 // Definición de objetos globales de audio
-//SoftwareSerial mp3Serie(DFPLAYER_RX, DFPLAYER_TX);
-HardwareSerial mp3Serie(DFPLAYER_RX, DFPLAYER_TX);
+//HardwareSerial mp3Serie(DFPLAYER_RX, DFPLAYER_TX);
+HardwareSerial mp3Serie(14, 15);
 DFRobotDFPlayerMini myDFPlayer;
 
 extern Configuracion config;
 
-// Las variables estáticas locales se inicializan en tiempo de compilación,
-// antes de que config exista, así que no se pueden inicializar con config aquí.
-// El valor real se restaura en iniciarMP3().
 // Carpeta 01 reservada para avisos del sistema; usuario: 02-99.
 static uint8_t carpetaActual = 2;
-
 static uint8_t pasoVolumen = 1; // paso de aumento/disminución de volumen
+
 
 uint8_t getCarpetaActual()
 {
@@ -25,12 +22,41 @@ uint8_t getCarpetaActual()
 
 void iniciarMP3()
 {
+    pinMode(DFPLAYER_BUSY, INPUT); // para saber el estado del reproductor.
+
     mp3Serie.begin(9600);
 
-    pinMode(DFPLAYER_BUSY, INPUT); //para saber el estado del reproductor.
+
+/*
+    // --- Paso 1: Reset del DFPlayer y espera de inicialización ---
+    // Es crucial darle tiempo al DFPlayer para que se encienda y estabilice.
+    Serial.println("Enviando RESET...");
+    byte resetCmd[] = {0x7E, 0xFF, 0x06, 0x0C, 0x00, 0x00, 0x00, 0xFE, 0xE4, 0xEF};
+    mp3Serie.write(resetCmd, sizeof(resetCmd));
+    
+    // Espera 2 segundos completos. Esto es más que suficiente para que el módulo se reinicie.
+    delay(2000);
+    Serial.println("Reset enviado, espera completada.");
+  
+    // --- Paso 2: Envío del comando principal (Carpeta 2, Pista 1) ---
+    // Se envía el comando que ya sabemos que funciona.
+    byte playCmd[] = {0x7E, 0xFF, 0x06, 0x0F, 0x00, 0x02, 0x01, 0xFE, 0xE9, 0xEF};
+    
+    // Enviamos el comando byte por byte.
+    Serial.println("Enviando comando PLAY...");
+    for (int i = 0; i < sizeof(playCmd); i++) {
+      mp3Serie.write(playCmd[i]);
+      // Este pequeño delay de 2ms entre bytes puede ayudar en casos de temporización muy estricta.
+      delay(2); 
+    }
+    Serial.println("Comando PLAY enviado.");
+
+    delay(999999);
+   */
 
     // ACK desactivado (false) porque puede causar problemas con algunos módulos
-    if (!myDFPlayer.begin(mp3Serie, false, true))
+     if (!myDFPlayer.begin(mp3Serie, true, true))
+    //if (!myDFPlayer.begin(mp3Serie))
     {
         Serial.println("No se pudo iniciar el DFPlayer Mini");
     }
@@ -42,6 +68,7 @@ void iniciarMP3()
     // Restaurar carpeta de la última sesión, garantizando que no sea la 01
     uint8_t carpetaGuardada = config.get().ultimaCarpeta;
     carpetaActual = carpetaGuardada < 2 ? 2 : carpetaGuardada;
+
     myDFPlayer.volume(config.get().volumen);
 }
 

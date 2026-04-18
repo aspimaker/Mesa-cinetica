@@ -7,6 +7,7 @@
 #include "pantalla.h"
 #include "menu.h" 
 #include "configuracion.h"
+#include "botones.h"
 
 extern Configuracion config;
 extern DFRobotDFPlayerMini myDFPlayer;
@@ -94,7 +95,7 @@ void activarAlarma()
 bool desactivarAlarmaPorUsuario()
 {
     // Verificar botón físico BTN_OK (TTP223 activo HIGH)
-    if (digitalRead(BOTON_DESACTIVAR) == HIGH)
+    if (digitalRead(BOTON_OK) == HIGH)
     {
         Serial.println("Alarma desactivada por botón OK");
         return true;

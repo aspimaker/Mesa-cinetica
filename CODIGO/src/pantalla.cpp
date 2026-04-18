@@ -1,10 +1,13 @@
-/*             160px
-┌────────────────────────────────┐
-│ [BT] [MP3] [VOL] [LED] [MODE]  │  16px alto
-├────────────────────────────────┤
-│                                │
-│         contenido              │  112px
-└────────────────────────────────┘
+/*                 160px
+┌─────────────────────────────────────────┐
+│  [BT]   [MP3]   [VOL]   [LED]   [MODE]  │  16px alto
+├─────────────┬─────────────┬─────────────┤
+│      0      │      1      │      2      │
+│   Diseño    │  Pista MP3  │     RGB     │
+├─────────────┼─────────────┼─────────────┤ 112px alto
+│      3      │      4      │      5      │
+│ Modo dibujo │  Modo MP3   │      ?      │
+└─────────────┴─────────────┴─────────────┘
 */
 
 #include "pantalla.h"
@@ -46,7 +49,7 @@ void iniciarPantalla()
     tft.setRotation(1);
     tft.fillScreen(ST7735_BLACK);
 
-    //barras de progreso
+    // barras de progreso
     /*
     barraVolumen.begin();
     barraBrilloPantalla.begin();
@@ -59,8 +62,8 @@ void mostrarSplash()
 {
     tft.fillScreen(ST7735_BLACK);
     tft.drawRGBBitmap(0, 0, (uint16_t *)logo_aspimaker, LOGO_WIDTH, LOGO_HEIGHT);
-    //delay(1000);
-    //tft.fillScreen(ST7735_BLACK);
+    // delay(1000);
+    // tft.fillScreen(ST7735_BLACK);
 }
 
 void barraEstado()
@@ -88,14 +91,14 @@ void actualizarReloj()
 
     FechaHora fh;
     RTC_GetFechaHora(fh);
-    //Serial.printf("RTC: %02d:%02d:%02d %02d:%02d:%02d\n", fh.dia, fh.mes, fh.año, fh.horas, fh.minutos, fh.segundos);
+    // Serial.printf("RTC: %02d:%02d:%02d %02d:%02d:%02d\n", fh.dia, fh.mes, fh.año, fh.horas, fh.minutos, fh.segundos);
 
     // Los 6 dígitos de la hora: HH MM SS
     uint8_t digitos[6] = {
         (uint8_t)(fh.horas / 10), (uint8_t)(fh.horas % 10),
         (uint8_t)(fh.minutos / 10), (uint8_t)(fh.minutos % 10),
         (uint8_t)(fh.segundos / 10), (uint8_t)(fh.segundos % 10)};
-        
+
     // Posición X de cada dígito (ajustar según tu fuente y posición)
     // Entre dígito 1-2 y 3-4 hay ':' que ocupa espacio
     const uint8_t CHAR_W = 6; // ancho de carácter en pixels (fuente por defecto)
@@ -111,6 +114,8 @@ void actualizarReloj()
         CHAR_W * 6, // S decena  (+1 por el ':')
         CHAR_W * 7  // S unidad
     };
+
+    tft.setTextSize(1);
 
     for (int i = 0; i < 6; i++)
     {

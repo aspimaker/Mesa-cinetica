@@ -6,16 +6,37 @@
 // El debounce evita lecturas múltiples por un solo toque.
 // ============================================================
 
+#include "botones.h"
+
 #include "globals.h"
 #include "pines.h"
 
+BotonADC leerBotonADC()
+{
+    int v = analogRead(BTN_ADC);
+
+    if (v < 100)
+        return (BotonADC)BOTON_NINGUNO;
+    if (v < 500)
+        return (BotonADC)BOTON_OK;
+    if (v < 1000)
+        return (BotonADC)BOTON_DERECHA;
+    if (v < 1600)
+        return (BotonADC)BOTON_IZQUIERDA;
+    if (v < 2500)
+        return (BotonADC)BOTON_ARRIBA;
+    return (BotonADC)BOTON_ABAJO;
+}
+
+
 void iniciarBotonesTTP223()
 {
-    pinMode(BTN_OK, INPUT);
-    pinMode(BTN_DERECHA, INPUT);
-    pinMode(BTN_IZQUIERDA, INPUT);
-    pinMode(BTN_ARRIBA, INPUT);
-    pinMode(BTN_ABAJO, INPUT);
+    pinMode(BTN_ADC, INPUT);
+    //pinMode(BTN_OK, INPUT);
+    //pinMode(BTN_DERECHA, INPUT);
+    //pinMode(BTN_IZQUIERDA, INPUT);
+    //pinMode(BTN_ARRIBA, INPUT);
+    //pinMode(BTN_ABAJO, INPUT);
 }
 
 // Devuelve true UNA SOLA VEZ por cada pulsación.
@@ -48,3 +69,4 @@ bool leerBotonTTP223(BotonTTP223 &boton)
     boton.estadoAnterior = lecturaActual;
     return false;
 }
+

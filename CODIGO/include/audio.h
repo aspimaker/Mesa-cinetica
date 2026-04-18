@@ -7,8 +7,6 @@
 extern HardwareSerial mp3Serie;
 extern DFRobotDFPlayerMini myDFPlayer;
 
-bool mp3Reproduciendo();
-
 // Funciones de audio
 void iniciarMP3();
 void procesarMP3();

@@ -1,5 +1,11 @@
 #include <Arduino.h>
 
+#define BTN_OK_PRUEBA PC0
+#define BTN_DERECHA_PRUEBA PC1
+#define BTN_IZQUIERDA_PRUEBA PC2
+#define BTN_ARRIBA_PRUEBA PC3
+#define BTN_ABAJO_PRUEBA PB6
+
 // ── Standalone (sin dependencias propias) ─────────────────────
 #include "pines.h"
 #include "colores.h"
@@ -14,26 +20,25 @@
 #include "leds.h"
 #include "utils.h"
 
-// ── BarraProgreso ─────────────────────────────────────────────
 #include "barraProgreso.h"
-
-// ── Módulos de alto nivel ─────────────────────────────────────
 #include "configuracion.h"
 #include "pantalla.h"
 #include "menu.h"
 #include "alarma.h"
 #include "bluetooth.h"
-
 #include "controles.h"
+#include "botones.h"
 #include "desactivaLog.h"
 
 extern Menu menu;
 
+/*
 BotonTTP223 botonOK = {BTN_OK, false, false, 0};
 BotonTTP223 botonDerecha = {BTN_DERECHA, false, false, 0};
 BotonTTP223 botonIzquierda = {BTN_IZQUIERDA, false, false, 0};
 BotonTTP223 botonArriba = {BTN_ARRIBA, false, false, 0};
 BotonTTP223 botonAbajo = {BTN_ABAJO, false, false, 0};
+*/
 
 RTC_HandleTypeDef rtc;
 Configuracion config;
@@ -46,6 +51,7 @@ bool alarmaSonando = false;
 unsigned long tiempoInicio = 0;
 // String comandoBluetoothRecibido = "";
 EstadoSistema estadoActual = ESTADO_MENU_PRINCIPAL;
+BotonADC botonADC = (BotonADC)BOTON_NINGUNO;
 unsigned long ultimoTiempoBoton = 0;
 
 /*
@@ -115,6 +121,9 @@ void setup()
     Serial.print("Config cargada: ");
     Serial.println(config.isCargada() ? "SI" : "NO");
 
+    // Inicializar reproductor MP3
+    iniciarMP3();
+
     iniciarPantalla();
 
     mostrarSplash(); // mientras se muestra, hacemos otras cosas...
@@ -124,9 +133,6 @@ void setup()
 
     // Inicializar LEDs WS2812B
     iniciarLEDs();
-
-    // Inicializar reproductor MP3
-    iniciarMP3();
 
     // módulo bluetooth y autoconfigurar
     bt.begin(BTSerial, 0);             // inicializar el puerto serie
@@ -140,7 +146,6 @@ void setup()
 
     Serial.print("Brillo: ");
     Serial.println(config.get().brillo);
-    // brilloPantalla(50);
 
     // esperar el tiempo de splash
     while (millis() - ahora < tiempoSplash)
@@ -158,10 +163,25 @@ void setup()
     tiempoInicio = millis();
 
     Serial.println("Setup finalizado");
+    reproducirPista(1, 2);
+
+    delay(6000);
+
+    myDFPlayer.stop();
 }
 
 void loop()
 {
+    botonADC = leerBotonADC();
+
+    // sólo para pruebas (pines morpho)
+    pinMode(BTN_OK_PRUEBA, INPUT_PULLDOWN);
+    pinMode(BTN_DERECHA_PRUEBA, INPUT_PULLDOWN);
+    pinMode(BTN_IZQUIERDA_PRUEBA, INPUT_PULLDOWN);
+    pinMode(BTN_ARRIBA_PRUEBA, INPUT_PULLDOWN);
+    pinMode(BTN_ABAJO_PRUEBA, INPUT_PULLDOWN);
+    //------------------------------------
+
     unsigned long ahora = millis();
 
     // ACTUALIZAR INTERFAZ (si es necesario)
@@ -172,16 +192,25 @@ void loop()
         actualizarInterfaz();
     }
 
-    
     // ==============================================
     // LECTURA DE BOTONES TTP223
     // ==============================================
+    /*
     bool ok_presionado = leerBotonTTP223(botonOK);
     bool derecha_presionado = leerBotonTTP223(botonDerecha);
     bool izquierda_presionado = leerBotonTTP223(botonIzquierda);
     bool arriba_presionado = leerBotonTTP223(botonArriba);
     bool abajo_presionado = leerBotonTTP223(botonAbajo);
+    */
 
+    bool ok_presionado = digitalRead(BTN_OK_PRUEBA);
+    bool derecha_presionado = digitalRead(BTN_DERECHA_PRUEBA);
+    bool izquierda_presionado = digitalRead(BTN_IZQUIERDA_PRUEBA);
+    bool arriba_presionado = digitalRead(BTN_ARRIBA_PRUEBA);
+    bool abajo_presionado = digitalRead(BTN_ABAJO_PRUEBA);
+
+    // Serial.println(estadoActual);
+    ;
     // ==============================================
     // CONTROL SEGÚN ESTADO ACTUAL
     // ==============================================
@@ -194,26 +223,31 @@ void loop()
         {
             if (arriba_presionado)
             {
+                Serial.println("arriba");
                 menu.moverSeleccion(0); // Arriba
                 ultimoMovimiento = ahora;
             }
             else if (abajo_presionado)
             {
+                Serial.println("abajo");
                 menu.moverSeleccion(1); // Abajo
                 ultimoMovimiento = ahora;
             }
             else if (izquierda_presionado)
             {
+                Serial.println("izquierda");
                 menu.moverSeleccion(2); // Izquierda
                 ultimoMovimiento = ahora;
             }
             else if (derecha_presionado)
             {
+                Serial.println("derecha");
                 menu.moverSeleccion(3); // Derecha
                 ultimoMovimiento = ahora;
             }
             else if (ok_presionado)
             {
+                Serial.println("OK");
                 menu.ejecutarAccion();
                 ultimoMovimiento = ahora;
             }
@@ -310,12 +344,12 @@ void loop()
     actualizarLEDs();
 
     // PROCESAR COMANDOS BLUETOOTH
-    procesarComandosBluetooth();
+    bt.update();                 // 1. detecta conexión/desconexión
+    procesarComandosBluetooth(); // 2. procesa comandos
 
     // PROCESAR REPRODUCCIÓN MP3
-    procesarMP3();
+    //  procesarMP3();
 
-    
     // PEQUEÑO DELAY para no saturar el CPU
     delay(10);
 }
