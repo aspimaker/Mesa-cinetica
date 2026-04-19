@@ -3,7 +3,27 @@
 # ─────────────────────────────────────────
 **/aspimaker
 
+# Archivos de keystore
 *.keystore
+*.jks
+*.key
+*.p12
+
+# Archivos de propiedades con claves
+gradle.properties
+local.properties
+keystore.properties
+
+# Otras cosas típicas de Android
+*.iml
+.gradle/
+/local.properties
+/.idea/
+.DS_Store
+/build/
+/captures/
+.externalNativeBuild/
+.cxx/
 
 # ─────────────────────────────────────────
 #  ANDROID  —  Visual Studio / C# / MAUI
