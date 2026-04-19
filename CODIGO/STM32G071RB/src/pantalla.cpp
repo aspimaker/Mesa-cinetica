@@ -91,7 +91,7 @@ void actualizarReloj()
 
     FechaHora fh;
     RTC_GetFechaHora(fh);
-    // Serial.printf("RTC: %02d:%02d:%02d %02d:%02d:%02d\n", fh.dia, fh.mes, fh.año, fh.horas, fh.minutos, fh.segundos);
+    // DEBUG_PRINTF("RTC: %02d:%02d:%02d %02d:%02d:%02d\n", fh.dia, fh.mes, fh.año, fh.horas, fh.minutos, fh.segundos);
 
     // Los 6 dígitos de la hora: HH MM SS
     uint8_t digitos[6] = {

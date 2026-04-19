@@ -1,4 +1,5 @@
 #include "barraProgreso.h"
+#include "desactivaLog.h"
 
 BarraProgreso::BarraProgreso(Adafruit_ST7735 &pantalla,
                              int x, int y, int ancho, int alto,
@@ -37,7 +38,7 @@ void BarraProgreso::begin()
 
     if (!_pantalla)
     {
-        Serial.println("BarraProgreso::begin() - ERROR: _pantalla es NULL");
+        DEBUG_PRINTLN("BarraProgreso::begin() - ERROR: _pantalla es NULL");
         return;
     }
 

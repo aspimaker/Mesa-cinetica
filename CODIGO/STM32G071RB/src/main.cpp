@@ -28,7 +28,6 @@
 #include "bluetooth.h"
 #include "controles.h"
 #include "botones.h"
-#include "desactivaLog.h"
 
 extern Menu menu;
 
@@ -46,6 +45,7 @@ Configuracion config;
 // ============================================================
 // VARIABLES GLOBALES (declaradas como extern)
 // ============================================================
+InformacionHardware mesaCinetica;
 bool sistemaEncendido = true;
 bool alarmaSonando = false;
 unsigned long tiempoInicio = 0;
@@ -105,12 +105,20 @@ void mostrarPistaActual()
 
 void setup()
 {
+    Serial.begin(115200);
+    delay(500);
+    DEBUG_PRINTLN("Iniciando Sistema...");
+
     uint16_t tiempoSplash = 500;
     uint32_t ahora = millis();
 
-    Serial.begin(115200);
-    delay(500);
-    Serial.println("Iniciando Sistema...");
+    // configuracion hardware
+    mesaCinetica.version = 0;
+    mesaCinetica.revision = 1;
+    mesaCinetica.memoria = 16;
+    mesaCinetica.mp3 = 1;
+    mesaCinetica.rgb = 1;
+
 
     // configuración
     config.begin();
@@ -118,8 +126,8 @@ void setup()
     // reloj para RTC
     activar_reloj_LSE();
 
-    Serial.print("Config cargada: ");
-    Serial.println(config.isCargada() ? "SI" : "NO");
+    DEBUG_PRINT("Config cargada: ");
+    DEBUG_PRINTLN(config.isCargada() ? "SI" : "NO");
 
     // Inicializar reproductor MP3
     iniciarMP3();
@@ -142,10 +150,10 @@ void setup()
     // snprintf(nombreBT, sizeof(nombreBT), "Mesa-%04X", (uint16_t)(id & 0xFFFF));
     bt.autoConfig(nombreBT, "123456");
 
-    Serial.println(nombreBT);
+    DEBUG_PRINTLN(nombreBT);
 
-    Serial.print("Brillo: ");
-    Serial.println(config.get().brillo);
+    DEBUG_PRINT("Brillo: ");
+    DEBUG_PRINTLN(config.get().brillo);
 
     // esperar el tiempo de splash
     while (millis() - ahora < tiempoSplash)
@@ -162,33 +170,11 @@ void setup()
 
     tiempoInicio = millis();
 
-    Serial.println("Setup finalizado");
-    reproducirPista(2, 2);
-    subirVolumenMP3();
-    subirVolumenMP3();
-    /*subirVolumenMP3();
-    subirVolumenMP3();
-    subirVolumenMP3();
-    subirVolumenMP3();
-    subirVolumenMP3();
-    subirVolumenMP3();
-    subirVolumenMP3();
-    subirVolumenMP3();
-    subirVolumenMP3();
-    subirVolumenMP3();
-   subirVolumenMP3();
-    subirVolumenMP3();
-    subirVolumenMP3();
-    subirVolumenMP3();
-    subirVolumenMP3();
-    subirVolumenMP3();
-    subirVolumenMP3();
-    subirVolumenMP3();
-    subirVolumenMP3();
- */
-    // delay(6000);
+    DEBUG_PRINTLN("Setup finalizado");
+    //reproducirPista(2, 2);
+  //  subirVolumenMP3();
 
-    //myDFPlayer.stop();
+    // myDFPlayer.stop();
 }
 
 void loop()
@@ -230,7 +216,7 @@ void loop()
     bool arriba_presionado = digitalRead(BTN_ARRIBA_PRUEBA);
     bool abajo_presionado = digitalRead(BTN_ABAJO_PRUEBA);
 
-    // Serial.println(estadoActual);
+    // DEBUG_PRINTLN(estadoActual);
     ;
     // ==============================================
     // CONTROL SEGÚN ESTADO ACTUAL
@@ -244,31 +230,31 @@ void loop()
         {
             if (arriba_presionado)
             {
-                Serial.println("arriba");
+                DEBUG_PRINTLN("arriba");
                 menu.moverSeleccion(0); // Arriba
                 ultimoMovimiento = ahora;
             }
             else if (abajo_presionado)
             {
-                Serial.println("abajo");
+                DEBUG_PRINTLN("abajo");
                 menu.moverSeleccion(1); // Abajo
                 ultimoMovimiento = ahora;
             }
             else if (izquierda_presionado)
             {
-                Serial.println("izquierda");
+                DEBUG_PRINTLN("izquierda");
                 menu.moverSeleccion(2); // Izquierda
                 ultimoMovimiento = ahora;
             }
             else if (derecha_presionado)
             {
-                Serial.println("derecha");
+                DEBUG_PRINTLN("derecha");
                 menu.moverSeleccion(3); // Derecha
                 ultimoMovimiento = ahora;
             }
             else if (ok_presionado)
             {
-                Serial.println("OK");
+                DEBUG_PRINTLN("OK");
                 menu.ejecutarAccion();
                 ultimoMovimiento = ahora;
             }

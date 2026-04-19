@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Arduino.h>
+#include "desactivaLog.h"
 #include <DFRobotDFPlayerMini.h>
 #include "rtc.h"
 
@@ -31,6 +32,16 @@ enum EstadoSistema
     ESTADO_SELECCION_MODO,
     ESTADO_INFORMACION,
     ESTADO_CONFIGURACION
+};
+
+// Estructura para manejar la hora de forma sencilla
+struct InformacionHardware
+{
+    uint8_t version;
+    uint8_t revision;
+    uint8_t memoria;
+    bool rgb;
+    bool mp3;
 };
 
 // El .cpp que necesite usar BarraProgreso debe incluir barraProgreso.h explícitamente.

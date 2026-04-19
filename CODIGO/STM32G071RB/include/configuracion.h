@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Arduino.h>
+#include "desactivaLog.h"
 #include <DFRobotDFPlayerMini.h> // DFRobotDFPlayerMini
 #include <Adafruit_NeoPixel.h>   // Adafruit_NeoPixel (usado en aplicarConfiguracion via rgb)
 #include "pines.h"               // TFT_BLK
@@ -147,7 +148,7 @@ public:
     void begin()
     {
         if (!_rtcInicializado)
-            Serial.println("*******************");
+            DEBUG_PRINTLN("*******************");
         // _inicializarRTC();
         _cargarDesdeBackup();
     }

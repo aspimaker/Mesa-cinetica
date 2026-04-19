@@ -47,7 +47,7 @@ void verificarAlarma()
 
 void activarAlarma()
 {
-    Serial.println("¡ALARMA ACTIVADA!");
+    DEBUG_PRINTLN("¡ALARMA ACTIVADA!");
     alarmaSonando = true;
 
     uint8_t volumenOriginal = config.get().volumen;
@@ -97,7 +97,7 @@ bool desactivarAlarmaPorUsuario()
     // Verificar botón físico BTN_OK (TTP223 activo HIGH)
     if (digitalRead(BOTON_OK) == HIGH)
     {
-        Serial.println("Alarma desactivada por botón OK");
+        DEBUG_PRINTLN("Alarma desactivada por botón OK");
         return true;
     }
 
@@ -105,7 +105,7 @@ bool desactivarAlarmaPorUsuario()
     if (comandoBluetoothRecibido == "STOP_ALARM")
     {
         comandoBluetoothRecibido = "";
-        Serial.println("Alarma desactivada por Bluetooth");
+        DEBUG_PRINTLN("Alarma desactivada por Bluetooth");
         return true;
     }
 
@@ -131,7 +131,7 @@ void verificarApagadoProgramado()
 
     if (tiempoEncendido >= config.get().autoApagado)
     {
-        Serial.println("Apagado programado activado");
+        DEBUG_PRINTLN("Apagado programado activado");
         apagarSistema();
     }
 }
@@ -160,7 +160,7 @@ void verificarEncendidoProgramado()
         horas == config.get().alarmaHora &&
         minutos == config.get().alarmaMinuto)
     {
-        Serial.println("Encendido programado activado");
+        DEBUG_PRINTLN("Encendido programado activado");
         encenderSistema();
         delay(5000);
     }
@@ -190,7 +190,7 @@ void apagarSistema()
 
 void entrarEnStandby()
 {
-    Serial.println("Entrando en modo standby...");
+    DEBUG_PRINTLN("Entrando en modo standby...");
 
     config.save();
     myDFPlayer.stop();

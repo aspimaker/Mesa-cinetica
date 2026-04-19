@@ -27,11 +27,11 @@ void iniciarMP3()
 
     if (!myDFPlayer.begin(mp3Serie, true, true))
     {
-        Serial.println("No se pudo iniciar el DFPlayer Mini");
+        DEBUG_PRINTLN("No se pudo iniciar el DFPlayer Mini");
     }
     else
     {
-        Serial.println("DFPlayer Mini iniciado correctamente");
+        DEBUG_PRINTLN("DFPlayer Mini iniciado correctamente");
     }
 
     // Restaurar carpeta de la última sesión, garantizando que no sea la 01
@@ -53,7 +53,7 @@ void procesarMP3()
         {
             ultimaPista = pistaActual;
             config.setUltimaPista(pistaActual, carpetaActual);
-            Serial.printf("Carpeta: %d  Pista: %d\n", carpetaActual, pistaActual);
+            DEBUG_PRINTF("Carpeta: %d  Pista: %d\n", carpetaActual, pistaActual);
         }
     }
 }

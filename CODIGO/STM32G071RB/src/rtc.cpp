@@ -1,4 +1,5 @@
 #include "rtc.h"
+#include "desactivaLog.h"
 
 void RTC_InitRTC_LSI()
 {
@@ -25,12 +26,12 @@ void RTC_InitRTC_LSI()
             ;
         RTC->WPR = 0xFF;
 
-        Serial.println("RTC: Manteniendo conteo previo.");
+        DEBUG_PRINTLN("RTC: Manteniendo conteo previo.");
         return;
     }
 
     // 4. Configuración desde cero
-    Serial.println("RTC: Configurando por primera vez...");
+    DEBUG_PRINTLN("RTC: Configurando por primera vez...");
 
     uint32_t bdcr = RCC->BDCR;
     bdcr &= ~RCC_BDCR_RTCSEL;
@@ -47,7 +48,7 @@ void RTC_InitRTC_LSI()
     RTC->PRER = (127 << 16) | 249;
 
     // Fecha/hora inicial solo si nunca se ha grabado
-    Serial.println("RTC: Grabando fecha/hora inicial...");
+    DEBUG_PRINTLN("RTC: Grabando fecha/hora inicial...");
     _fechaHoraPorDefecto();
 
     TAMP->BKP0R = 0x4224;
@@ -75,7 +76,7 @@ void RTC_InitRTC_LSE()
     {
         if (HAL_GetTick() - t > 2000)
         {
-            Serial.println("LSE timeout! Usando LSI...");
+            DEBUG_PRINTLN("LSE timeout! Usando LSI...");
             RCC->CSR |= RCC_CSR_LSION;
             while (!(RCC->CSR & RCC_CSR_LSIRDY))
                 ;
@@ -85,7 +86,7 @@ void RTC_InitRTC_LSE()
     }
 
     if (usandoLSE)
-        Serial.println("LSE listo.");
+        DEBUG_PRINTLN("LSE listo.");
 
     // ¿Ya estaba configurado?
     if ((RCC->BDCR & RCC_BDCR_RTCEN) && (TAMP->BKP0R == 0x4225))
@@ -96,12 +97,12 @@ void RTC_InitRTC_LSE()
         while (!(RTC->ICSR & RTC_ICSR_RSF))
             ;
         RTC->WPR = 0xFF;
-        Serial.println("RTC: Manteniendo conteo previo.");
+        DEBUG_PRINTLN("RTC: Manteniendo fecha/hora.");
         return;
     }
 
     // Configurar desde cero
-    Serial.println("RTC: Configurando por primera vez...");
+    DEBUG_PRINTLN("RTC: Configurando por primera vez...");
 
     uint32_t bdcr = RCC->BDCR;
     bdcr &= ~RCC_BDCR_RTCSEL;
@@ -120,7 +121,7 @@ void RTC_InitRTC_LSE()
     else
         RTC->PRER = (127 << 16) | 249; // LSI ~32 kHz
 
-    Serial.println("RTC: Grabando fecha/hora inicial...");
+    DEBUG_PRINTLN("RTC: Grabando fecha/hora inicial...");
     _fechaHoraPorDefecto();
 
     TAMP->BKP0R = 0x4225; // Magic number nuevo para forzar reconfiguración
@@ -143,7 +144,7 @@ void RTC_GetFechaHora(FechaHora &t)
         {
             if (HAL_GetTick() - timeout > 200)
             {
-                Serial.println("RTC: timeout RSF");
+                DEBUG_PRINTLN("RTC: timeout RSF");
                 return;
             }
         }

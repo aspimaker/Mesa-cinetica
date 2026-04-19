@@ -6,23 +6,23 @@
 # ─────────────────────────────────────────
 #  ANDROID  —  Visual Studio / C# / MAUI
 # ─────────────────────────────────────────
-ANDROID/bin/
-ANDROID/obj/
-ANDROID/.vs/
-ANDROID/**/*.user
-ANDROID/**/*.suo
-ANDROID/**/*.userprefs
-ANDROID/**/TestResults/
-ANDROID/**/.idea/
-ANDROID/**/*.binlog
+CODIGO/ANDROID/bin/
+CODIGO/ANDROID/obj/
+CODIGO/ANDROID/.vs/
+CODIGO/ANDROID/**/*.user
+CODIGO/ANDROID/**/*.suo
+CODIGO/ANDROID/**/*.userprefs
+CODIGO/ANDROID/**/TestResults/
+CODIGO/ANDROID/**/.idea/
+CODIGO/ANDROID/**/*.binlog
 
 # NuGet
-ANDROID/**/packages/
-ANDROID/**/*.nupkg
-ANDROID/**/.nuget/
+CODIGO/ANDROID/**/packages/
+CODIGO/ANDROID/**/*.nupkg
+CODIGO/ANDROID/**/.nuget/
 
 # Publicación
-ANDROID/**/publish/
+CODIGO/ANDROID/**/publish/
 
 # ─────────────────────────────────────────
 #  CODIGO  —  VS Code + PlatformIO
