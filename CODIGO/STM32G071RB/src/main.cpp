@@ -1,5 +1,11 @@
 #include <Arduino.h>
 
+#define MESA_VERSION 0;
+#define MESA_REVISION 1;
+#define MESA_MEMORIA 16;
+#define MESA_MP3 1;
+#define MESA_RGB 1;
+
 #define BTN_OK_PRUEBA PC0
 #define BTN_DERECHA_PRUEBA PC1
 #define BTN_IZQUIERDA_PRUEBA PC2
@@ -49,12 +55,10 @@ InformacionHardware mesaCinetica;
 bool sistemaEncendido = true;
 bool alarmaSonando = false;
 unsigned long tiempoInicio = 0;
-// String comandoBluetoothRecibido = "";
 EstadoSistema estadoActual = ESTADO_MENU_PRINCIPAL;
 BotonADC botonADC = (BotonADC)BOTON_NINGUNO;
 unsigned long ultimoTiempoBoton = 0;
 
-/*
 void activar_reloj_LSI()
 {
     // utilizar reloj interno LSI para el RTC (aunque es menos preciso, no requiere cristal externo)
@@ -74,7 +78,6 @@ void activar_reloj_LSI()
     // iniciar reloj LSI
     RTC_InitRTC_LSI();
 }
-*/
 
 void activar_reloj_LSE()
 {
@@ -96,7 +99,6 @@ void mostrarPistaActual()
     menu.dibujarBarraEstado(buffer);
     delay(500);
 
-    // Usar la variable global estadoActual (sin extern)
     if (estadoActual == ESTADO_MENU_PRINCIPAL)
     {
         menu.dibujarBarraEstado("MENU PRINCIPAL");
@@ -113,12 +115,11 @@ void setup()
     uint32_t ahora = millis();
 
     // configuracion hardware
-    mesaCinetica.version = 0;
-    mesaCinetica.revision = 1;
-    mesaCinetica.memoria = 16;
-    mesaCinetica.mp3 = 1;
-    mesaCinetica.rgb = 1;
-
+    mesaCinetica.version = MESA_VERSION;
+    mesaCinetica.revision = MESA_REVISION;
+    mesaCinetica.memoria = MESA_MEMORIA;
+    mesaCinetica.mp3 = MESA_MP3;
+    mesaCinetica.rgb = MESA_RGB;
 
     // configuración
     config.begin();
@@ -171,8 +172,8 @@ void setup()
     tiempoInicio = millis();
 
     DEBUG_PRINTLN("Setup finalizado");
-    //reproducirPista(2, 2);
-  //  subirVolumenMP3();
+    // reproducirPista(2, 2);
+    //  subirVolumenMP3();
 
     // myDFPlayer.stop();
 }
@@ -342,7 +343,6 @@ void loop()
     if (ahora - ultimaVerificacionApagado >= 60000)
     {
         ultimaVerificacionApagado = ahora;
-
         verificarApagadoProgramado();
         verificarEncendidoProgramado();
     }

@@ -5,7 +5,6 @@
 #include <DFRobotDFPlayerMini.h>
 #include "rtc.h"
 
-
 const unsigned long DEBOUNCE_DELAY = 150;
 
 #define UID_BASE_ADDR 0x1FFF7590UL
@@ -16,13 +15,12 @@ const unsigned long DEBOUNCE_DELAY = 150;
 #define SCREEN_WIDTH 160
 #define SCREEN_HEIGHT 128
 #define STATUS_BAR_H 16
-#define NUMERO_LEDS_WS2812B 8
-
 #define STATUS_BAR_BG 0x0000 // negro RGB565, sin depender de ST7735.h
 // #define STATUS_BAR_BG ST7735_BLACK
 
-// enumeración para el estados
+#define NUMERO_LEDS_WS2812B 8
 
+// enumeración para el estados
 enum EstadoSistema
 {
     ESTADO_MENU_PRINCIPAL,

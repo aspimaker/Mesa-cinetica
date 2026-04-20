@@ -4,8 +4,7 @@
 #include "pines.h"
 
 // Definición de objetos globales de audio
-// HardwareSerial mp3Serie(DFPLAYER_RX, DFPLAYER_TX);
-HardwareSerial mp3Serie(14, 15);
+HardwareSerial mp3Serie(DFPLAYER_RX, DFPLAYER_TX);
 DFRobotDFPlayerMini myDFPlayer;
 
 extern Configuracion config;

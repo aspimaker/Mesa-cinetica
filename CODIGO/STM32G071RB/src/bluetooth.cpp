@@ -272,10 +272,9 @@ bool Bluetooth::autoConfig(char *nombre, const char *pin)
     delay(250);
     ok &= sendAT((String("AT+NAME") + nombre).c_str(), response);
     ok &= sendAT((String("AT+PIN") + pin).c_str(), response);
-    ok &= sendAT("AT+TYPE0", response);
-    ok &= sendAT("AT+ROLE0", response);
-    ok &= sendAT("AT+NOTI1", response);
-    ok &= sendAT("AT+DISC", response);
+    ok &= sendAT("AT+TYPE0", response); // modo normal (puerto serie)
+    ok &= sendAT("AT+ROLE0", response); // modo esclavo
+    ok &= sendAT("AT+NOTI1", response); // envía por uart el aviso de conexión/desconexión
     ok &= sendAT("AT+RESET", response); // reinicia para guardar
 
     // Esperar arranque tras reset y vaciar basura
@@ -352,6 +351,7 @@ void procesarComandosBluetooth()
 
     String cmd = bt.getCommand();
 
+    
     // ── Alarma ────────────────────────────────────────────────
     if (cmd.equalsIgnoreCase("ALARMA ON"))
     {
