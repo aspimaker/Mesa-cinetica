@@ -5,6 +5,8 @@
 
 # Archivos de keystore
 *.keystore
+local.properties
+Directory.Build.props
 *.jks
 *.key
 *.p12
