@@ -18,21 +18,14 @@
 #include "logo.h"
 #include "qrcode.h"
 
-//#include <Adafruit_ST7735.h>
-//#include <Adafruit_GFX.h>
-//#include "globals.h"
-//#include "configuracion.h"
-//#include "colores.h"
-
 extern Adafruit_ST7735 tft;
 extern class Menu      menu;
-
 
 extern BarraProgreso barraVolumen;
 extern BarraProgreso barraBrilloPantalla;
 extern BarraProgreso barraWS2812B;
 
-// Funciones de pantalla
+// funciones de pantalla
 void iniciarPantalla();
 void mostrarSplash();
 void barraEstado();

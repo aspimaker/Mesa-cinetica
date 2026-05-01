@@ -1,13 +1,3 @@
-// ============================================================
-// controles.cpp — Implementación de las acciones de botón
-// para cada estado de la máquina de estados.
-//
-// Patrón de cada función:
-//   1. Modifica el dato en config (setter puro, no guarda)
-//   2. Aplica el cambio al hardware directamente
-//   3. Actualiza la barra de progreso en pantalla
-// ============================================================
-
 #include "controles.h"
 #include "audio.h"          // subirVolumenMP3(), bajarVolumenMP3()
 #include "leds.h"           // rgb
@@ -22,7 +12,7 @@ extern Configuracion        config;
 extern Adafruit_NeoPixel    rgb;
 extern DFRobotDFPlayerMini  myDFPlayer;
 
-// ── Paso de ajuste para cada control ─────────────────────
+// ── paso de ajuste para cada control ─────────────────────
 static constexpr uint8_t PASO_VOLUMEN  = 1;    // 1 unidad DFPlayer  (rango 0-30)
 static constexpr uint8_t PASO_BRILLO   = 15;   // ~6% del rango      (rango 0-255)
 static constexpr uint8_t PASO_EQ       = 1;    // 1 modo             (rango 0-5)
@@ -104,10 +94,9 @@ static const char* const NOMBRES_EQ[] = {
 void siguienteEcualizador()
 {
     uint8_t nuevo = (config.get().ecualizador + PASO_EQ) % 6;
-    config.get().ecualizador = nuevo;   // setter directo — no hay setEcualizador()
+    config.get().ecualizador = nuevo;
     myDFPlayer.EQ(nuevo);
-    // Mostrar nombre del modo en barra de estado (pantalla.h lo exporta via menu)
-    // El llamador (main.cpp / menu) puede actualizar la UI si lo necesita
+    // mostrar nombre del modo en barra de estado
 }
 
 void anteriorEcualizador()

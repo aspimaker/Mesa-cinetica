@@ -5,7 +5,6 @@
 #include "audio.h"
 #include "configuracion.h"
 
-// ── Objetos globales ──────────────────────────────────────────
 HardwareSerial BTSerial(BT_RX, BT_TX);
 Bluetooth bt;
 char nombreBT[30];
@@ -13,7 +12,6 @@ String comandoBluetoothRecibido = "";
 
 extern Configuracion config;
 
-// ── Inicialización ────────────────────────────────────────────
 void Bluetooth::begin(HardwareSerial &serial, uint32_t baudrate)
 {
     _serial = &serial;
@@ -26,7 +24,7 @@ void Bluetooth::begin(HardwareSerial &serial, uint32_t baudrate)
         _serial->begin(baudrate);
 }
 
-// ── Callbacks de conexión ─────────────────────────────────────
+// callbacks de conexión
 void Bluetooth::_onConectado()
 {
     DEBUG_PRINTLN("[BT] Conectado");
@@ -37,7 +35,7 @@ void Bluetooth::_onConectado()
     _rxBuffer = "";
     _lastCommand = "";
 
-    // Purgar cualquier byte residual que el módulo envíe tras OK+CONN
+    // eliminar cualquier byte residual que el módulo envíe tras OK+CONN
     delay(200);
     while (_serial->available())
         _serial->read();
@@ -57,21 +55,21 @@ void Bluetooth::_onDesconectado()
     _lastCommand = "";
 }
 
-// ── Procesado byte a byte ─────────────────────────────────────
+// procesar byte a byte
 void Bluetooth::_procesarByte(char c)
 {
-    // Detectar notificaciones del módulo BT (pueden llegar en cualquier momento)
-    // Las acumulamos en un buffer auxiliar estático para detectar el patrón completo
+    // detectar datos del módulo BT (pueden llegar en cualquier momento)
+    // se acumulan en un buffer auxiliar estático para detectar el patrón completo
     static String notifBuf = "";
 
     if (!_dentroDeComando)
     {
-        // Primero comprobar inicio de comando, ANTES de acumular en notifBuf
+        // primero comprobar inicio de comando, antes de acumular en notifBuf
         if (c == BT_CMD_START)
         {
             _dentroDeComando = true;
             _rxBuffer = "";
-            notifBuf = ""; // limpiar cualquier basura acumulada
+            notifBuf = ""; // limpiar el buffer
             return;
         }
 
@@ -79,7 +77,7 @@ void Bluetooth::_procesarByte(char c)
 
         // DEBUG_PRINTLN(notifBuf);
 
-        // Mantener solo los últimos N chars necesarios para detectar el patrón
+        // mantener solo los últimos N chars necesarios para detectar el patrón
         if (notifBuf.length() > 8)
             notifBuf = notifBuf.substring(notifBuf.length() - 8);
 
@@ -96,7 +94,7 @@ void Bluetooth::_procesarByte(char c)
             return;
         }
 
-        // Inicio de comando
+        // inicio de comando
         if (c == BT_CMD_START)
         {
             _dentroDeComando = true;
@@ -106,7 +104,7 @@ void Bluetooth::_procesarByte(char c)
         return;
     }
 
-    // Estamos dentro de un comando (_CMD#)
+    // detectar el final del comando (_comando#)
     if (c == BT_CMD_END)
     {
         // Comando completo recibido
@@ -123,24 +121,23 @@ void Bluetooth::_procesarByte(char c)
 
     if (c == BT_CMD_START)
     {
-        // Nuevo '_' dentro de un comando → reiniciar (byte perdido anterior)
+        // nuevo '_' dentro de un comando → reiniciar (byte perdido anterior)
         _rxBuffer = "";
         return;
     }
 
-    // Acumular byte del comando
+    // acumular byte del comando
     if (_rxBuffer.length() < BT_BUFFER_SIZE)
         _rxBuffer += c;
 }
 
-// ── Update ────────────────────────────────────────────────────
 void Bluetooth::update()
 {
     while (_serial->available())
         _procesarByte((char)_serial->read());
 }
 
-// ── Comandos recibidos ────────────────────────────────────────
+// comandos recibidos
 bool Bluetooth::hasCommand()
 {
     return _lastCommand.length() > 0;
@@ -153,16 +150,16 @@ String Bluetooth::getCommand()
     return cmd;
 }
 
-// ── Estado ────────────────────────────────────────────────────
+// estado
 bool Bluetooth::isConnected() { return _connected; }
 
-// ── Envío ─────────────────────────────────────────────────────
+// envío
 void Bluetooth::sendString(const char *str) { _serial->print(str); }
 void Bluetooth::sendString(const String &str) { _serial->print(str); }
 void Bluetooth::sendByte(uint8_t byte) { _serial->write(byte); }
 void Bluetooth::sendData(const uint8_t *data, uint16_t len) { _serial->write(data, len); }
 
-// ── Recepción raw ─────────────────────────────────────────────
+// recepción
 bool Bluetooth::available() { return _serial->available() > 0; }
 uint8_t Bluetooth::readByte() { return (uint8_t)_serial->read(); }
 String Bluetooth::readLine() { return _serial->readStringUntil('\n'); }
@@ -177,7 +174,7 @@ String Bluetooth::readString()
 
 String Bluetooth::readAll() { return readString(); }
 
-// ── Comandos AT ───────────────────────────────────────────────
+// comandos AT
 bool Bluetooth::sendAT(const char *cmd, String &response, uint16_t timeout)
 {
     while (_serial->available())
@@ -230,7 +227,7 @@ void Bluetooth::reset()
     sendAT("AT+RESET", response);
 }
 
-// ── Autoconfiguración ─────────────────────────────────────────
+// autoconfiguración
 bool Bluetooth::autoConfig(char *nombre, const char *pin)
 {
     String response;
@@ -277,12 +274,12 @@ bool Bluetooth::autoConfig(char *nombre, const char *pin)
     ok &= sendAT("AT+NOTI1", response); // envía por uart el aviso de conexión/desconexión
     ok &= sendAT("AT+RESET", response); // reinicia para guardar
 
-    // Esperar arranque tras reset y vaciar basura
+    // esperar arranque tras reset y vaciar basura
     delay(1500);
     while (_serial->available())
         _serial->read();
 
-    // Resetear estado interno
+    // resetear estado interno
     _connected = false;
     _dentroDeComando = false;
     _rxBuffer = "";
@@ -330,7 +327,7 @@ void _actualizarFechaHora(String &fechaHora)
     DEBUG_PRINT(":");
     DEBUG_PRINTLN(s);
 
-    // Convertir día semana a nombre
+    // convertir día semana a nombre
     const char *diasSemana[] = {"", "Lunes", "Martes", "Miercoles",
                                 "Jueves", "Viernes", "Sabado", "Domingo"};
     DEBUG_PRINT("  Dia: ");
@@ -341,7 +338,6 @@ void _actualizarFechaHora(String &fechaHora)
     RTC_SetFechaHora(d, mes, a, h, min, s, diaSemana);
 }
 
-// ── Procesamiento de comandos ─────────────────────────────────
 void procesarComandosBluetooth()
 {
     bt.update();
@@ -352,7 +348,7 @@ void procesarComandosBluetooth()
     String cmd = bt.getCommand();
 
     
-    // ── Alarma ────────────────────────────────────────────────
+    // alarma
     if (cmd.equalsIgnoreCase("ALARMA ON"))
     {
         activarAlarma();
@@ -364,7 +360,7 @@ void procesarComandosBluetooth()
         bt.sendString("OK:ALARMA_OFF\n");
     }
 
-    // ── Audio ─────────────────────────────────────────────────
+    // audio
     else if (cmd.equalsIgnoreCase("MP3 PLAY"))
     {
         reproducirPista(config.get().ultimaPista, config.get().ultimaCarpeta);
@@ -403,7 +399,7 @@ void procesarComandosBluetooth()
         bt.sendString("OK:VOL_DOWN\n");
     }
 
-    // ── LEDs ──────────────────────────────────────────────────
+    // leds
     else if (cmd.equalsIgnoreCase("LED ON"))
     {
         config.setLedModo(2);
@@ -421,7 +417,7 @@ void procesarComandosBluetooth()
         bt.sendString("OK:LED_BRILLO_" + String(brillo) + "\n");
     }
 
-    // ── Sistema ───────────────────────────────────────────────
+    // sistema
     else if (cmd.equalsIgnoreCase("APAGAR"))
     {
         bt.sendString("OK:APAGANDO\n");
@@ -443,7 +439,7 @@ void procesarComandosBluetooth()
         _actualizarFechaHora(cmd);
     }
 
-    // ── Desconocido ───────────────────────────────────────────
+    // desconocido
     else
     {
         DEBUG_PRINTLN("[BT] No reconocido: " + cmd);

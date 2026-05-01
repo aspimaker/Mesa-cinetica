@@ -3,16 +3,14 @@
 #include "menu.h"
 #include "pantalla.h"
 #include "audio.h"
-#include "leds.h" 
+#include "leds.h"
 #include "pantalla.h"
-#include "menu.h" 
+#include "menu.h"
 #include "configuracion.h"
 #include "botones.h"
 
 extern Configuracion config;
 extern DFRobotDFPlayerMini myDFPlayer;
-//extern Adafruit_NeoPixel rgb;
-//extern Menu menu;
 
 void verificarAlarma()
 {
@@ -21,16 +19,13 @@ void verificarAlarma()
     if (!sistemaEncendido)
         return;
 
-        FechaHora t;
-
-    //RTC_SetFechaHora(hora, minuto, segundo, dia, mes, año, diaSemana);
+    FechaHora t;
     RTC_GetFechaHora(t);
-
 
     if (config.get().alarmaActivada &&
         t.horas == config.get().alarmaHora &&
         t.minutos == config.get().alarmaMinuto)
-        //diaSemana // de momento no se controla
+    // diaSemana // de momento no se controla
 
     {
         if (!alarmaDisparada)
@@ -52,7 +47,7 @@ void activarAlarma()
 
     uint8_t volumenOriginal = config.get().volumen;
 
-    // Mostrar mensaje de alarma en la barra de estado
+    // mostrar mensaje de alarma en la barra de estado
     menu.dibujarBarraEstado("!!! ALARMA !!!");
 
     // Subir volumen gradualmente
@@ -62,10 +57,10 @@ void activarAlarma()
         delay(50);
     }
 
-    // Reproducir sonido de alarma
+    // reproducir sonido de alarma
     reproducirPista(3, 1);
 
-    // LEDs rojo pulsante y verificar desactivación
+    // led rojo pulsante y verificar desactivación
     unsigned long inicio = millis();
 
     while (alarmaSonando && millis() - inicio < 300000) // 5 minutos máximo
@@ -83,25 +78,25 @@ void activarAlarma()
         }
     }
 
-    // Restaurar volumen
+    // restaurar volumen
     myDFPlayer.volume(volumenOriginal);
     myDFPlayer.stop();
     alarmaSonando = false;
 
-    // Restaurar la interfaz
+    // restaurar la interfaz
     redibujarInterfaz();
 }
 
 bool desactivarAlarmaPorUsuario()
 {
-    // Verificar botón físico BTN_OK (TTP223 activo HIGH)
+    // comprobar botón físico BTN_OK (TTP223 activo HIGH)
     if (digitalRead(BOTON_OK) == HIGH)
     {
         DEBUG_PRINTLN("Alarma desactivada por botón OK");
         return true;
     }
 
-    // Verificar comando Bluetooth
+    // comprobar comando Bluetooth
     if (comandoBluetoothRecibido == "STOP_ALARM")
     {
         comandoBluetoothRecibido = "";

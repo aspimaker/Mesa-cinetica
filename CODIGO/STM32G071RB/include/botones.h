@@ -10,7 +10,7 @@ enum BotonADC
     BOTON_ABAJO
 };
 
-// Estructura para botones TTP223
+// estructura para botones TTP223
 struct BotonTTP223
 {
     int pin;

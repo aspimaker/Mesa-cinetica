@@ -1,10 +1,14 @@
 #pragma once
 
+// ── Bluetooth (HM-10) ─────────────────────
+
+// ── Protocolo de comandos ─────────────────────────────────────
+// formato: _comando#
+// ejemplos: _VOL UP#   _LED ON#   _MP3 PLAY#
+
 #include <Arduino.h>
 #include "pines.h"
 #include "globals.h"
-
-// ── Bluetooth (HM-05 / HC-06 compatible) ─────────────────────
 
 #define BT_BUFFER_SIZE 128
 #define BT_TIMEOUT 1000
@@ -15,43 +19,40 @@
 #define BT_NOTIFY_CONN "OK+CONN"
 #define BT_NOTIFY_LOST "OK+LOST"
 
-// ── Protocolo de comandos ─────────────────────────────────────
-// Todo comando enviado desde la app tiene la forma: _COMANDO#
-// Ejemplo: _VOL UP#   _LED ON#   _MP3 PLAY#
 #define BT_CMD_START '_'
 #define BT_CMD_END '#'
 
 class Bluetooth
 {
 public:
-    // ── Inicialización ────────────────────────────────────────
+    // Inicialización
     void begin(HardwareSerial &serial, uint32_t baudrate = BT_BAUDRATE);
     bool autoConfig(char *nombre, const char *pin);
 
-    // ── Loop — llamar en cada iteración del loop() ────────────
+    // llamar desde loop() en cada iteración
     void update();
 
-    // ── Comandos recibidos ────────────────────────────────────
+    // comandos recibidos
     bool hasCommand();   // true si hay un comando completo pendiente
     String getCommand(); // devuelve el comando (sin _ ni #) y lo borra
 
-    // ── Estado ────────────────────────────────────────────────
+    // estado
     bool isConnected();
 
-    // ── Envío ─────────────────────────────────────────────────
+    // envío
     void sendString(const char *str);
     void sendString(const String &str);
     void sendByte(uint8_t byte);
     void sendData(const uint8_t *data, uint16_t len);
 
-    // ── Recepción raw (uso interno / AT) ──────────────────────
+    // recepción
     bool available();
     uint8_t readByte();
     String readString();
     String readLine();
     String readAll();
 
-    // ── Comandos AT ───────────────────────────────────────────
+    // comandos AT
     bool sendAT(const char *cmd, String &response, uint16_t timeout = BT_TIMEOUT);
     bool setName(const char *name);
     bool setPin(const char *pin);
@@ -76,5 +77,4 @@ extern Bluetooth bt;
 extern char nombreBT[30];
 extern String comandoBluetoothRecibido;
 
-// ── Funciones globales ────────────────────────────────────────
 void procesarComandosBluetooth();

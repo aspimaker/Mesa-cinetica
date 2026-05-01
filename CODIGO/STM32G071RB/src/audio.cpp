@@ -9,7 +9,8 @@ DFRobotDFPlayerMini myDFPlayer;
 
 extern Configuracion config;
 
-// Carpeta 01 reservada para avisos del sistema; usuario: 02-99.
+// Carpeta 01 reservada para avisos del sistema, con el formato 001.mp3 002.mp3 etc.
+// los mp3 del usuario están en /mp3 con el formato 0001.mp 0002.mp3 etc.
 static uint8_t carpetaActual = 2;
 static uint8_t pasoVolumen = 1; // paso de aumento/disminución de volumen
 
@@ -33,7 +34,10 @@ void iniciarMP3()
         DEBUG_PRINTLN("DFPlayer Mini iniciado correctamente");
     }
 
-    // Restaurar carpeta de la última sesión, garantizando que no sea la 01
+    // cambiar: ahora uso la carpeta /mp3
+    DEBUG_PRINTLN("!! CAMBIAR !!");
+
+    // restaurar carpeta de la última sesión, garantizando que no sea la 01
     uint8_t carpetaGuardada = config.get().ultimaCarpeta;
     carpetaActual = carpetaGuardada < 2 ? 2 : carpetaGuardada;
 
@@ -59,15 +63,19 @@ void procesarMP3()
 
 void reproducirPista(uint16_t pista, uint8_t carpeta)
 {
-    // Protección: nunca reproducir desde la carpeta de avisos del sistema
-    if (carpeta < 2)
-        carpeta = 2;
+    // utilizar la carpeta /mp3
+    
+    // cambiar
+    DEBUG_PRINTF("! CAMBIAR !");
     carpetaActual = carpeta;
     myDFPlayer.playFolder(carpetaActual, pista);
 }
 
 void cambiarCarpeta(uint8_t carpeta)
 {
+    // cambiar
+    DEBUG_PRINTF("! CAMBIAR - YA NO ES NECESARIO !");
+
     if (carpeta < 2)
         carpeta = 2;
     carpetaActual = carpeta;

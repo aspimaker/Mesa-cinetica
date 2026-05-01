@@ -2,7 +2,6 @@
 #include "configuracion.h"
 #include "botones.h"
 
-// Definición del objeto global de LEDs
 Adafruit_NeoPixel rgb(NUMERO_LEDS_WS2812B, PIN_WS2812B, NEO_GRB + NEO_KHZ800);
 //   NEO_KHZ800  800 KHz bitstream (most NeoPixel products w/WS2812 LEDs)
 //   NEO_KHZ400  400 KHz (classic 'v1' (not v2) FLORA pixels, WS2811 drivers)
@@ -27,7 +26,7 @@ void actualizarLEDs()
     static unsigned long ultimoFrameLED = 0;
     unsigned long ahora = millis();
 
-    // Velocidad de actualización según configuración
+    // velocidad de actualización según configuración
     int intervalo = map(config.get().ledVelocidad, 0, 255, 20, 200);
 
     if (ahora - ultimoFrameLED >= intervalo)

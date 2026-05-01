@@ -32,7 +32,6 @@ BarraProgreso::BarraProgreso(Adafruit_ST7735 &pantalla,
     }
 }
 
-// Método begin
 void BarraProgreso::begin()
 {
 
@@ -53,14 +52,14 @@ void BarraProgreso::begin()
     setProgresoYActualizar(0);
 }
 
-// Calcular ancho de la barra según porcentaje
+// calcular ancho de la barra según porcentaje
 int BarraProgreso::_calcularAnchoProgreso(int porcentaje)
 {
     porcentaje = constrain(porcentaje, 0, 100);
     return (porcentaje * _ancho) / 100; // Más preciso que map()
 }
 
-// Dibujar el texto de porcentaje centrado
+// dibujar el texto de porcentaje centrado
 void BarraProgreso::_dibujarPorcentaje(int porcentaje)
 {
     if (!_inicializada || !_mostrarPorcentaje || !_pantalla)
@@ -79,30 +78,30 @@ void BarraProgreso::_dibujarPorcentaje(int porcentaje)
     
     int anchoProgreso = _calcularAnchoProgreso(porcentaje);
     
-    // Caso especial: 100% -> 99%
+    // caso especial: 100% -> 99%
     if (_ultimoPorcentaje == 100 && porcentaje == 99)
     {
-        // Limpiar centena (posición del "1")
+        // limpiar centena (posición del "1")
         int posCentena = baseX;
         int centroXCentena = posCentena + (ANCHO_DIGITO / 2);
         bool dentroBarraCentena = (centroXCentena < _x + anchoProgreso);
         _pantalla->fillRect(posCentena - 1, textY - 1, ANCHO_DIGITO + 2, 12, 
                            dentroBarraCentena ? _colorRelleno : _colorFondo);
         
-        // Limpiar unidad (posición del segundo "0" que se convierte en "9")
+        // limpiar unidad (posición del segundo "0" que se convierte en "9")
         int posUnidad = baseX + ANCHO_DIGITO * 2;  // posición del tercer dígito (unidades)
         int centroXUnidad = posUnidad + (ANCHO_DIGITO / 2);
         bool dentroBarraUnidad = (centroXUnidad < _x + anchoProgreso);
         _pantalla->fillRect(posUnidad - 1, textY - 1, ANCHO_DIGITO + 1, 10, 
                            dentroBarraUnidad ? _colorRelleno : _colorFondo);
         
-        // Forzar redibujo de todos los dígitos
+        // forzar redibujo de todos los dígitos
         for (int i = 0; i < 4; i++) {
             _ultimosDigitos[i] = -1;
         }
     }
     
-    // Separar dígitos
+    // separar dígitos
     int digitos[3];
     int numDigitos;
     
@@ -120,7 +119,7 @@ void BarraProgreso::_dibujarPorcentaje(int porcentaje)
         numDigitos = 1;
     }
     
-    // Dibujar dígitos (alineados a la derecha)
+    // dibujar dígitos (alineados a la derecha)
     int startX = baseX + (3 - numDigitos) * ANCHO_DIGITO;
     
     for (int i = 0; i < numDigitos; i++)
@@ -132,7 +131,7 @@ void BarraProgreso::_dibujarPorcentaje(int porcentaje)
         uint16_t colorTexto = dentroBarra ? ST7735_WHITE : ST7735_BLACK;
         uint16_t fondoTexto = dentroBarra ? _colorRelleno : _colorFondo;
         
-        // Limpiar y dibujar dígito
+        // limpiar y dibujar dígito
         if (_ultimosDigitos[i] != digitos[i] || _ultimasPosX[i] != charX)
         {
             _pantalla->fillRect(charX - 1, textY - 1, ANCHO_DIGITO + 1, 10, fondoTexto);
@@ -147,7 +146,7 @@ void BarraProgreso::_dibujarPorcentaje(int porcentaje)
         _ultimasPosX[i] = charX;
     }
     
-    // Dibujar símbolo %
+    // dibujar símbolo %
     int percentX = baseX + 3 * ANCHO_DIGITO;
     int percentCenterX = percentX + (ANCHO_PORCENTAJE / 2);
     
@@ -167,7 +166,7 @@ void BarraProgreso::_dibujarPorcentaje(int porcentaje)
     _ultimosDigitos[3] = '%';
     _ultimasPosX[3] = percentX;
     
-    // Limpiar dígitos sobrantes
+    // limpiar dígitos sobrantes
     for (int i = numDigitos; i < 3; i++) {
         if (_ultimosDigitos[i] != -1) {
             int charX = baseX + i * ANCHO_DIGITO;
@@ -180,7 +179,7 @@ void BarraProgreso::_dibujarPorcentaje(int porcentaje)
     _ultimoPorcentaje = porcentaje;
 }
 
-// Dibujar el texto principal arriba de la barra
+// dibujar el texto sobre la barra
 void BarraProgreso::_dibujarTextoPrincipal()
 {
     if (!_inicializada || !_pantalla)
@@ -197,19 +196,19 @@ void BarraProgreso::_dibujarTextoPrincipal()
     }
 }
 
-// Establecer nuevo progreso (solo guarda el valor)
+// establecer nuevo progreso (solo guarda el valor)
 void BarraProgreso::setProgreso(int nuevoProgreso)
 {
     _progresoObjetivo = constrain(nuevoProgreso, 0, 100);
 }
 
-// Obtener progreso actual
+// obtener progreso actual
 int BarraProgreso::getProgreso()
 {
     return _progresoActual;
 }
 
-// Redibujar la barra completa
+// redibujar la barra completa
 void BarraProgreso::redibujarCompleto()
 {
     if (!_inicializada || !_pantalla)
@@ -217,10 +216,10 @@ void BarraProgreso::redibujarCompleto()
         return;
     }
 
-    // 1. Dibujar fondo completo
+    // 1. dibujar fondo completo
     _pantalla->fillRect(_x, _y, _ancho, _alto, _colorFondo);
 
-    // 2. Dibujar barra según progreso actual
+    // 2. dibujar barra según progreso actual
     if (_progresoActual > 0)
     {
         int anchoProgreso = _calcularAnchoProgreso(_progresoActual);
@@ -229,13 +228,13 @@ void BarraProgreso::redibujarCompleto()
         }
     }
 
-    // 3. Dibujar texto principal (arriba de la barra)
+    // 3. dibujar texto principal (arriba de la barra)
     _dibujarTextoPrincipal();
     
-    // 4. Dibujar borde (encima de todo)
+    // 4. dibujar borde (encima de todo)
     _pantalla->drawRect(_x, _y, _ancho, _alto, _colorBorde);
     
-    // 5. Dibujar porcentaje (encima del borde, con su propio fondo)
+    // 5. dibujar porcentaje (encima del borde, con su propio fondo)
     if (_mostrarPorcentaje)
     {
         _dibujarPorcentaje(_progresoActual);
@@ -244,7 +243,7 @@ void BarraProgreso::redibujarCompleto()
     _visible = true;
 }
 
-// Actualizar solo la parte que cambió
+// actualizar solo la parte que cambió
 // ------------------------------------------------------------
 void BarraProgreso::actualizar()
 {
@@ -253,7 +252,7 @@ void BarraProgreso::actualizar()
         return;
     }
 
-    // Si es la primera vez o estaba oculta, redibujar completo
+    // si es la primera vez o estaba oculta, redibujar completo
     if (_progresoActual == -1 || !_visible)
     {
         _progresoActual = _progresoObjetivo;
@@ -261,54 +260,54 @@ void BarraProgreso::actualizar()
         return;
     }
 
-    // Si no hay cambio, no hacer nada
+    // si no hay cambio, no hacer nada
     if (_progresoActual == _progresoObjetivo)
         return;
 
-    // Guardar valores anteriores
+    // guardar valores anteriores
     int progresoAnterior = _progresoActual;
     
-    // Calcular anchos
+    // calcular anchos
     int anchoAnterior = _calcularAnchoProgreso(progresoAnterior);
     int anchoNuevo = _calcularAnchoProgreso(_progresoObjetivo);
 
-    // Determinar si aumentó o disminuyó
+    // determinar si aumentó o disminuyó
     if (anchoNuevo > anchoAnterior)
     {
-        // Aumentó: dibujar solo la parte nueva
+        // aumentó: dibujar solo la parte nueva
         _pantalla->fillRect(_x + anchoAnterior, _y,
                             anchoNuevo - anchoAnterior, _alto,
                             _colorRelleno);
     }
     else if (anchoNuevo < anchoAnterior)
     {
-        // Disminuyó: restaurar la parte que sobra con el color de fondo
+        // disminuyó: restaurar la parte que sobra con el color de fondo
         _pantalla->fillRect(_x + anchoNuevo, _y,
                             anchoAnterior - anchoNuevo, _alto,
                             _colorFondo);
     }
 
-    // Redibujar el borde
+    // redibujar el borde
     _pantalla->drawRect(_x, _y, _ancho, _alto, _colorBorde);
     
-    // Redibujar el porcentaje (limpia y dibuja de nuevo)
+    // redibujar el porcentaje (limpia y dibuja de nuevo)
     if (_mostrarPorcentaje)
     {
         _dibujarPorcentaje(_progresoObjetivo);
     }
 
-    // Actualizar el valor actual
+    // actualizar el valor actual
     _progresoActual = _progresoObjetivo;
 }
 
-// Establecer nuevo progreso Y actualizar en un solo paso
+// establecer nuevo progreso Y actualizar en un solo paso
 void BarraProgreso::setProgresoYActualizar(int nuevoProgreso)
 {
     setProgreso(nuevoProgreso);
     actualizar();
 }
 
-// Ocultar la barra (borrarla de la pantalla)
+// ocultar la barra (borrarla de la pantalla)
 void BarraProgreso::ocultar()
 {
     if (!_inicializada || !_pantalla || !_visible)
@@ -316,13 +315,13 @@ void BarraProgreso::ocultar()
         return;
     }
 
-    // Borrar toda el área de la barra (incluyendo texto)
+    // borrar toda el área de la barra (incluyendo texto)
     _pantalla->fillRect(_x, _y - 12, _ancho, _alto + 18, ST7735_BLACK);
     _visible = false;
     _progresoActual = -1;
 }
 
-// Cambiar el color de relleno dinámicamente
+// cambiar el color de relleno dinámicamente
 void BarraProgreso::setColorRelleno(uint16_t nuevoColor)
 {
     _colorRelleno = nuevoColor;
@@ -332,7 +331,7 @@ void BarraProgreso::setColorRelleno(uint16_t nuevoColor)
     }
 }
 
-// Cambiar el color de fondo dinámicamente
+// cambiar el color de fondo dinámicamente
 void BarraProgreso::setColorFondo(uint16_t nuevoColor)
 {
     _colorFondo = nuevoColor;
@@ -342,7 +341,7 @@ void BarraProgreso::setColorFondo(uint16_t nuevoColor)
     }
 }
 
-// Cambiar el color del borde dinámicamente
+// cambiar el color del borde dinámicamente
 void BarraProgreso::setColorBorde(uint16_t nuevoColor)
 {
     _colorBorde = nuevoColor;
@@ -352,7 +351,7 @@ void BarraProgreso::setColorBorde(uint16_t nuevoColor)
     }
 }
 
-// Cambiar el texto principal
+// cambiar el texto principal
 void BarraProgreso::setTexto(String nuevoTexto)
 {
     if (!_inicializada)
@@ -372,7 +371,7 @@ void BarraProgreso::setTexto(String nuevoTexto)
     }
 }
 
-// Cambiar si mostrar o no el porcentaje
+// cambiar si mostrar o no el porcentaje
 void BarraProgreso::setMostrarPorcentaje(bool mostrar)
 {
     if (!_inicializada)
@@ -389,25 +388,25 @@ void BarraProgreso::setMostrarPorcentaje(bool mostrar)
         }
         else
         {
-            // Borrar el porcentaje si estaba visible
+            // borrar el porcentaje si estaba visible
             int anchoTexto = 30; // Aproximado para "100%"
             int altoTexto = 8;
             int textX = _x + (_ancho / 2) - (anchoTexto / 2);
             int textY = _y + (_alto / 2) + (altoTexto / 2) - 2;
             _pantalla->fillRect(textX - 1, textY - altoTexto + 1, anchoTexto + 2, altoTexto, _colorFondo);
         }
-        // Redibujar borde
+        // redibujar borde
         _pantalla->drawRect(_x, _y, _ancho, _alto, _colorBorde);
     }
 }
 
-// Obtener si la barra está visible
+// obtener si la barra está visible
 bool BarraProgreso::isVisible()
 {
     return _visible;
 }
 
-// Cambiar la posición de la barra
+// cambiar la posición de la barra
 void BarraProgreso::setPosicion(int nuevaX, int nuevaY)
 {
     if (_visible)
@@ -422,7 +421,7 @@ void BarraProgreso::setPosicion(int nuevaX, int nuevaY)
     }
 }
 
-// Cambiar el tamaño de la barra
+// cambiar el tamaño de la barra
 void BarraProgreso::setTamanio(int nuevoAncho, int nuevoAlto)
 {
     if (_visible)
@@ -437,7 +436,7 @@ void BarraProgreso::setTamanio(int nuevoAncho, int nuevoAlto)
     }
 }
 
-// Método para animar suavemente el progreso
+// animar suavemente el progreso
 void BarraProgreso::animarHasta(int progresoFinal, int pasoDelayMs)
 {
     int paso = (progresoFinal > _progresoActual) ? 1 : -1;

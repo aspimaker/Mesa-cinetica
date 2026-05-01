@@ -1,8 +1,7 @@
 #include "menu.h"
-#include "configuracion.h"       // Si necesitas acceso a configuración
-#include "DFRobotDFPlayerMini.h" // Si necesitas el reproductor
+#include "configuracion.h"
+#include "DFRobotDFPlayerMini.h"
 
-// Referencias externas (si las necesitas en las acciones)
 extern Configuracion config;
 extern DFRobotDFPlayerMini myDFPlayer;
 
@@ -14,8 +13,6 @@ Menu::Menu(Adafruit_ST7735 &pantalla) : tft(pantalla), iconoActivo(0)
 // Inicialización
 void Menu::begin()
 {
-    // No llamamos a tft.init() porque ya se hace en iniciarPantalla()
-    // Solo aseguramos la orientación correcta
     tft.setRotation(1);
     tft.fillScreen(COLOR_FONDO);
     dibujarBarraEstado("MENU PRINCIPAL");
@@ -23,7 +20,7 @@ void Menu::begin()
     dibujarSeleccion(iconoActivo);
 }
 
-// Dibujar barra de estado superior
+// dibujar barra de estado superior
 void Menu::dibujarBarraEstado(const char *texto)
 {
     tft.fillRect(0, 0, ANCHO_PANTALLA, ALTO_BARRA, COLOR_BARRA);
@@ -33,7 +30,7 @@ void Menu::dibujarBarraEstado(const char *texto)
     tft.print(texto);
 }
 
-// Obtener coordenadas X según columna
+// obtener coordenadas X según columna
 int Menu::getXPorColumna(int columna)
 {
     switch (columna)
@@ -49,7 +46,7 @@ int Menu::getXPorColumna(int columna)
     }
 }
 
-// Obtener coordenadas Y según fila
+// obtener coordenadas Y según fila
 int Menu::getYPorFila(int fila)
 {
     switch (fila)
@@ -63,7 +60,7 @@ int Menu::getYPorFila(int fila)
     }
 }
 
-// Obtener coordenadas de un icono específico
+// obtener coordenadas de un icono específico
 void Menu::obtenerCoordenadasIcono(int index, int &x, int &y)
 {
     int fila = index / 3;    // 0 o 1
@@ -73,20 +70,20 @@ void Menu::obtenerCoordenadasIcono(int index, int &x, int &y)
     y = getYPorFila(fila);
 }
 
-// Dibujar rectángulo de selección
+// dibujar rectángulo de selección
 void Menu::dibujarRectanguloSeleccion(int x, int y, bool dibujar)
 {
     uint16_t color = dibujar ? COLOR_SELECCION : COLOR_FONDO;
     tft.drawRect(x, y, ANCHO_SELECCION, ALTO_SELECCION, color);
 }
 
-// Dibujar un icono individual
+// dibujar un icono individual
 void Menu::dibujarIcono(int index, bool seleccionado)
 {
     int x, y;
     obtenerCoordenadasIcono(index, x, y);
 
-    // Color del icono según si está seleccionado
+    // color del icono según si está seleccionado
     uint16_t colorIcono = seleccionado ? COLOR_ICONO_SELEC : COLOR_ICONO_NORMAL;
     uint16_t colorFondo = seleccionado ? COLOR_SELECCION : COLOR_FONDO;
 
@@ -94,8 +91,7 @@ void Menu::dibujarIcono(int index, bool seleccionado)
     tft.fillRect(x, y, ANCHO_ICONO - MARGEN_SELECCION * 2,
                  ALTO_ICONO - MARGEN_SELECCION * 2, colorFondo);
 
-    // Aquí dibujas tus iconos personalizados
-    // EJEMPLO TEMPORAL con texto - REEMPLAZAR CON TUS ICONOS REALES
+    // dibujar icono
     tft.setTextColor(colorIcono, colorFondo);
     tft.setTextSize(2);
 
@@ -128,7 +124,7 @@ void Menu::dibujarIcono(int index, bool seleccionado)
     }
 }
 
-// Dibujar todos los iconos
+// dibujar todos los iconos
 void Menu::dibujarIconos()
 {
     for (int i = 0; i < 6; i++)
@@ -137,20 +133,20 @@ void Menu::dibujarIconos()
     }
 }
 
-// Dibujar selección en un icono
+// dibujar selección en un icono
 void Menu::dibujarSeleccion(int iconoIndex)
 {
     int x, y;
     obtenerCoordenadasIcono(iconoIndex, x, y);
 
-    // Primero redibujar el icono como seleccionado
+    // primero redibujar el icono como seleccionado
     dibujarIcono(iconoIndex, true);
 
-    // Dibujar el rectángulo alrededor
+    // dibujar el rectángulo alrededor
     dibujarRectanguloSeleccion(x, y, true);
 }
 
-// Borrar selección de un icono
+// borrar selección de un icono
 void Menu::borrarSeleccion(int iconoIndex)
 {
     int x, y;
@@ -163,7 +159,7 @@ void Menu::borrarSeleccion(int iconoIndex)
     dibujarIcono(iconoIndex, false);
 }
 
-// Mover selección: 0=arriba, 1=abajo, 2=izquierda, 3=derecha
+// mover selección: 0=arriba, 1=abajo, 2=izquierda, 3=derecha
 void Menu::moverSeleccion(int direccion)
 {
     int nuevoIcono = iconoActivo;
@@ -196,41 +192,40 @@ void Menu::moverSeleccion(int direccion)
     }
 }
 
-// Obtener icono activo
+// obtener icono activo
 int Menu::getIconoActivo()
 {
     return iconoActivo;
 }
 
-// Ejecutar acción según icono seleccionado
+// ejecutar acción según icono seleccionado
 void Menu::ejecutarAccion()
 {
     switch (iconoActivo)
     {
     case 0:
-        dibujarBarraEstado("Volumen");
-        // Aquí mostrarías la barra de volumen
-        // barraVolumen.dibujar(config.get().volumen);
-        break;
+    // barraVolumen.dibujar(config.get().volumen);
+    dibujarBarraEstado("Volumen");
+                break;
     case 1:
-        dibujarBarraEstado("Ecualizador");
-        // Acción ecualizador
+    // acción ecualizador
+    dibujarBarraEstado("Ecualizador");
         break;
     case 2:
-        dibujarBarraEstado("Brillo RGB");
-        // Acción LEDs WS2812B
+    // acción LEDs WS2812B
+    dibujarBarraEstado("Brillo RGB");
         break;
     case 3:
-        dibujarBarraEstado("Modo reproduccion");
-        // Cambiar modo (USB/SD/AUX/BT)
+    // cambiar modo (USB/SD/AUX/BT)
+    dibujarBarraEstado("Modo reproduccion");
         break;
     case 4:
-        dibujarBarraEstado("Informacion");
-        // Mostrar info del sistema
+    // mostrar info del sistema
+    dibujarBarraEstado("Informacion");
         break;
     case 5:
-        dibujarBarraEstado("Configuracion");
-        // Menú de configuración
+    // menú de configuración
+    dibujarBarraEstado("Configuracion");
         break;
     }
     delay(1000);

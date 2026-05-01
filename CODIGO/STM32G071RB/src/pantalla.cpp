@@ -3,7 +3,7 @@
 │  [BT]   [MP3]   [VOL]   [LED]   [MODE]  │  16px alto
 ├─────────────┬─────────────┬─────────────┤
 │      0      │      1      │      2      │
-│   Diseño    │  Pista MP3  │     RGB     │
+│   patrones  │  pista MP3  │     RGB     │
 ├─────────────┼─────────────┼─────────────┤ 112px alto
 │      3      │      4      │      5      │
 │ Modo dibujo │  Modo MP3   │      ?      │
@@ -20,7 +20,7 @@
 
 extern Configuracion config;
 
-// crera objeto tft
+// crear objeto tft
 Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
 
 // crear objeto menú
@@ -68,7 +68,7 @@ void mostrarSplash()
 
 void barraEstado()
 {
-    // Fondo de la barra (solo si no es negro)
+    // fondo de la barra (solo si no es negro)
     if (STATUS_BAR_BG != ST7735_BLACK)
     {
         tft.fillRect(0, 0, 160, STATUS_BAR_H, STATUS_BAR_BG);
@@ -86,26 +86,26 @@ void barraEstado()
 
 void actualizarReloj()
 {
-    // Variables estáticas para recordar los dígitos anteriores (repintado de hora, minutos y segundos)
+    // variables estáticas para de los dígitos anteriores (repintado de hora, minutos y segundos)
     static uint8_t digitos_prev[6] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF}; // 0xFF = no inicializado
 
     FechaHora fh;
     RTC_GetFechaHora(fh);
     // DEBUG_PRINTF("RTC: %02d:%02d:%02d %02d:%02d:%02d\n", fh.dia, fh.mes, fh.año, fh.horas, fh.minutos, fh.segundos);
 
-    // Los 6 dígitos de la hora: HH MM SS
+    // los 6 dígitos de la hora: HH MM SS
     uint8_t digitos[6] = {
         (uint8_t)(fh.horas / 10), (uint8_t)(fh.horas % 10),
         (uint8_t)(fh.minutos / 10), (uint8_t)(fh.minutos % 10),
         (uint8_t)(fh.segundos / 10), (uint8_t)(fh.segundos % 10)};
 
-    // Posición X de cada dígito (ajustar según tu fuente y posición)
-    // Entre dígito 1-2 y 3-4 hay ':' que ocupa espacio
+    // posición X de cada dígito (ajustar según tu fuente y posición)
+    // entre dígito 1-2 y 3-4 hay ':' que ocupa espacio
     const uint8_t CHAR_W = 6; // ancho de carácter en pixels (fuente por defecto)
     const uint16_t X_BASE = SCREEN_WIDTH - 60;
     const uint16_t Y = 20;
 
-    // Offsets X de cada dígito, saltando los ':'
+    // offsets X de cada dígito, saltando los ':'
     const uint8_t offsets[6] = {
         0,          // H decena
         CHAR_W,     // H unidad
@@ -121,12 +121,12 @@ void actualizarReloj()
     {
         if (digitos[i] != digitos_prev[i])
         {
-            // Borrar dígito anterior con color de fondo
+            // borrar dígito anterior con color de fondo
             tft.setCursor(X_BASE + offsets[i], Y);
             tft.setTextColor(STATUS_BAR_BG); // color de fondo
             tft.print(digitos_prev[i]);
 
-            // Pintar nuevo dígito
+            // pintar nuevo dígito
             tft.setCursor(X_BASE + offsets[i], Y);
             tft.setTextColor(ST7735_WHITE);
             tft.print(digitos[i]);
@@ -135,7 +135,7 @@ void actualizarReloj()
         }
     }
 
-    // Pintar ':' solo la primera vez (no cambian nunca)
+    // pintar ':' solo la primera vez (no cambian nunca)
     static bool separadores = false;
     if (!separadores)
     {
@@ -156,7 +156,7 @@ void actualizarInterfaz()
     // actualizar barra de estado
     barraEstado();
 
-    // Actualizar reloj solo cada segundo
+    // actualizar reloj solo cada segundo
     static uint32_t ultimaActualizacion = 0;
     uint32_t ahora = HAL_GetTick();
     if (ahora - ultimaActualizacion >= 1000)
@@ -174,7 +174,6 @@ void brilloPantalla(int brillo)
 void QR(const String &text)
 {
     QRCode qrcode;
-    // static uint8_t qrcodeData[qrcode_getBufferSize(3)];
     static uint8_t qrcodeData[193]; // Para versión 3, el buffer es de 193 bytes
 
     qrcode_initText(&qrcode, qrcodeData, 3, ECC_LOW, text.c_str());
@@ -194,10 +193,3 @@ void QR(const String &text)
         }
     }
 }
-
-/*
-uint16_t _color565(uint8_t r, uint8_t g, uint8_t b)
-{
-    return tft.color565(r, g, b);
-}
-*/

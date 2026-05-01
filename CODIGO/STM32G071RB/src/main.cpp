@@ -12,16 +12,13 @@
 #define BTN_ARRIBA_PRUEBA PC3
 #define BTN_ABAJO_PRUEBA PB6
 
-// ── Standalone (sin dependencias propias) ─────────────────────
 #include "pines.h"
 #include "colores.h"
 #include "iconos.h"
 #include "logo.h"
 
-// ── Base del sistema ──────────────────────────────────────────
 #include "globals.h"
 
-// ── Módulos sin dependencias cruzadas ─────────────────────────
 #include "audio.h"
 #include "leds.h"
 #include "utils.h"
@@ -37,14 +34,6 @@
 
 extern Menu menu;
 
-/*
-BotonTTP223 botonOK = {BTN_OK, false, false, 0};
-BotonTTP223 botonDerecha = {BTN_DERECHA, false, false, 0};
-BotonTTP223 botonIzquierda = {BTN_IZQUIERDA, false, false, 0};
-BotonTTP223 botonArriba = {BTN_ARRIBA, false, false, 0};
-BotonTTP223 botonAbajo = {BTN_ABAJO, false, false, 0};
-*/
-
 RTC_HandleTypeDef rtc;
 Configuracion config;
 
@@ -59,9 +48,24 @@ EstadoSistema estadoActual = ESTADO_MENU_PRINCIPAL;
 BotonADC botonADC = (BotonADC)BOTON_NINGUNO;
 unsigned long ultimoTiempoBoton = 0;
 
+void activar_reloj_LSE()
+{
+    // reloj externo LSE para el RTC (requiere cristal de 32.768 kHz)
+    // relojes de interfaz
+    RCC->APBENR1 |= RCC_APBENR1_PWREN;
+    RCC->APBENR1 |= RCC_APBENR1_RTCAPBEN;
+
+    // acceso al dominio de backup
+    HAL_PWR_EnableBkUpAccess();
+
+    // iniciar el reloj
+    RTC_InitRTC_LSE();
+}
+
 void activar_reloj_LSI()
 {
-    // utilizar reloj interno LSI para el RTC (aunque es menos preciso, no requiere cristal externo)
+    //NO SE UTILIZA POR EL ERROR DIARIO DE 1-2 MINUTOS
+    // reloj interno LSI para el RTC (no necesita cristal externo)
 
     // Relojes de interfaz
     RCC->APBENR1 |= RCC_APBENR1_PWREN;
@@ -77,19 +81,6 @@ void activar_reloj_LSI()
 
     // iniciar reloj LSI
     RTC_InitRTC_LSI();
-}
-
-void activar_reloj_LSE()
-{
-    // Relojes de interfaz
-    RCC->APBENR1 |= RCC_APBENR1_PWREN;
-    RCC->APBENR1 |= RCC_APBENR1_RTCAPBEN;
-
-    // Acceso al dominio de backup
-    HAL_PWR_EnableBkUpAccess();
-
-    // iniciar el reloj
-    RTC_InitRTC_LSE();
 }
 
 void mostrarPistaActual()
@@ -121,7 +112,7 @@ void setup()
     mesaCinetica.mp3 = MESA_MP3;
     mesaCinetica.rgb = MESA_RGB;
 
-    // configuración
+    // cargar configuración
     config.begin();
 
     // reloj para RTC
@@ -130,22 +121,22 @@ void setup()
     DEBUG_PRINT("Config cargada: ");
     DEBUG_PRINTLN(config.isCargada() ? "SI" : "NO");
 
-    // Inicializar reproductor MP3
+    // inicializar reproductor MP3
     iniciarMP3();
 
     iniciarPantalla();
 
     mostrarSplash(); // mientras se muestra, hacemos otras cosas...
 
-    // configurarPulsadoresTTP223();
+    // inicializar pulsadores TTP223
     iniciarBotonesTTP223();
 
-    // Inicializar LEDs WS2812B
+    // inicializar LEDs WS2812B
     iniciarLEDs();
 
     // módulo bluetooth y autoconfigurar
     bt.begin(BTSerial, 0);             // inicializar el puerto serie
-    uint32_t hash = getDeviceIDHash(); // Construir nombre Bluetooth único a partir del UID del chip
+    uint32_t hash = getDeviceIDHash(); // construir nombre Bluetooth único a partir del UID del chip
     const char *nombreBase = "aspiKntc-";
     snprintf(nombreBT, sizeof(nombreBT), "%s%lu", nombreBase, hash);
     // snprintf(nombreBT, sizeof(nombreBT), "Mesa-%04X", (uint16_t)(id & 0xFFFF));
@@ -163,18 +154,19 @@ void setup()
     }
     tft.fillScreen(ST7735_BLACK);
 
-    // Mostrar barra de estado inicial
+    // mostrar barra de estado inicial
     barraEstado();
 
-    // Aplicar ajustes guardados al hardware
+    // aplicar ajustes guardados al hardware
     config.aplicarConfiguracion();
 
     tiempoInicio = millis();
 
     DEBUG_PRINTLN("Setup finalizado");
-    // reproducirPista(2, 2);
-    //  subirVolumenMP3();
 
+    // pruebas
+    // reproducirPista(2, 2);
+    // subirVolumenMP3();
     // myDFPlayer.stop();
 }
 
@@ -201,7 +193,7 @@ void loop()
     }
 
     // ==============================================
-    // LECTURA DE BOTONES TTP223
+    // LECTURA DE BOTONES TTP223 - desactivado para las pruebas con pines morpho
     // ==============================================
     /*
     bool ok_presionado = leerBotonTTP223(botonOK);
@@ -232,25 +224,25 @@ void loop()
             if (arriba_presionado)
             {
                 DEBUG_PRINTLN("arriba");
-                menu.moverSeleccion(0); // Arriba
+                menu.moverSeleccion(0); // arriba
                 ultimoMovimiento = ahora;
             }
             else if (abajo_presionado)
             {
                 DEBUG_PRINTLN("abajo");
-                menu.moverSeleccion(1); // Abajo
+                menu.moverSeleccion(1); // abajo
                 ultimoMovimiento = ahora;
             }
             else if (izquierda_presionado)
             {
                 DEBUG_PRINTLN("izquierda");
-                menu.moverSeleccion(2); // Izquierda
+                menu.moverSeleccion(2); // izquierda
                 ultimoMovimiento = ahora;
             }
             else if (derecha_presionado)
             {
                 DEBUG_PRINTLN("derecha");
-                menu.moverSeleccion(3); // Derecha
+                menu.moverSeleccion(3); // derecha
                 ultimoMovimiento = ahora;
             }
             else if (ok_presionado)
@@ -316,7 +308,7 @@ void loop()
         }
         else if (ok_presionado && estadoActual != ESTADO_MENU_PRINCIPAL)
         {
-            // Play/Pausa (solo si no estamos en el menú)
+            // play/pausa (solo si no estamos en el menú)
             if (reproduciendoMP3())
             {
                 myDFPlayer.pause();
@@ -355,7 +347,7 @@ void loop()
     procesarComandosBluetooth(); // 2. procesa comandos
 
     // PROCESAR REPRODUCCIÓN MP3
-    //  procesarMP3();
+    procesarMP3();
 
     // PEQUEÑO DELAY para no saturar el CPU
     delay(10);

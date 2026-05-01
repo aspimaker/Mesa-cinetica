@@ -2,7 +2,6 @@
 
 #include <Arduino.h>
 #include <DFRobotDFPlayerMini.h>
-// #include <SoftwareSerial.h>
 
 extern HardwareSerial mp3Serie;
 extern DFRobotDFPlayerMini myDFPlayer;

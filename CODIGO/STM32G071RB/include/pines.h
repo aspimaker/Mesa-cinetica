@@ -1,4 +1,3 @@
-// pines.h (o al inicio de main.cpp)
 #pragma once
 
 // SPI común
@@ -31,7 +30,7 @@
 #define BT_RX A1
 #define BT_TX A0
 
-// ── Botones táctiles TTP223 (activo HIGH) ────────────────────
+// ── notones táctiles TTP223 (activo HIGH) ────────────────────
 // Usar pinMode(PIN, INPUT), sin pull-up interno.
 #define BTN_ADC A2
 // #define BTN_OK        D4   // Play / Pausa / Confirmar menú
@@ -39,9 +38,6 @@
 // #define BTN_IZQUIERDA A2   // Pista anterior
 // #define BTN_ARRIBA    A3   // Subir (volumen / menú arriba)
 // #define BTN_ABAJO     A4   // Bajar  (volumen / menú abajo)
-
-// Alias para la alarma: el botón OK la desactiva
-// #define BOTON_DESACTIVAR BTN_OK
 
 // motor R
 #define MOTOR_R_STEP D4

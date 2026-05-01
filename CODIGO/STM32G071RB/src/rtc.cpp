@@ -1,62 +1,6 @@
 #include "rtc.h"
 #include "desactivaLog.h"
 
-void RTC_InitRTC_LSI()
-{
-    // utilizar el oscilador interno LSI
-
-    // 1. Activar relojes de bus y energía
-    RCC->APBENR1 |= RCC_APBENR1_PWREN;
-    RCC->APBENR1 |= RCC_APBENR1_RTCAPBEN;
-    HAL_PWR_EnableBkUpAccess();
-
-    // 2. SIEMPRE rearrancar el LSI, independientemente de todo
-    RCC->CSR |= RCC_CSR_LSION;
-    while (!(RCC->CSR & RCC_CSR_LSIRDY))
-        ;
-
-    // 3. ¿Ya estaba configurado el RTC alguna vez?
-    if ((RCC->BDCR & RCC_BDCR_RTCEN) && (TAMP->BKP0R == 0x4224))
-    {
-        // RTC ya configurado — solo esperar resincronización
-        RTC->WPR = 0xCA;
-        RTC->WPR = 0x53;
-        RTC->ICSR &= ~RTC_ICSR_RSF;
-        while (!(RTC->ICSR & RTC_ICSR_RSF))
-            ;
-        RTC->WPR = 0xFF;
-
-        DEBUG_PRINTLN("RTC: Manteniendo conteo previo.");
-        return;
-    }
-
-    // 4. Configuración desde cero
-    DEBUG_PRINTLN("RTC: Configurando por primera vez...");
-
-    uint32_t bdcr = RCC->BDCR;
-    bdcr &= ~RCC_BDCR_RTCSEL;
-    bdcr |= RCC_BDCR_RTCSEL_1; // LSI
-    bdcr |= RCC_BDCR_RTCEN;
-    RCC->BDCR = bdcr;
-
-    RTC->WPR = 0xCA;
-    RTC->WPR = 0x53;
-    RTC->ICSR |= RTC_ICSR_INIT;
-    while (!(RTC->ICSR & RTC_ICSR_INITF))
-        ;
-
-    RTC->PRER = (127 << 16) | 249;
-
-    // Fecha/hora inicial solo si nunca se ha grabado
-    DEBUG_PRINTLN("RTC: Grabando fecha/hora inicial...");
-    _fechaHoraPorDefecto();
-
-    TAMP->BKP0R = 0x4224;
-
-    RTC->ICSR &= ~RTC_ICSR_INIT;
-    RTC->WPR = 0xFF;
-}
-
 void RTC_InitRTC_LSE()
 {
     // utilizar el oscilador externo LSE
@@ -65,10 +9,10 @@ void RTC_InitRTC_LSE()
     RCC->APBENR1 |= RCC_APBENR1_RTCAPBEN;
     HAL_PWR_EnableBkUpAccess();
 
-    // Drive mínimo — condensadores externos 6.8pF
+    // drive mínimo — condensadores externos 6.8pF
     RCC->BDCR &= ~RCC_BDCR_LSEDRV;
 
-    // Encender LSE con timeout y fallback a LSI
+    // activar LSE con timeout y fallback a LSI
     RCC->BDCR |= RCC_BDCR_LSEON;
     uint32_t t = HAL_GetTick();
     bool usandoLSE = true;
@@ -88,7 +32,7 @@ void RTC_InitRTC_LSE()
     if (usandoLSE)
         DEBUG_PRINTLN("LSE listo.");
 
-    // ¿Ya estaba configurado?
+    // ¿ya estaba configurado?
     if ((RCC->BDCR & RCC_BDCR_RTCEN) && (TAMP->BKP0R == 0x4225))
     {
         RTC->WPR = 0xCA;
@@ -101,7 +45,7 @@ void RTC_InitRTC_LSE()
         return;
     }
 
-    // Configurar desde cero
+    // configurar desde cero
     DEBUG_PRINTLN("RTC: Configurando por primera vez...");
 
     uint32_t bdcr = RCC->BDCR;
@@ -124,7 +68,65 @@ void RTC_InitRTC_LSE()
     DEBUG_PRINTLN("RTC: Grabando fecha/hora inicial...");
     _fechaHoraPorDefecto();
 
-    TAMP->BKP0R = 0x4225; // Magic number nuevo para forzar reconfiguración
+    TAMP->BKP0R = 0x4225; // magic number nuevo para forzar reconfiguración
+
+    RTC->ICSR &= ~RTC_ICSR_INIT;
+    RTC->WPR = 0xFF;
+}
+
+void RTC_InitRTC_LSI()
+{
+    // NO SE UTILIZA POR EL ERROR DIARIO DE 1-2 MINUTOS
+
+    // oscilador interno LSI
+
+    // 1. activar relojes de bus y energía
+    RCC->APBENR1 |= RCC_APBENR1_PWREN;
+    RCC->APBENR1 |= RCC_APBENR1_RTCAPBEN;
+    HAL_PWR_EnableBkUpAccess();
+
+    // 2. SIEMPRE rearrancar el LSI...
+    RCC->CSR |= RCC_CSR_LSION;
+    while (!(RCC->CSR & RCC_CSR_LSIRDY))
+        ;
+
+    // 3. ¿ya estaba configurado el RTC alguna vez?
+    if ((RCC->BDCR & RCC_BDCR_RTCEN) && (TAMP->BKP0R == 0x4224))
+    {
+        // RTC ya configurado — solo esperar resincronización
+        RTC->WPR = 0xCA;
+        RTC->WPR = 0x53;
+        RTC->ICSR &= ~RTC_ICSR_RSF;
+        while (!(RTC->ICSR & RTC_ICSR_RSF))
+            ;
+        RTC->WPR = 0xFF;
+
+        DEBUG_PRINTLN("RTC: Manteniendo conteo previo.");
+        return;
+    }
+
+    // 4. configuración desde cero
+    DEBUG_PRINTLN("RTC: Configurando por primera vez...");
+
+    uint32_t bdcr = RCC->BDCR;
+    bdcr &= ~RCC_BDCR_RTCSEL;
+    bdcr |= RCC_BDCR_RTCSEL_1; // LSI
+    bdcr |= RCC_BDCR_RTCEN;
+    RCC->BDCR = bdcr;
+
+    RTC->WPR = 0xCA;
+    RTC->WPR = 0x53;
+    RTC->ICSR |= RTC_ICSR_INIT;
+    while (!(RTC->ICSR & RTC_ICSR_INITF))
+        ;
+
+    RTC->PRER = (127 << 16) | 249;
+
+    // fecha/hora inicial solo si nunca se ha grabado
+    DEBUG_PRINTLN("RTC: Grabando fecha/hora inicial...");
+    _fechaHoraPorDefecto();
+
+    TAMP->BKP0R = 0x4224;
 
     RTC->ICSR &= ~RTC_ICSR_INIT;
     RTC->WPR = 0xFF;
@@ -132,25 +134,7 @@ void RTC_InitRTC_LSE()
 
 void RTC_GetFechaHora(FechaHora &t)
 {
-    /*
-        // Esperar sincronización — obligatorio antes de leer TR/DR
-        RTC->WPR = 0xCA;
-        RTC->WPR = 0x53;
-        RTC->ICSR &= ~RTC_ICSR_RSF;          // limpiar flag
-        RTC->WPR = 0xFF;
-
-        uint32_t timeout = HAL_GetTick();
-        while (!(RTC->ICSR & RTC_ICSR_RSF))
-        {
-            if (HAL_GetTick() - timeout > 200)
-            {
-                DEBUG_PRINTLN("RTC: timeout RSF");
-                return;
-            }
-        }
-    */
-
-    // Leer PRIMERO TR, LUEGO DR — regla de hardware STM32
+        // Leer PRIMERO TR, LUEGO DR — regla de hardware STM32
     uint32_t tr = RTC->TR;
     uint32_t dr = RTC->DR;
 
@@ -184,10 +168,10 @@ void RTC_SetFechaHora(uint8_t d, uint8_t mes, uint16_t a, uint8_t h, uint8_t min
     uint32_t min_bcd = ((min / 10) << 4) | (min % 10);
     uint32_t s_bcd = ((s / 10) << 4) | (s % 10);
 
-    // Hora
+    // hora
     RTC->TR = (h_bcd << RTC_TR_HU_Pos) | (min_bcd << RTC_TR_MNU_Pos) | (s_bcd << RTC_TR_SU_Pos);
 
-    // Fecha (día semana obligatorio)
+    // fecha (día semana obligatorio)
     RTC->DR = (a_bcd << RTC_DR_YU_Pos) | (mes_bcd << RTC_DR_MU_Pos) | (d_bcd << RTC_DR_DU_Pos) | (diaSemana << RTC_DR_WDU_Pos);
 
     RTC->ICSR &= ~RTC_ICSR_INIT;

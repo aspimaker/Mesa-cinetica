@@ -15,8 +15,7 @@ const unsigned long DEBOUNCE_DELAY = 150;
 #define SCREEN_WIDTH 160
 #define SCREEN_HEIGHT 128
 #define STATUS_BAR_H 16
-#define STATUS_BAR_BG 0x0000 // negro RGB565, sin depender de ST7735.h
-// #define STATUS_BAR_BG ST7735_BLACK
+#define STATUS_BAR_BG 0x0000 // color de fondo de la barra de estado
 
 #define NUMERO_LEDS_WS2812B 8
 
@@ -32,7 +31,6 @@ enum EstadoSistema
     ESTADO_CONFIGURACION
 };
 
-// Estructura para manejar la hora de forma sencilla
 struct InformacionHardware
 {
     uint8_t version;
@@ -42,7 +40,7 @@ struct InformacionHardware
     bool mp3;
 };
 
-// El .cpp que necesite usar BarraProgreso debe incluir barraProgreso.h explícitamente.
+// el .cpp que necesite usar BarraProgreso debe incluir barraProgreso.h explícitamente.
 class BarraProgreso;
 class Menu;
 // extern class Menu menu;
@@ -62,12 +60,5 @@ extern BarraProgreso barraWS2812B;
 
 // bluetooth
 extern char nombreBT[30];
-
-// Objetos globales
-// extern Adafruit_NeoPixel rgb;
-//// extern SoftwareSerial mp3Serie;
-// extern DFRobotDFPlayerMini myDFPlayer;
-// extern Adafruit_ST7735 tft;
-// extern HardwareSerial BTSerial;
 
 void mostrarPistaActual();

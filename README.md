@@ -19,12 +19,12 @@ Diseño 3D
 ![Onshape](https://img.shields.io/badge/Onshape-Diseño%203D-0066CC?style=for-the-badge) ![3D Printing](https://img.shields.io/badge/3D%20Printing-STEP-orange?style=for-the-badge) ![3D Printing](https://img.shields.io/badge/3D%20Printing-3MF-orange?style=for-the-badge)
 
 Comunicaciones  
-![Bluetooth](https://img.shields.io/badge/Bluetooth_classic-JDY--31-blue?style=for-the-badge)
+![Bluetooth](https://img.shields.io/badge/Bluetooth_BLE-HM--10-blue?style=for-the-badge&logo=bluetooth)
 
 Componentes  
-![TMC2209](https://img.shields.io/badge/Driver%20motor-TMC2209-brightgreen?style=for-the-badge) ![DFPlayer](https://img.shields.io/badge/Audio%20MP3-DFPlayer%20Mini-red?style=for-the-badge) ![WS2812B](https://img.shields.io/badge/LEDs_RGB-WS2812B-brightgreen?style=for-the-badge)
+![TMC2209](https://img.shields.io/badge/Driver%20motor-TMC2209-brightgreen?style=for-the-badge) ![DFPlayer](https://img.shields.io/badge/Audio%20MP3-DFPlayer%20Mini-red?style=for-the-badge&logo=mp3) ![WS2812B](https://img.shields.io/badge/LEDs_RGB-WS2812B-brightgreen?style=for-the-badge)
 
-**MESA CINÉTICA** es un proyecto de mobiliario interactivo que integra el arte y la tecnología combinando electrónica, programación para microcontroladores, diseño e impresión 3D y desarrollo de una app Android.
+**MESA CINÉTICA** es un proyecto de mobiliario interactivo que integra el arte y la tecnología combinando electrónica, programación para microcontroladores, diseño e impresión 3D y desarrollo de una app Android y un programa para Windows.
 
 Se trata de una mesa que incorpora un mecanismo de movimiento polar. Mientras el suave desplazamiento de la bola de acero sobre la arena traza patrones hipnóticos, la iluminación LED y la música acompañan cada movimiento transformando la mesa en un lienzo vivo donde arte, luz y sonido se funden.
 
@@ -38,12 +38,14 @@ Quiero agradecer a [@LaboratorioGluon](https://github.com/LaboratorioGluon) y [@
 
 ```txt
 MESA CINETICA
-├── ANDROID # Aplicación para Android desarrollada en C# con MAUI (Visual Studio 2026)
-├── CODIGO # Firmware desarrollado en C++ con PlatformIO en VS Code
+├── CODIGO
+|	├── ANDROID # Aplicación para Android desarrollada en C# con MAUI (Visual Studio 2026)
+|	├── PC a microSd # Programa de Windows para copiar los fichero mp3, extraer los metadatos y enviarlos a la mesa
+|	├── STM32G071RB # Firmware desarrollado en C++ con PlatformIO en VS Code
 ├── ELECTRONICA # Esquemas y diseño de PCB con KiCad 10
 ├── FOTOS # Imagenes de las distintas fases del proyecto
 ├── PIEZAS # Modelos 3D (onshape) para impresión en formato STEP y 3MF
-└── README.md # !! Este fichero !!
+└── README.md # Este fichero
 ```
 
 ---
@@ -57,9 +59,9 @@ Este proyecto nace con la idea de transformar una mesa convencional en una super
 - desarrollar un sistema de control de motores paso a paso preciso y silencioso
 - diseñar una PCB que integre la placa de desarrollo ST NUCLEO G071RB junto con el resto de componentes (drivers de motores, control de leds, bluetooth, reproductor MP3, amplificador, fuente alimentación...)
 - modelar piezas 3D funcionales y estéticas
-- crear patrones de movimiento modulables por software
+- crear patrones de movimiento por software
 
-Para hacer accesible el proyecto a todos los makers, los drivers de los motores, módulo bluetooth y el reproductor MP3 serán componentes independientes. En futuras versiones toda la electrónica estará en una única pcb gestionada por el microcontrolador y se utilizsará el decodificador MP3 VS1053.
+Para hacer accesible el proyecto a todos los makers, los drivers de los motores, amplificador, módulo bluetooth y el reproductor MP3 serán componentes independientes. En futuras versiones toda la electrónica estará en una única pcb gestionada por el microcontrolador y se utilizsará el decodificador MP3 VS1053.
 
 ---
 
@@ -103,7 +105,7 @@ git clone https://github.com/aspimaker/mesa-cinetica.git
 | ![modulo drivder](./FOTOS/para_readme/modulo-drivder.png)                 | **Módulo para el driver**                  |                                                                                 | 2                              | Módulo para instalar el driver y conectar el motor                                                                                                                                                         | 1.09€             |
 | ![motor nema17](./FOTOS/para_readme/motor-nema17.png)                     | **Motores paso a paso**                    | NEMA17                                                                          | 2                              | Para el movimiento polar. Desplaza el imán. El tamaño dependerá del peso a mover                                                                                                                           |                   |
 | ![pantalla tft rgb](./FOTOS/para_readme/pantalla-tft-rgb.png)             | **Pantalla**                               | ST7735S TFT 1.8" RGB SPI                                                        | 1                              | Mostrará el estado general (mp3, volumen, iluminación, modo, etc...)                                                                                                                                       | 2.81€             |
-| ![bluetooth hm-10](./FOTOS/para_readme/bluetooth-hm10.png)                 | **Módulo bluetooth BLE 4.23**                   | HM-10                                                                  | 1                              | Permite la comunicación con la app de Android y el programa para PC                                                                                                                                                              | 2.25€             |
+| ![bluetooth hm-10](./FOTOS/para_readme/bluetooth-hm10.png)                | **Módulo bluetooth BLE 4.23**              | HM-10                                                                           | 1                              | Permite la comunicación con la app de Android y el programa para PC                                                                                                                                        | 2.25€             |
 | ![reproductor mp3](./FOTOS/para_readme/reproductor-mp3.png)               | **Reproductor de audio**                   | DFPlayer Mini MP3 V3.0                                                          | 1                              | Reproducción de música y efectos de sonido                                                                                                                                                                 | 1.29€             |
 | ![amplificador](./FOTOS/para_readme/amplificador.png)                     | **Amplificador de audio**                  | TPA3110 XH-A232                                                                 | 1                              | Amplificación estéreo para altavoces                                                                                                                                                                       | 1.49€             |
 | ![pulsador táctil](./FOTOS/para_readme/pulsador-t-ctil.png)               | **Pulsador táctil**                        | TTP223                                                                          |                                | Para moverse por el menú de la pantalla                                                                                                                                                                    | 0.83€ lote de 10  |

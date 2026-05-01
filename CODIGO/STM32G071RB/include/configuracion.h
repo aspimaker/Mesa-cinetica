@@ -6,21 +6,13 @@
 #include <Adafruit_NeoPixel.h>   // Adafruit_NeoPixel (usado en aplicarConfiguracion via rgb)
 #include "pines.h"               // TFT_BLK
 
-// Objetos externos que este header usa directamente en sus métodos inline.
-// Se definen en main.cpp / globals definición.
 extern DFRobotDFPlayerMini myDFPlayer;
 extern Adafruit_NeoPixel rgb;
-
-// Declaración del manejador RTC (se define en main.cpp)
 extern RTC_HandleTypeDef rtc;
-
-// ============================================
-// DATOS DE CONFIGURACIÓN
-// ============================================
 
 struct __attribute__((packed)) DatosConfiguracion
 {
-    // Pantalla TFT
+    // pantalla TFT
     uint8_t brillo; // 0-255
 
     // DFPlayer Mini
@@ -34,13 +26,13 @@ struct __attribute__((packed)) DatosConfiguracion
     uint8_t volumenAmplificador; // 0-100
     bool mute;
 
-    // LEDs WS2812B
+    // leds WS2812B
     uint8_t ledModo;   // 0-4
     uint8_t ledBrillo; // 0-255
     uint32_t ledColor;
     uint8_t ledVelocidad;
 
-    // Temporizadores
+    // temporizadores
     uint8_t autoApagado; // 0=off, 1-60 minutos
     uint8_t alarmaHora;
     uint8_t alarmaMinuto;
@@ -162,8 +154,6 @@ public:
         _cargada = true;
     }
 
-    // ── Acceso rápido ──────────────────────────────────────────
-
     void setBrillo(uint8_t valor)
     {
         _datos.brillo = (uint8_t)constrain(valor, 0, 255);
@@ -223,24 +213,6 @@ public:
         }
         save();
     }
-
-    /*
-    void getDateTime(uint8_t &hora, uint8_t &minuto, uint8_t &segundo,
-                     uint8_t &dia, uint8_t &mes, uint16_t &año)
-    {
-        RTC_TimeTypeDef sTime;
-        RTC_DateTypeDef sDate;
-        HAL_RTC_GetTime(&rtc, &sTime, RTC_FORMAT_BIN);
-        HAL_RTC_GetDate(&rtc, &sDate, RTC_FORMAT_BIN);
-
-        hora = sTime.Hours;
-        minuto = sTime.Minutes;
-        segundo = sTime.Seconds;
-        dia = sDate.Date;
-        mes = sDate.Month;
-        año = sDate.Year;
-    }
-    */
 
     void aplicarConfiguracion()
     {

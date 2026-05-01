@@ -4,7 +4,7 @@
 #include <Arduino.h>
 #include <stm32g0xx_hal.h>
 
-// Estructura para manejar la hora de forma sencilla
+// estructura para manejar la fecha y hora
 struct FechaHora
 {
     uint8_t dia;

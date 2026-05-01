@@ -1,13 +1,5 @@
 #pragma once
 
-// ============================================================
-// controles.h — Funciones de control para cada estado de la
-// máquina de estados principal (loop).
-//
-// Cada función corresponde a una acción de botón dentro de
-// un estado concreto. Se implementan en controles.cpp.
-// ============================================================
-
 // ── Volumen ───────────────────────────────────────────────
 void aumentarVolumen();
 void disminuirVolumen();
