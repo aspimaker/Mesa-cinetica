@@ -4,6 +4,7 @@
 #include "desactivaLog.h"
 #include <DFRobotDFPlayerMini.h>
 #include "rtc.h"
+#include "qr.h"
 
 const unsigned long DEBOUNCE_DELAY = 150;
 

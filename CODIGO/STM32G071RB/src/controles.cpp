@@ -1,10 +1,12 @@
+#pragma once
+
 #include "controles.h"
 #include "audio.h"          // subirVolumenMP3(), bajarVolumenMP3()
-#include "leds.h"           // rgb
+//#include "leds.h"           // rgb
+
 #include "configuracion.h"  // config
 #include "pantalla.h"       // barraVolumen, barraWS2812B, barraBrilloPantalla, brilloPantalla()
 #include "pines.h"          // TFT_BLK
-
 #include <Adafruit_NeoPixel.h>
 #include <DFRobotDFPlayerMini.h>
 

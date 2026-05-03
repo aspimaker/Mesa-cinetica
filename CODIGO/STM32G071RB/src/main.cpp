@@ -1,3 +1,11 @@
+/* mapa de memoria
+0x000000 - 0x000FFF   →  Cabecera (datetime sync, nº canciones, nº patrones...)
+0x001000 - 0x00FFFF   →  Índice canciones (500 entradas x ~32 bytes = 16 KB)
+0x010000 - 0x0FFFFF   →  Metadatos texto (500 x ~300 bytes = 150 KB)
+0x100000 - 0x7FFFFF   →  Miniaturas (500 x ~15 KB = 7.5 MB)
+0x800000 - 0xFFFFFF   →  Patrones (8 MB)
+*/
+
 #include <Arduino.h>
 
 #define MESA_VERSION 0;
@@ -64,8 +72,8 @@ void activar_reloj_LSE()
 
 void activar_reloj_LSI()
 {
-    //NO SE UTILIZA POR EL ERROR DIARIO DE 1-2 MINUTOS
-    // reloj interno LSI para el RTC (no necesita cristal externo)
+    // NO SE UTILIZA POR EL ERROR DIARIO DE 1-2 MINUTOS
+    //  reloj interno LSI para el RTC (no necesita cristal externo)
 
     // Relojes de interfaz
     RCC->APBENR1 |= RCC_APBENR1_PWREN;
@@ -168,6 +176,8 @@ void setup()
     // reproducirPista(2, 2);
     // subirVolumenMP3();
     // myDFPlayer.stop();
+
+   // qr("hola mundo");
 }
 
 void loop()

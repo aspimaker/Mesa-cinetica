@@ -13,7 +13,10 @@ Electrónica
 ![KiCad](https://img.shields.io/badge/KiCad_10-PCB-blue?style=for-the-badge&logo=kicad&logoColor=white)
 
 App Android  
-![.NET C#](https://img.shields.io/badge/.NET%20C%23-512BD4?style=for-the-badge&logo=dotnet&logoColor=white) ![MAUI](https://img.shields.io/badge/MAUI-Framework-512BD4?style=for-the-badge&logo=dotnet&logoColor=white) ![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white)
+![Android](https://img.shields.io/badge/Android-3DDC84?style=for-the-badge&logo=android&logoColor=white) ![.NET C#](https://img.shields.io/badge/C%23%20.NET-512BD4?style=for-the-badge&logo=dotnet&logoColor=white) ![MAUI](https://img.shields.io/badge/Framework-MAUI-512BD4?style=for-the-badge&logo=dotnet&logoColor=white) 
+
+Aplicación para Windows  
+![Windows](https://img.shields.io/badge/Windows-0078D6?style=for-the-badge&logo=windows11&logoColor=white) ![VB .NET](https://img.shields.io/badge/VB.%20NET-512BD4?style=for-the-badge&logo=dotnet&logoColor=white) ![FRAMEWORK](https://img.shields.io/badge/FRAMEWORK-CORE10-512BD4?style=for-the-badge&logo=dotnet&logoColor=white)  
 
 Diseño 3D  
 ![Onshape](https://img.shields.io/badge/Onshape-Diseño%203D-0066CC?style=for-the-badge) ![3D Printing](https://img.shields.io/badge/3D%20Printing-STEP-orange?style=for-the-badge) ![3D Printing](https://img.shields.io/badge/3D%20Printing-3MF-orange?style=for-the-badge)

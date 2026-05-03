@@ -16,7 +16,6 @@
 #include "barraProgreso.h"
 #include "iconos.h"
 #include "logo.h"
-#include "qrcode.h"
 
 extern Adafruit_ST7735 tft;
 extern class Menu      menu;
@@ -33,5 +32,4 @@ void redibujarTodo();
 void actualizarInterfaz();
 void actualizarReloj();
 void brilloPantalla(int brillo);
-void QR(const String &text);
 void mostrarPistaActual();
