@@ -28,12 +28,12 @@ BotonADC leerBotonADC()
     return (BotonADC)BOTON_ABAJO;
 }
 
-
 void iniciarBotonesTTP223()
 {
     pinMode(BTN_ADC, INPUT);
 }
 
+/*
 // devuelve true UNA SOLA VEZ por cada pulsación.
 // no bloquea — se llama en cada iteración del loop.
 bool leerBotonTTP223(BotonTTP223 &boton)
@@ -56,7 +56,7 @@ bool leerBotonTTP223(BotonTTP223 &boton)
             return true;
         }
 
-        // flanco de bajada -> liberado 
+        // flanco de bajada -> liberado
         if (lecturaActual == false)
             boton.estadoActual = false;
     }
@@ -64,3 +64,4 @@ bool leerBotonTTP223(BotonTTP223 &boton)
     boton.estadoAnterior = lecturaActual;
     return false;
 }
+*/

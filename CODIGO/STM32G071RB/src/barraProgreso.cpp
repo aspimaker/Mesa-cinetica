@@ -1,5 +1,5 @@
 #include "barraProgreso.h"
-#include "desactivaLog.h"
+#include "depuracion.h"
 
 BarraProgreso::BarraProgreso(Adafruit_ST7735 &pantalla,
                              int x, int y, int ancho, int alto,
@@ -37,7 +37,7 @@ void BarraProgreso::begin()
 
     if (!_pantalla)
     {
-        DEBUG_PRINTLN("BarraProgreso::begin() - ERROR: _pantalla es NULL");
+        dPln("BarraProgreso::begin() - ERROR: _pantalla es NULL");
         return;
     }
 

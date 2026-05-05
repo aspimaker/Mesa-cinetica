@@ -1,5 +1,3 @@
-#pragma once
-
 #include "controles.h"
 #include "audio.h"          // subirVolumenMP3(), bajarVolumenMP3()
 //#include "leds.h"           // rgb
@@ -8,11 +6,12 @@
 #include "pantalla.h"       // barraVolumen, barraWS2812B, barraBrilloPantalla, brilloPantalla()
 #include "pines.h"          // TFT_BLK
 #include <Adafruit_NeoPixel.h>
-#include <DFRobotDFPlayerMini.h>
+//#include <DFRobotDFPlayerMini.h>
+#include <DFMiniMp3.h>
 
 extern Configuracion        config;
 extern Adafruit_NeoPixel    rgb;
-extern DFRobotDFPlayerMini  myDFPlayer;
+//extern DFRobotDFPlayerMini  myDFPlayer;
 
 // ── paso de ajuste para cada control ─────────────────────
 static constexpr uint8_t PASO_VOLUMEN  = 1;    // 1 unidad DFPlayer  (rango 0-30)
@@ -97,7 +96,7 @@ void siguienteEcualizador()
 {
     uint8_t nuevo = (config.get().ecualizador + PASO_EQ) % 6;
     config.get().ecualizador = nuevo;
-    myDFPlayer.EQ(nuevo);
+    myDFPlayer.setEq((DfMp3_Eq)nuevo);
     // mostrar nombre del modo en barra de estado
 }
 
@@ -106,5 +105,5 @@ void anteriorEcualizador()
     uint8_t actual = config.get().ecualizador;
     uint8_t nuevo  = (actual == 0) ? 5 : actual - PASO_EQ;
     config.get().ecualizador = nuevo;
-    myDFPlayer.EQ(nuevo);
+    myDFPlayer.setEq((DfMp3_Eq)nuevo);
 }

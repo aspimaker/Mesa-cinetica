@@ -10,7 +10,7 @@
 #include "botones.h"
 
 extern Configuracion config;
-extern DFRobotDFPlayerMini myDFPlayer;
+//extern DFRobotDFPlayerMini myDFPlayer;
 
 void verificarAlarma()
 {
@@ -42,7 +42,7 @@ void verificarAlarma()
 
 void activarAlarma()
 {
-    DEBUG_PRINTLN("¡ALARMA ACTIVADA!");
+    dPln("¡ALARMA ACTIVADA!");
     alarmaSonando = true;
 
     uint8_t volumenOriginal = config.get().volumen;
@@ -53,12 +53,12 @@ void activarAlarma()
     // Subir volumen gradualmente
     for (int v = 0; v <= config.get().volumen; v++)
     {
-        myDFPlayer.volume(v);
+        myDFPlayer.setVolume(v);
         delay(50);
     }
 
     // reproducir sonido de alarma
-    reproducirPista(3, 1);
+    reproducirAviso(3); // aviso 003.mp3 en la carpeta /01
 
     // led rojo pulsante y verificar desactivación
     unsigned long inicio = millis();
@@ -79,7 +79,7 @@ void activarAlarma()
     }
 
     // restaurar volumen
-    myDFPlayer.volume(volumenOriginal);
+    myDFPlayer.setVolume(volumenOriginal);
     myDFPlayer.stop();
     alarmaSonando = false;
 
@@ -92,7 +92,7 @@ bool desactivarAlarmaPorUsuario()
     // comprobar botón físico BTN_OK (TTP223 activo HIGH)
     if (digitalRead(BOTON_OK) == HIGH)
     {
-        DEBUG_PRINTLN("Alarma desactivada por botón OK");
+        dPln("Alarma desactivada por botón OK");
         return true;
     }
 
@@ -100,7 +100,7 @@ bool desactivarAlarmaPorUsuario()
     if (comandoBluetoothRecibido == "STOP_ALARM")
     {
         comandoBluetoothRecibido = "";
-        DEBUG_PRINTLN("Alarma desactivada por Bluetooth");
+        dPln("Alarma desactivada por Bluetooth");
         return true;
     }
 
@@ -126,7 +126,7 @@ void verificarApagadoProgramado()
 
     if (tiempoEncendido >= config.get().autoApagado)
     {
-        DEBUG_PRINTLN("Apagado programado activado");
+        dPln("Apagado programado activado");
         apagarSistema();
     }
 }
@@ -155,7 +155,7 @@ void verificarEncendidoProgramado()
         horas == config.get().alarmaHora &&
         minutos == config.get().alarmaMinuto)
     {
-        DEBUG_PRINTLN("Encendido programado activado");
+        dPln("Encendido programado activado");
         encenderSistema();
         delay(5000);
     }
@@ -185,7 +185,7 @@ void apagarSistema()
 
 void entrarEnStandby()
 {
-    DEBUG_PRINTLN("Entrando en modo standby...");
+    dPln("Entrando en modo standby...");
 
     config.save();
     myDFPlayer.stop();

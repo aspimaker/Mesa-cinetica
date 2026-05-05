@@ -1,9 +1,9 @@
 #include "menu.h"
 #include "configuracion.h"
-#include "DFRobotDFPlayerMini.h"
+//#include "DFRobotDFPlayerMini.h"
 
 extern Configuracion config;
-extern DFRobotDFPlayerMini myDFPlayer;
+//extern DFRobotDFPlayerMini myDFPlayer;
 
 // Constructor
 Menu::Menu(Adafruit_ST7735 &pantalla) : tft(pantalla), iconoActivo(0)

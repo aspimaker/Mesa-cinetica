@@ -5,6 +5,7 @@
 0x100000 - 0x7FFFFF   →  Miniaturas (500 x ~15 KB = 7.5 MB)
 0x800000 - 0xFFFFFF   →  Patrones (8 MB)
 */
+bool debugEnabled = true;
 
 #include <Arduino.h>
 
@@ -18,7 +19,7 @@
 #define BTN_DERECHA_PRUEBA PC1
 #define BTN_IZQUIERDA_PRUEBA PC2
 #define BTN_ARRIBA_PRUEBA PC3
-#define BTN_ABAJO_PRUEBA PB6
+#define BTN_ABAJO_PRUEBA PA15 // PB6
 
 #include "pines.h"
 #include "colores.h"
@@ -26,6 +27,7 @@
 #include "logo.h"
 
 #include "globals.h"
+#include "depuracion.h"
 
 #include "audio.h"
 #include "leds.h"
@@ -45,9 +47,15 @@ extern Menu menu;
 RTC_HandleTypeDef rtc;
 Configuracion config;
 
-// ============================================================
-// VARIABLES GLOBALES (declaradas como extern)
-// ============================================================
+// Depuración → USB-TTL en PB6/PB7 (pines morpho)
+// HardwareSerial SerialDebug(UART_RX_DEBUG, UART_TX_DEBUG);
+
+// TMC2209 UART → D2/D3
+HardwareSerial SerialTMC(UART_RX_TMC2209, UART_TX_TMC2209);
+
+// mp3 DFPlayer Mini → D0/D1
+HardwareSerial mp3Serie(DFPLAYER_RX, DFPLAYER_TX);
+
 InformacionHardware mesaCinetica;
 bool sistemaEncendido = true;
 bool alarmaSonando = false;
@@ -94,7 +102,7 @@ void activar_reloj_LSI()
 void mostrarPistaActual()
 {
     char buffer[32];
-    sprintf(buffer, "Pista: %d", myDFPlayer.readCurrentFileNumber());
+    sprintf(buffer, "Pista: %d", myDFPlayer.getCurrentTrack());
     menu.dibujarBarraEstado(buffer);
     delay(500);
 
@@ -107,13 +115,22 @@ void mostrarPistaActual()
 void setup()
 {
     Serial.begin(115200);
-    delay(500);
-    DEBUG_PRINTLN("Iniciando Sistema...");
+    SerialTMC.begin(115200);
+    mp3Serie.begin(115200);
+    bt.begin(BTSerial, 9600);
+
+    delay(200);
+    dPln("");
+    dPln("");
+    dPln("Iniciando Sistema...");
 
     uint16_t tiempoSplash = 500;
     uint32_t ahora = millis();
 
-    // configuracion hardware
+    // reloj para RTC
+    activar_reloj_LSE();
+
+    // datos hardware
     mesaCinetica.version = MESA_VERSION;
     mesaCinetica.revision = MESA_REVISION;
     mesaCinetica.memoria = MESA_MEMORIA;
@@ -123,37 +140,30 @@ void setup()
     // cargar configuración
     config.begin();
 
-    // reloj para RTC
-    activar_reloj_LSE();
-
-    DEBUG_PRINT("Config cargada: ");
-    DEBUG_PRINTLN(config.isCargada() ? "SI" : "NO");
-
-    // inicializar reproductor MP3
-    iniciarMP3();
+    dP("Config cargada: ");
+    dPln(config.isCargada() ? "SI" : "NO");
 
     iniciarPantalla();
 
     mostrarSplash(); // mientras se muestra, hacemos otras cosas...
 
-    // inicializar pulsadores TTP223
-    iniciarBotonesTTP223();
+    iniciarMP3();
 
-    // inicializar LEDs WS2812B
+    // iniciarBotonesTTP223();
+
     iniciarLEDs();
 
     // módulo bluetooth y autoconfigurar
-    bt.begin(BTSerial, 0);             // inicializar el puerto serie
     uint32_t hash = getDeviceIDHash(); // construir nombre Bluetooth único a partir del UID del chip
     const char *nombreBase = "aspiKntc-";
     snprintf(nombreBT, sizeof(nombreBT), "%s%lu", nombreBase, hash);
     // snprintf(nombreBT, sizeof(nombreBT), "Mesa-%04X", (uint16_t)(id & 0xFFFF));
+
     bt.autoConfig(nombreBT, "123456");
+    dPln(nombreBT);
 
-    DEBUG_PRINTLN(nombreBT);
-
-    DEBUG_PRINT("Brillo: ");
-    DEBUG_PRINTLN(config.get().brillo);
+    dP("Brillo: ");
+    dPln(config.get().brillo);
 
     // esperar el tiempo de splash
     while (millis() - ahora < tiempoSplash)
@@ -170,28 +180,11 @@ void setup()
 
     tiempoInicio = millis();
 
-    DEBUG_PRINTLN("Setup finalizado");
-
-    // pruebas
-    // reproducirPista(2, 2);
-    // subirVolumenMP3();
-    // myDFPlayer.stop();
-
-   // qr("hola mundo");
+    dPln("Setup finalizado");
 }
 
 void loop()
 {
-    botonADC = leerBotonADC();
-
-    // sólo para pruebas (pines morpho)
-    pinMode(BTN_OK_PRUEBA, INPUT_PULLDOWN);
-    pinMode(BTN_DERECHA_PRUEBA, INPUT_PULLDOWN);
-    pinMode(BTN_IZQUIERDA_PRUEBA, INPUT_PULLDOWN);
-    pinMode(BTN_ARRIBA_PRUEBA, INPUT_PULLDOWN);
-    pinMode(BTN_ABAJO_PRUEBA, INPUT_PULLDOWN);
-    //------------------------------------
-
     unsigned long ahora = millis();
 
     // ACTUALIZAR INTERFAZ (si es necesario)
@@ -202,143 +195,156 @@ void loop()
         actualizarInterfaz();
     }
 
-    // ==============================================
-    // LECTURA DE BOTONES TTP223 - desactivado para las pruebas con pines morpho
-    // ==============================================
-    /*
-    bool ok_presionado = leerBotonTTP223(botonOK);
-    bool derecha_presionado = leerBotonTTP223(botonDerecha);
-    bool izquierda_presionado = leerBotonTTP223(botonIzquierda);
-    bool arriba_presionado = leerBotonTTP223(botonArriba);
-    bool abajo_presionado = leerBotonTTP223(botonAbajo);
-    */
+    botonADC = leerBotonADC();
+    botonADC = BOTON_NINGUNO;
 
-    bool ok_presionado = digitalRead(BTN_OK_PRUEBA);
-    bool derecha_presionado = digitalRead(BTN_DERECHA_PRUEBA);
-    bool izquierda_presionado = digitalRead(BTN_IZQUIERDA_PRUEBA);
-    bool arriba_presionado = digitalRead(BTN_ARRIBA_PRUEBA);
-    bool abajo_presionado = digitalRead(BTN_ABAJO_PRUEBA);
+    // dP("Botón ADC: ");
+    // dPln(botonADC);
 
-    // DEBUG_PRINTLN(estadoActual);
-    ;
-    // ==============================================
-    // CONTROL SEGÚN ESTADO ACTUAL
-    // ==============================================
-    if (estadoActual == ESTADO_MENU_PRINCIPAL)
-    {
-        // NAVEGACIÓN DEL MENÚ PRINCIPAL
+
+        // ==============================================
+        // CONTROL SEGÚN ESTADO ACTUAL
+        // ==============================================
         static unsigned long ultimoMovimiento = 0;
 
         if (ahora - ultimoMovimiento >= DEBOUNCE_DELAY)
         {
-            if (arriba_presionado)
+            switch (estadoActual)
             {
-                DEBUG_PRINTLN("arriba");
-                menu.moverSeleccion(0); // arriba
-                ultimoMovimiento = ahora;
-            }
-            else if (abajo_presionado)
-            {
-                DEBUG_PRINTLN("abajo");
-                menu.moverSeleccion(1); // abajo
-                ultimoMovimiento = ahora;
-            }
-            else if (izquierda_presionado)
-            {
-                DEBUG_PRINTLN("izquierda");
-                menu.moverSeleccion(2); // izquierda
-                ultimoMovimiento = ahora;
-            }
-            else if (derecha_presionado)
-            {
-                DEBUG_PRINTLN("derecha");
-                menu.moverSeleccion(3); // derecha
-                ultimoMovimiento = ahora;
-            }
-            else if (ok_presionado)
-            {
-                DEBUG_PRINTLN("OK");
-                menu.ejecutarAccion();
-                ultimoMovimiento = ahora;
-            }
-        }
-    }
-    else
-    {
-        // CONTROL EN OTRAS PANTALLAS (volumen, ecualizador, etc.)
-        switch (estadoActual)
-        {
-        case ESTADO_AJUSTE_VOLUMEN:
-            if (arriba_presionado)
-            {
-                aumentarVolumen();
-            }
-            else if (abajo_presionado)
-            {
-                disminuirVolumen();
-            }
-            else if (ok_presionado || izquierda_presionado)
-            {
-                estadoActual = ESTADO_MENU_PRINCIPAL;
-                menu.dibujarIconos();
-                menu.dibujarSeleccion(menu.getIconoActivo());
-            }
-            break;
 
-        case ESTADO_AJUSTE_BRILLO_RGB:
-            if (arriba_presionado)
-            {
-                aumentarBrilloRGB();
-            }
-            else if (abajo_presionado)
-            {
-                disminuirBrilloRGB();
-            }
-            else if (ok_presionado)
-            {
-                estadoActual = ESTADO_MENU_PRINCIPAL;
-                menu.dibujarIconos();
-                menu.dibujarSeleccion(menu.getIconoActivo());
-            }
-            break;
+            case ESTADO_MENU_PRINCIPAL:
 
-            // Añadir más casos según necesites
+                switch (botonADC)
+                {
+                case (BotonADC)BOTON_ARRIBA:
+                    dPln("arriba");
+                    menu.moverSeleccion(0); // arriba
+                    ultimoMovimiento = ahora;
+                    break;
+
+                case (BotonADC)BOTON_ABAJO:
+                    dPln("abajo");
+                    menu.moverSeleccion(1); // abajo
+                    ultimoMovimiento = ahora;
+                    break;
+
+                case (BotonADC)BOTON_IZQUIERDA:
+                    dPln("izquierda");
+                    menu.moverSeleccion(2); // izquierda
+                    ultimoMovimiento = ahora;
+                    break;
+
+                case (BotonADC)BOTON_DERECHA:
+                    dPln("derecha");
+                    menu.moverSeleccion(3); // derecha
+                    ultimoMovimiento = ahora;
+                    break;
+
+                case (BotonADC)BOTON_OK:
+                    dPln("OK");
+                    menu.ejecutarAccion();
+                    ultimoMovimiento = ahora;
+                    break;
+
+                default:
+                    break;
+                }
+                break;
+
+            case ESTADO_AJUSTE_VOLUMEN:
+
+                switch (botonADC)
+                {
+                case (BotonADC)BOTON_IZQUIERDA:
+                    dPln("izquierda");
+                    aumentarVolumen();
+                    ultimoMovimiento = ahora;
+                    break;
+
+                case (BotonADC)BOTON_DERECHA:
+                    dPln("derecha");
+                    disminuirVolumen();
+                    ultimoMovimiento = ahora;
+                    break;
+
+                case (BotonADC)BOTON_OK:
+                    dPln("OK");
+                    estadoActual = ESTADO_MENU_PRINCIPAL;
+                    menu.dibujarIconos();
+                    menu.dibujarSeleccion(menu.getIconoActivo());
+                    ultimoMovimiento = ahora;
+                    break;
+
+                default:
+                    break;
+                }
+                break;
+
+            case ESTADO_AJUSTE_BRILLO_RGB:
+
+                switch (botonADC)
+                {
+                case (BotonADC)BOTON_IZQUIERDA:
+                    dPln("izquierda");
+                    aumentarBrilloRGB();
+                    ultimoMovimiento = ahora;
+                    break;
+
+                case (BotonADC)BOTON_DERECHA:
+                    dPln("derecha");
+                    disminuirBrilloRGB();
+                    ultimoMovimiento = ahora;
+                    break;
+
+                case (BotonADC)BOTON_OK:
+                    dPln("OK");
+                    estadoActual = ESTADO_MENU_PRINCIPAL;
+                    menu.dibujarIconos();
+                    menu.dibujarSeleccion(menu.getIconoActivo());
+                    ultimoMovimiento = ahora;
+                    break;
+
+                default:
+                    break;
+                }
+                break;
+
+            case ESTADO_AJUSTE_ECUALIZADOR:
+
+                switch (botonADC)
+                {
+                case (BotonADC)BOTON_IZQUIERDA:
+                    dPln("izquierda");
+                    // ecualizadorAnterior();
+                    ultimoMovimiento = ahora;
+                    break;
+
+                case (BotonADC)BOTON_DERECHA:
+                    dPln("derecha");
+                    // ecualizadorSiguiente();
+                    ultimoMovimiento = ahora;
+                    break;
+
+                case (BotonADC)BOTON_OK:
+                    dPln("OK");
+                    estadoActual = ESTADO_MENU_PRINCIPAL;
+                    menu.dibujarIconos();
+                    menu.dibujarSeleccion(menu.getIconoActivo());
+                    ultimoMovimiento = ahora;
+                    break;
+                }
+                break;
+            }
         }
 
-        // CONTROL DEL REPRODUCTOR MP3 (siempre activo en segundo plano)
-        if (derecha_presionado)
+        // VERIFICAR ALARMA (cada segundo)
+        static unsigned long ultimaVerificacionAlarma = 0;
+        if (ahora - ultimaVerificacionAlarma >= 1000)
         {
-            myDFPlayer.next();
-            mostrarPistaActual();
+            ultimaVerificacionAlarma = ahora;
+            verificarAlarma();
         }
-        else if (izquierda_presionado)
-        {
-            myDFPlayer.previous();
-            mostrarPistaActual();
-        }
-        else if (ok_presionado && estadoActual != ESTADO_MENU_PRINCIPAL)
-        {
-            // play/pausa (solo si no estamos en el menú)
-            if (reproduciendoMP3())
-            {
-                myDFPlayer.pause();
-                menu.dibujarBarraEstado("Pausa");
-            }
-            else
-            {
-                myDFPlayer.start();
-                menu.dibujarBarraEstado("Reproduciendo");
-            }
-        }
-    }
 
-    // VERIFICAR ALARMA (cada segundo)
-    static unsigned long ultimaVerificacionAlarma = 0;
-    if (ahora - ultimaVerificacionAlarma >= 1000)
-    {
-        ultimaVerificacionAlarma = ahora;
-        verificarAlarma();
-    }
 
     // VERIFICAR APAGADO y ENCENDIDO PROGRAMADO (cada minuto)
     static unsigned long ultimaVerificacionApagado = 0;
@@ -349,6 +355,7 @@ void loop()
         verificarEncendidoProgramado();
     }
 
+    
     // ACTUALIZAR LEDs según modo
     actualizarLEDs();
 

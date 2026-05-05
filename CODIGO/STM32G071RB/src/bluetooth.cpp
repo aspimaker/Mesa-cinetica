@@ -4,6 +4,7 @@
 #include "leds.h"
 #include "audio.h"
 #include "configuracion.h"
+#include "depuracion.h"
 
 HardwareSerial BTSerial(BT_RX, BT_TX);
 Bluetooth bt;
@@ -27,7 +28,7 @@ void Bluetooth::begin(HardwareSerial &serial, uint32_t baudrate)
 // callbacks de conexión
 void Bluetooth::_onConectado()
 {
-    DEBUG_PRINTLN("[BT] Conectado");
+    dPln("[BT] Conectado");
     // delay(20);
 
     _connected = true;
@@ -46,7 +47,7 @@ void Bluetooth::_onConectado()
 
 void Bluetooth::_onDesconectado()
 {
-    DEBUG_PRINTLN("[BT] Desconectado");
+    dPln("[BT] Desconectado");
     delay(20);
 
     _connected = false;
@@ -75,7 +76,7 @@ void Bluetooth::_procesarByte(char c)
 
         notifBuf += c;
 
-        // DEBUG_PRINTLN(notifBuf);
+        // dPln(notifBuf);
 
         // mantener solo los últimos N chars necesarios para detectar el patrón
         if (notifBuf.length() > 8)
@@ -112,7 +113,7 @@ void Bluetooth::_procesarByte(char c)
         if (_rxBuffer.length() > 0)
         {
             _lastCommand = _rxBuffer;
-            DEBUG_PRINTLN("[BT] Comando: " + _lastCommand);
+            dPln("[BT] Comando: " + _lastCommand);
         }
         _rxBuffer = "";
         _dentroDeComando = false;
@@ -233,33 +234,33 @@ bool Bluetooth::autoConfig(char *nombre, const char *pin)
     String response;
     bool found = false;
 
-    DEBUG_PRINTLN("[BT] Probando 9600");
+    dPln("[BT] Probando 9600");
     _serial->end();
     _serial->begin(BT_BAUD_DEFAULT);
     delay(500);
 
     if (sendAT("AT", response) && response.indexOf("OK") >= 0)
     {
-        DEBUG_PRINTLN("[BT] Encontrado a 9600, migrando a 115200...");
+        dPln("[BT] Encontrado a 9600, migrando a 115200...");
         sendAT("AT+BAUD8", response);
         delay(250);
         found = true;
     }
 
-    DEBUG_PRINTLN("[BT] Probando 115200");
+    dPln("[BT] Probando 115200");
     _serial->end();
     _serial->begin(BT_BAUDRATE);
     delay(250);
 
     if (sendAT("AT", response) && response.indexOf("OK") >= 0)
     {
-        DEBUG_PRINTLN("[BT] Modulo listo a 115200");
+        dPln("[BT] Modulo listo a 115200");
         found = true;
     }
 
     if (!found)
     {
-        DEBUG_PRINTLN("[BT] Modulo no encontrado");
+        dPln("[BT] Modulo no encontrado");
         return false;
     }
 
@@ -285,53 +286,53 @@ bool Bluetooth::autoConfig(char *nombre, const char *pin)
     _rxBuffer = "";
     _lastCommand = "";
 
-    DEBUG_PRINTLN(ok ? "[BT] Listo" : "[BT] Error configuración");
+    dPln(ok ? "[BT] Listo" : "[BT] Error configuración");
     return ok;
 }
 
 void _actualizarFechaHora(String &fechaHora)
 {
-    // DEBUG_PRINTLN(fechaHora);
+    // dPln(fechaHora);
     // ddmmyyhhmmssx
     if (fechaHora.length() < 13)
     {
-        DEBUG_PRINTLN("Error: Formato invalido - longitud incorrecta");
+        dPln("Error: Formato invalido - longitud incorrecta");
         return;
     }
 
     // Extraer
-    uint8_t d = (fechaHora[11+0] - '0') * 10 + (fechaHora[11+1] - '0');   // Día (01-31)
-    uint8_t mes = (fechaHora[11+2] - '0') * 10 + (fechaHora[11+3] - '0'); // Mes (01-12)
-    uint8_t yy = (fechaHora[11+4] - '0') * 10 + (fechaHora[11+5] - '0');  // Año (2 dígitos)
-    uint8_t h = (fechaHora[11+6] - '0') * 10 + (fechaHora[11+7] - '0');   // Hora (00-23)
-    uint8_t min = (fechaHora[11+8] - '0') * 10 + (fechaHora[11+9] - '0'); // Minuto (00-59)
-    uint8_t s = (fechaHora[11+10] - '0') * 10 + (fechaHora[11+11] - '0'); // Segundo (00-59)
-    uint8_t diaSemana = fechaHora[11+12] - '0';                        // Día semana (1-7)
+    uint8_t d = (fechaHora[11 + 0] - '0') * 10 + (fechaHora[11 + 1] - '0');   // Día (01-31)
+    uint8_t mes = (fechaHora[11 + 2] - '0') * 10 + (fechaHora[11 + 3] - '0'); // Mes (01-12)
+    uint8_t yy = (fechaHora[11 + 4] - '0') * 10 + (fechaHora[11 + 5] - '0');  // Año (2 dígitos)
+    uint8_t h = (fechaHora[11 + 6] - '0') * 10 + (fechaHora[11 + 7] - '0');   // Hora (00-23)
+    uint8_t min = (fechaHora[11 + 8] - '0') * 10 + (fechaHora[11 + 9] - '0'); // Minuto (00-59)
+    uint8_t s = (fechaHora[11 + 10] - '0') * 10 + (fechaHora[11 + 11] - '0'); // Segundo (00-59)
+    uint8_t diaSemana = fechaHora[11 + 12] - '0';                             // Día semana (1-7)
     uint16_t a = 2000 + yy;
 
-    DEBUG_PRINTF("d=%d, mes=%d, yy=%d, a=%d, h=%d, min=%d, s=%d, diaSemana=%d\n",
-                  d, mes, yy, a, h, min, s, diaSemana);
+    dPf("d=%d, mes=%d, yy=%d, a=%d, h=%d, min=%d, s=%d, diaSemana=%d\n",
+                 d, mes, yy, a, h, min, s, diaSemana);
 
     // Mostrar confirmación
-    DEBUG_PRINTLN("RTC actualizado correctamente:");
-    DEBUG_PRINT("  Fecha: ");
-    DEBUG_PRINT(d);
-    DEBUG_PRINT("/");
-    DEBUG_PRINT(mes);
-    DEBUG_PRINT("/");
-    DEBUG_PRINTLN(a);
-    DEBUG_PRINT("  Hora: ");
-    DEBUG_PRINT(h);
-    DEBUG_PRINT(":");
-    DEBUG_PRINT(min);
-    DEBUG_PRINT(":");
-    DEBUG_PRINTLN(s);
+    dPln("RTC actualizado correctamente:");
+    dP("  Fecha: ");
+    dP(d);
+    dP("/");
+    dP(mes);
+    dP("/");
+    dPln(a);
+    dP("  Hora: ");
+    dP(h);
+    dP(":");
+    dP(min);
+    dP(":");
+    dPln(s);
 
     // convertir día semana a nombre
     const char *diasSemana[] = {"", "Lunes", "Martes", "Miercoles",
                                 "Jueves", "Viernes", "Sabado", "Domingo"};
-    DEBUG_PRINT("  Dia: ");
-    DEBUG_PRINTLN(diasSemana[diaSemana]);
+    dP("  Dia: ");
+    dPln(diasSemana[diaSemana]);
 
     delay(50);
 
@@ -347,7 +348,6 @@ void procesarComandosBluetooth()
 
     String cmd = bt.getCommand();
 
-    
     // alarma
     if (cmd.equalsIgnoreCase("ALARMA ON"))
     {
@@ -363,7 +363,7 @@ void procesarComandosBluetooth()
     // audio
     else if (cmd.equalsIgnoreCase("MP3 PLAY"))
     {
-        reproducirPista(config.get().ultimaPista, config.get().ultimaCarpeta);
+        reproducirPista(config.get().ultimaPista);
         bt.sendString("OK:MP3_PLAY\n");
     }
     else if (cmd.equalsIgnoreCase("MP3 STOP"))
@@ -373,13 +373,13 @@ void procesarComandosBluetooth()
     }
     else if (cmd.equalsIgnoreCase("MP3 NEXT"))
     {
-        reproducirPista(config.get().ultimaPista + 1, config.get().ultimaCarpeta);
+        reproducirPista(config.get().ultimaPista + 1);
         bt.sendString("OK:MP3_NEXT\n");
     }
     else if (cmd.equalsIgnoreCase("MP3 PREV"))
     {
         uint16_t pista = config.get().ultimaPista;
-        reproducirPista(pista > 1 ? pista - 1 : 1, config.get().ultimaCarpeta);
+        reproducirPista(pista > 1 ? pista - 1 : 1);
         bt.sendString("OK:MP3_PREV\n");
     }
     else if (cmd.startsWith("VOL "))
@@ -439,10 +439,22 @@ void procesarComandosBluetooth()
         _actualizarFechaHora(cmd);
     }
 
+    // depuración
+    else if (cmd == "_DEBUG|on#")
+    {
+        debugEnabled = true;
+        dPln("[BT] depuración activada: " + cmd);
+    }
+    else if (cmd == "_DEBUG|off#")
+    {
+        debugEnabled = false;
+        dPln("[BT] depuración desactivada: " + cmd);
+    }
+
     // desconocido
     else
     {
-        DEBUG_PRINTLN("[BT] No reconocido: " + cmd);
+        dPln("[BT] No reconocido: " + cmd);
         bt.sendString("ERR:CMD_DESCONOCIDO\n");
     }
 }

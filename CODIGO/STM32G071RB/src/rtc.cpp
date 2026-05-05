@@ -1,5 +1,5 @@
 #include "rtc.h"
-#include "desactivaLog.h"
+#include "depuracion.h"
 
 void RTC_InitRTC_LSE()
 {
@@ -20,7 +20,7 @@ void RTC_InitRTC_LSE()
     {
         if (HAL_GetTick() - t > 2000)
         {
-            DEBUG_PRINTLN("LSE timeout! Usando LSI...");
+            dPln("LSE timeout! Usando LSI...");
             RCC->CSR |= RCC_CSR_LSION;
             while (!(RCC->CSR & RCC_CSR_LSIRDY))
                 ;
@@ -30,7 +30,7 @@ void RTC_InitRTC_LSE()
     }
 
     if (usandoLSE)
-        DEBUG_PRINTLN("LSE listo.");
+        dPln("LSE listo.");
 
     // ¿ya estaba configurado?
     if ((RCC->BDCR & RCC_BDCR_RTCEN) && (TAMP->BKP0R == 0x4225))
@@ -41,12 +41,12 @@ void RTC_InitRTC_LSE()
         while (!(RTC->ICSR & RTC_ICSR_RSF))
             ;
         RTC->WPR = 0xFF;
-        DEBUG_PRINTLN("RTC: Manteniendo fecha/hora.");
+        dPln("RTC: Manteniendo fecha/hora.");
         return;
     }
 
     // configurar desde cero
-    DEBUG_PRINTLN("RTC: Configurando por primera vez...");
+    dPln("RTC: Configurando por primera vez...");
 
     uint32_t bdcr = RCC->BDCR;
     bdcr &= ~RCC_BDCR_RTCSEL;
@@ -65,7 +65,7 @@ void RTC_InitRTC_LSE()
     else
         RTC->PRER = (127 << 16) | 249; // LSI ~32 kHz
 
-    DEBUG_PRINTLN("RTC: Grabando fecha/hora inicial...");
+        dPln("RTC: Grabando fecha/hora inicial...");
     _fechaHoraPorDefecto();
 
     TAMP->BKP0R = 0x4225; // magic number nuevo para forzar reconfiguración
@@ -101,12 +101,12 @@ void RTC_InitRTC_LSI()
             ;
         RTC->WPR = 0xFF;
 
-        DEBUG_PRINTLN("RTC: Manteniendo conteo previo.");
+        dPln("RTC: Manteniendo conteo previo.");
         return;
     }
 
     // 4. configuración desde cero
-    DEBUG_PRINTLN("RTC: Configurando por primera vez...");
+    dPln("RTC: Configurando por primera vez...");
 
     uint32_t bdcr = RCC->BDCR;
     bdcr &= ~RCC_BDCR_RTCSEL;
@@ -123,7 +123,7 @@ void RTC_InitRTC_LSI()
     RTC->PRER = (127 << 16) | 249;
 
     // fecha/hora inicial solo si nunca se ha grabado
-    DEBUG_PRINTLN("RTC: Grabando fecha/hora inicial...");
+    dPln("RTC: Grabando fecha/hora inicial...");
     _fechaHoraPorDefecto();
 
     TAMP->BKP0R = 0x4224;
@@ -134,7 +134,7 @@ void RTC_InitRTC_LSI()
 
 void RTC_GetFechaHora(FechaHora &t)
 {
-        // Leer PRIMERO TR, LUEGO DR — regla de hardware STM32
+    // Leer PRIMERO TR, LUEGO DR — regla de hardware STM32
     uint32_t tr = RTC->TR;
     uint32_t dr = RTC->DR;
 

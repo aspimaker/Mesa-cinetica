@@ -2,12 +2,8 @@
 
 // SPI común
 // D11 MOSI
-// #define MISO D12
+// D12 MISO para la memoria flash, pero no se conecta a la pantalla TFT
 // D13 SCK
-
-// depuración usb
-//  D2
-//  D3
 
 // DFPlayer
 #define DFPLAYER_RX D0
@@ -26,18 +22,13 @@
 // memoria flash W25Q128JVSIM
 #define FLASH_CS D14
 
-// bluetooth
-#define BT_RX A1
-#define BT_TX A0
+// bluetooth HM-10
+#define BT_RX A0
+#define BT_TX A1
 
-// ── notones táctiles TTP223 (activo HIGH) ────────────────────
+// ── Botones táctiles TTP223 (activo HIGH) ────────────────────
 // Usar pinMode(PIN, INPUT), sin pull-up interno.
-#define BTN_ADC A2
-// #define BTN_OK        D4   // Play / Pausa / Confirmar menú
-// #define BTN_DERECHA   D5   // Siguiente pista
-// #define BTN_IZQUIERDA A2   // Pista anterior
-// #define BTN_ARRIBA    A3   // Subir (volumen / menú arriba)
-// #define BTN_ABAJO     A4   // Bajar  (volumen / menú abajo)
+#define BTN_ADC A2 //usar diodos y resistencias para multiplexar varios botones en este pin ADC
 
 // motor R
 #define MOTOR_R_STEP D4
@@ -45,7 +36,15 @@
 
 // motor θ
 #define MOTOR_O_STEP A3
-#define MOTOR_O_DIR A4 // PB15
+#define MOTOR_O_DIR A4
 
 // enable motores
 #define MOTORES_ENABLE D15
+
+// uart motores (para TMC2209)
+#define UART_TX_TMC2209 D2
+#define UART_RX_TMC2209 D3
+
+// uart para depuración (pines morpho)
+//#define UART_TX_DEBUG PB6
+//#define UART_RX_DEBUG PB7

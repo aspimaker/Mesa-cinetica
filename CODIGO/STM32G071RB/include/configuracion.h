@@ -1,12 +1,14 @@
 #pragma once
 
+#include "depuracion.h"
 #include <Arduino.h>
-#include "desactivaLog.h"
-#include <DFRobotDFPlayerMini.h> // DFRobotDFPlayerMini
-#include <Adafruit_NeoPixel.h>   // Adafruit_NeoPixel (usado en aplicarConfiguracion via rgb)
-#include "pines.h"               // TFT_BLK
+#include "depuracion.h"
+// #include <DFRobotDFPlayerMini.h> // DFRobotDFPlayerMini
+#include <Adafruit_NeoPixel.h> // Adafruit_NeoPixel (usado en aplicarConfiguracion via rgb)
+#include "pines.h"             // TFT_BLK
+#include "audio.h"
 
-extern DFRobotDFPlayerMini myDFPlayer;
+// extern DFRobotDFPlayerMini myDFPlayer;
 extern Adafruit_NeoPixel rgb;
 extern RTC_HandleTypeDef rtc;
 
@@ -20,7 +22,7 @@ struct __attribute__((packed)) DatosConfiguracion
     uint8_t ecualizador;      // 0-5
     uint8_t modoReproduccion; // 0-3
     uint16_t ultimaPista;
-    uint16_t ultimaCarpeta;
+    // uint16_t ultimaCarpeta;
 
     // TPA3110 (amplificador)
     uint8_t volumenAmplificador; // 0-100
@@ -47,7 +49,7 @@ struct __attribute__((packed)) DatosConfiguracion
         ecualizador = 0;
         modoReproduccion = 0;
         ultimaPista = 1;
-        ultimaCarpeta = 2;
+        // ultimaCarpeta = 2;
         volumenAmplificador = 70;
         mute = false;
         ledModo = 2;
@@ -140,9 +142,8 @@ public:
     void begin()
     {
         if (!_rtcInicializado)
-            DEBUG_PRINTLN("*******************");
-        // _inicializarRTC();
-        _cargarDesdeBackup();
+            // _inicializarRTC();
+            _cargarDesdeBackup();
     }
 
     DatosConfiguracion &get() { return _datos; }
@@ -164,19 +165,19 @@ public:
     void setVolumen(uint8_t valor)
     {
         _datos.volumen = (uint8_t)constrain(valor, 0, 30);
-        myDFPlayer.volume(_datos.volumen);
+        myDFPlayer.setVolume(_datos.volumen);
         // save();
     }
 
-    void setUltimaPista(uint16_t pista, uint16_t carpeta)
+    void setUltimaPista(uint16_t pista)
     {
         _datos.ultimaPista = pista;
-        _datos.ultimaCarpeta = carpeta;
+        //_datos.ultimaCarpeta = carpeta;
         // save();
     }
 
     uint16_t getUltimaPista() { return _datos.ultimaPista; }
-    uint16_t getUltimaCarpeta() { return _datos.ultimaCarpeta; }
+    // uint16_t getUltimaCarpeta() { return _datos.ultimaCarpeta; }
 
     void setAutoApagado(uint8_t minutos)
     {
@@ -218,25 +219,41 @@ public:
     {
         analogWrite(TFT_BLK, _datos.brillo); // brillo de la pantalla tft
 
-        myDFPlayer.volume(_datos.volumen);
-        myDFPlayer.EQ(_datos.ecualizador);
+        myDFPlayer.setVolume(_datos.volumen);
+        myDFPlayer.setEq((DfMp3_Eq)_datos.ecualizador);
 
+        _datos.modoReproduccion = 3;
+
+        dP("modoReproduccion: (");
+        dP(_datos.modoReproduccion);
+        dP(")");
+
+        
         switch (_datos.modoReproduccion)
         {
         case 0:
-            myDFPlayer.enableLoop();
-            break; // Repetir todas
+            dPln("repetir todas");
+            myDFPlayer.setRepeatPlayAllInRoot(true);
+            break;
+
         case 1:
-            myDFPlayer.randomAll();
-            break; // Aleatorio
+            dPln("aleatorio");
+            myDFPlayer.playRandomTrackFromAll();
+            break;
+
         case 2:
+            dPln("repetir una");
             if (_datos.ultimaPista > 0)
-                myDFPlayer.loop(_datos.ultimaPista);
-            break; // Repetir una
+                myDFPlayer.setRepeatPlayCurrentTrack(true);
+            break;
+
         case 3:
-            myDFPlayer.disableLoop();
-            break; // Normal
+            dPln("normal");
+            myDFPlayer.setRepeatPlayAllInRoot(false);
+            break;
         }
+
+        myDFPlayer.stop();
 
         rgb.setBrightness(_datos.ledBrillo);
     }

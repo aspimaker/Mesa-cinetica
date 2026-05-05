@@ -32,7 +32,6 @@ BarraProgreso barraBrilloPantalla(tft, 10, 70, 100, 20, ST7735_BLUE, ST7735_RED,
 BarraProgreso barraWS2812B(tft, 10, 90, 100, 20, ST7735_BLUE, ST7735_RED, ST7735_YELLOW, "Brillo RGB", true);
 
 extern Configuracion config;
-extern DFRobotDFPlayerMini myDFPlayer;
 
 void iniciarPantalla()
 {
@@ -62,8 +61,6 @@ void mostrarSplash()
 {
     tft.fillScreen(ST7735_BLACK);
     tft.drawRGBBitmap(0, 0, (uint16_t *)logo_aspimaker, LOGO_WIDTH, LOGO_HEIGHT);
-    // delay(1000);
-    // tft.fillScreen(ST7735_BLACK);
 }
 
 void barraEstado()
@@ -91,7 +88,7 @@ void actualizarReloj()
 
     FechaHora fh;
     RTC_GetFechaHora(fh);
-    // DEBUG_PRINTF("RTC: %02d:%02d:%02d %02d:%02d:%02d\n", fh.dia, fh.mes, fh.año, fh.horas, fh.minutos, fh.segundos);
+    // dPf("RTC: %02d:%02d:%02d %02d:%02d:%02d\n", fh.dia, fh.mes, fh.año, fh.horas, fh.minutos, fh.segundos);
 
     // los 6 dígitos de la hora: HH MM SS
     uint8_t digitos[6] = {

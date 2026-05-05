@@ -1,8 +1,9 @@
 #pragma once
 
 #include <Arduino.h>
-#include "desactivaLog.h"
-#include <DFRobotDFPlayerMini.h>
+#include "depuracion.h"
+//#include <DFRobotDFPlayerMini.h>
+#include <DFMiniMp3.h>
 #include "rtc.h"
 #include "qr.h"
 
@@ -19,6 +20,9 @@ const unsigned long DEBOUNCE_DELAY = 150;
 #define STATUS_BAR_BG 0x0000 // color de fondo de la barra de estado
 
 #define NUMERO_LEDS_WS2812B 8
+
+#define pasoVolumen 1 // paso de aumento/disminución de volumen
+
 
 // enumeración para el estados
 enum EstadoSistema

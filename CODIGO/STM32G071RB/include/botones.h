@@ -19,13 +19,17 @@ struct BotonTTP223
     unsigned long ultimoDebounce;
 };
 
+BotonADC leerBotonADC();
+
+/*
 // botones
+
 extern BotonTTP223 botonOK;
 extern BotonTTP223 botonDerecha;
 extern BotonTTP223 botonIzquierda;
 extern BotonTTP223 botonArriba;
 extern BotonTTP223 botonAbajo;
 
-BotonADC leerBotonADC();
 void iniciarBotonesTTP223();
 bool leerBotonTTP223(BotonTTP223 &boton);
+*/
