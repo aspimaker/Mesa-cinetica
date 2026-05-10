@@ -311,7 +311,7 @@ void _actualizarFechaHora(String &fechaHora)
     uint16_t a = 2000 + yy;
 
     dPf("d=%d, mes=%d, yy=%d, a=%d, h=%d, min=%d, s=%d, diaSemana=%d\n",
-                 d, mes, yy, a, h, min, s, diaSemana);
+        d, mes, yy, a, h, min, s, diaSemana);
 
     // Mostrar confirmación
     dPln("RTC actualizado correctamente:");
@@ -347,114 +347,114 @@ void procesarComandosBluetooth()
         return;
 
     String cmd = bt.getCommand();
+    cmd.trim();
+    cmd.toUpperCase();
 
-    // alarma
-    if (cmd.equalsIgnoreCase("ALARMA ON"))
-    {
-        activarAlarma();
-        bt.sendString("OK:ALARMA_ON\n");
-    }
-    else if (cmd.equalsIgnoreCase("ALARMA OFF"))
-    {
-        desactivarAlarmaPorUsuario();
-        bt.sendString("OK:ALARMA_OFF\n");
-    }
-
-    // audio
-    else if (cmd.equalsIgnoreCase("MP3 PLAY"))
-    {
-        reproducirPista(config.get().ultimaPista);
-        bt.sendString("OK:MP3_PLAY\n");
-    }
-    else if (cmd.equalsIgnoreCase("MP3 STOP"))
-    {
-        detenerMP3();
-        bt.sendString("OK:MP3_STOP\n");
-    }
-    else if (cmd.equalsIgnoreCase("MP3 NEXT"))
-    {
-        reproducirPista(config.get().ultimaPista + 1);
-        bt.sendString("OK:MP3_NEXT\n");
-    }
-    else if (cmd.equalsIgnoreCase("MP3 PREV"))
-    {
-        uint16_t pista = config.get().ultimaPista;
-        reproducirPista(pista > 1 ? pista - 1 : 1);
-        bt.sendString("OK:MP3_PREV\n");
-    }
-    else if (cmd.startsWith("VOL "))
+    // procesar comandos con parámetros primero
+    if (cmd.startsWith("VOL "))
     {
         int nivel = constrain(cmd.substring(4).toInt(), 0, 30);
         volumenMP3((uint8_t)nivel);
-        bt.sendString("OK:VOL_" + String(nivel) + "\n");
-    }
-    else if (cmd.equalsIgnoreCase("VOL UP"))
-    {
-        subirVolumenMP3();
-        bt.sendString("OK:VOL_UP\n");
-    }
-    else if (cmd.equalsIgnoreCase("VOL DOWN"))
-    {
-        bajarVolumenMP3();
-        bt.sendString("OK:VOL_DOWN\n");
-    }
-
-    // leds
-    else if (cmd.equalsIgnoreCase("LED ON"))
-    {
-        config.setLedModo(2);
-        bt.sendString("OK:LED_ON\n");
-    }
-    else if (cmd.equalsIgnoreCase("LED OFF"))
-    {
-        config.setLedModo(0);
-        bt.sendString("OK:LED_OFF\n");
+        //bt.sendString("OK " + cmd + "\n");
     }
     else if (cmd.startsWith("LED BRILLO "))
     {
         int brillo = constrain(cmd.substring(11).toInt(), 0, 255);
         config.setLedBrillo((uint8_t)brillo);
-        bt.sendString("OK:LED_BRILLO_" + String(brillo) + "\n");
-    }
-
-    // sistema
-    else if (cmd.equalsIgnoreCase("APAGAR"))
-    {
-        bt.sendString("OK:APAGANDO\n");
-        apagarSistema();
-    }
-    else if (cmd.equalsIgnoreCase("ENCENDER"))
-    {
-        encenderSistema();
-        bt.sendString("OK:ENCENDIDO\n");
-    }
-    else if (cmd.equalsIgnoreCase("STANDBY"))
-    {
-        bt.sendString("OK:STANDBY\n");
-        entrarEnStandby();
+        bt.sendString("OK LED_BRILLO_" + String(brillo) + "\n");
     }
     else if (cmd.startsWith("SINCROFECHA"))
     {
         bt.sendString("OK:SINCROFECHA\n");
         _actualizarFechaHora(cmd);
     }
-
-    // depuración
-    else if (cmd == "_DEBUG|on#")
-    {
-        debugEnabled = true;
-        dPln("[BT] depuración activada: " + cmd);
-    }
-    else if (cmd == "_DEBUG|off#")
-    {
-        debugEnabled = false;
-        dPln("[BT] depuración desactivada: " + cmd);
-    }
-
-    // desconocido
     else
     {
-        dPln("[BT] No reconocido: " + cmd);
-        bt.sendString("ERR:CMD_DESCONOCIDO\n");
+        // Comandos exactos - usar if-else normal
+        if (cmd == "ALARMA ON")
+        {
+            activarAlarma();
+            bt.sendString("OK:ALARMA_ON\n");
+        }
+        else if (cmd == "ALARMA OFF")
+        {
+            desactivarAlarmaPorUsuario();
+            bt.sendString("OK:ALARMA_OFF\n");
+        }
+        else if (cmd == "MP3 PLAY")
+        {
+            reproducirPista(config.get().ultimaPista);
+            bt.sendString("OK:MP3_PLAY\n");
+        }
+        else if (cmd == "MP3 STOP")
+        {
+            detenerMP3();
+            bt.sendString("OK:MP3_STOP\n");
+        }
+        else if (cmd == "MP3 NEXT")
+        {
+            reproducirPista(config.get().ultimaPista + 1);
+            bt.sendString("OK:MP3_NEXT\n");
+        }
+        else if (cmd == "MP3 PREV")
+        {
+            uint16_t pista = config.get().ultimaPista;
+            reproducirPista(pista > 1 ? pista - 1 : 1);
+            bt.sendString("OK:MP3_PREV\n");
+        }
+        else if (cmd == "VOL UP")
+        {
+            subirVolumenMP3();
+            bt.sendString("OK:VOL_UP\n");
+        }
+        else if (cmd == "VOL DOWN")
+        {
+            bajarVolumenMP3();
+            bt.sendString("OK:VOL_DOWN\n");
+        }
+        else if (cmd == "GETVOLUMEN")
+        {
+            bt.sendString("OK:GETVOLUMEN_12");
+        }
+        else if (cmd == "LED ON")
+        {
+            config.setLedModo(2);
+            bt.sendString("OK:LED_ON\n");
+        }
+        else if (cmd == "LED OFF")
+        {
+            config.setLedModo(0);
+            bt.sendString("OK:LED_OFF\n");
+        }
+        else if (cmd == "APAGAR")
+        {
+            bt.sendString("OK:APAGANDO\n");
+            apagarSistema();
+        }
+        else if (cmd == "ENCENDER")
+        {
+            encenderSistema();
+            bt.sendString("OK:ENCENDIDO\n");
+        }
+        else if (cmd == "STANDBY")
+        {
+            bt.sendString("OK:STANDBY\n");
+            entrarEnStandby();
+        }
+        else if (cmd == "DEBUG|ON")
+        {
+            debugEnabled = true;
+            dPln("[BT] depuración activada: " + cmd);
+        }
+        else if (cmd == "DEBUG|OFF")
+        {
+            debugEnabled = false;
+            dPln("[BT] depuración desactivada: " + cmd);
+        }
+        else
+        {
+            dPln("[BT] No reconocido: " + cmd);
+            bt.sendString("ERR:CMD_DESCONOCIDO\n");
+        }
     }
 }

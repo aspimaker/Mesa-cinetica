@@ -148,6 +148,12 @@ public:
 
     DatosConfiguracion &get() { return _datos; }
 
+    DatosConfiguracion &set() { 
+        _datos.actualizarChecksum();
+        return _datos; 
+    }
+
+
     void save()
     {
         _datos.actualizarChecksum();
@@ -172,6 +178,7 @@ public:
     void setUltimaPista(uint16_t pista)
     {
         _datos.ultimaPista = pista;
+        _datos.checksum;
         //_datos.ultimaCarpeta = carpeta;
         // save();
     }

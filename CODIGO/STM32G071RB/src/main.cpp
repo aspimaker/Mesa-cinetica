@@ -1,3 +1,25 @@
+/*
+==================================================
+Mesa Cinética - Kinetic Table
+Copyright © 2026 aspimaker
+
+https://github.com/aspimaker/Mesa-cinetica/
+
+Este software está bajo licencia Creative Commons
+Attribution-NonCommercial-ShareAlike 4.0 International
+CC BY-NC-SA 4.0
+ 
+Usted es libre de:
+  • Compartir: copiar y redistribuir el material
+  • Adaptar: remezclar, transformar y construir sobre el material
+
+exclusivamente bajo los siguientes términos:
+  • Atribución: debe dar crédito adecuado
+  • No Comercial: no puede usar el material con fines comerciales
+  • Compartir Igual: si remezcla o transforma, debe distribuir bajo la misma licencia
+==================================================
+*/
+
 /* mapa de memoria
 0x000000 - 0x000FFF   →  Cabecera (datetime sync, nº canciones, nº patrones...)
 0x001000 - 0x00FFFF   →  Índice canciones (500 entradas x ~32 bytes = 16 KB)
@@ -367,5 +389,5 @@ void loop()
     procesarMP3();
 
     // PEQUEÑO DELAY para no saturar el CPU
-    delay(10);
+    //delay(10);
 }

@@ -22,9 +22,9 @@ void iniciarMP3()
     myDFPlayer.setVolume(0); // volumen mínimo al iniciar para evitar ruidos indeseados
     myDFPlayer.enableDac();  // habilitar salida DAC para mejor calidad de audio
     myDFPlayer.stop();       // asegurarse de que no esté reproduciendo nada al iniciar
-    //myDFPlayer.reset(); //produce un ruido molesto al iniciar, mejor evitarlo
+    // myDFPlayer.reset(); //produce un ruido molesto al iniciar, mejor evitarlo
     dPln("Reproductor MP3 iniciado");
-    //delay(100); // dar tiempo a que el módulo se estabilice
+    // delay(100); // dar tiempo a que el módulo se estabilice
 }
 
 void procesarMP3()
@@ -40,14 +40,25 @@ void reproducirAleatorio()
 
 void reproducirPista(uint16_t pista)
 {
-    // utiliza la carpeta /mp3
+   
+    uint16_t total = myDFPlayer.getTotalTrackCount();
+    dP("Total pistas disponibles 0: ");
+    dPln(total);    
+
+    /*
+    uint16_t totalUno = myDFPlayer.getFolderTrackCount(1);
+    dP("Total pistas disponibles 1: ");
+    dPln(totalUno);    
+*/
+
     dPln("Reproduciendo pista: " + String(pista));
     myDFPlayer.playMp3FolderTrack(pista);
+
+    config.set().ultimaPista = pista;
 }
 
 void reproducirAviso(uint16_t aviso)
 {
-
     dPln("Reproduciendo aviso: " + String(aviso));
 
     // utiliza la carpeta /advert/ 0001.mp3, 0002.mp3
@@ -59,21 +70,32 @@ void reproducirAviso(uint16_t aviso)
 void subirVolumenMP3()
 {
     dPln("Volumen +");
-    int vol = myDFPlayer.getVolume();
-    if (vol + pasoVolumen <= 30)
+    uint8_t vol = myDFPlayer.getVolume();
+    uint8_t nuevo = vol + pasoVolumen;
+
+    if (nuevo <= 30)
     {
-        myDFPlayer.setVolume(vol + pasoVolumen);
+        dPln("Nuevo volumen: " + String(nuevo));
+        myDFPlayer.setVolume(nuevo);
+        return;
     }
+
+    dPln("Volumen máximo alcanzado");
 }
 
 void bajarVolumenMP3()
 {
     dPln("Volumen -");
-    uint16_t vol = myDFPlayer.getVolume();
-    if (vol - pasoVolumen >= 0)
+    int8_t vol = myDFPlayer.getVolume();
+    int8_t nuevo = vol - pasoVolumen;
+
+    if (nuevo >= 0)
     {
-        myDFPlayer.setVolume(vol - pasoVolumen);
+        dPln("Nuevo volumen: " + String(nuevo));
+        myDFPlayer.setVolume(nuevo);
+       return;
     }
+    dPln("Volumen mínimo alcanzado");
 }
 
 void detenerMP3()
