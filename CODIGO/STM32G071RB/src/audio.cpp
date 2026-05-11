@@ -117,6 +117,15 @@ bool reproduciendoMP3()
     return digitalRead(DFPLAYER_BUSY) == LOW;
 }
 
+void ecualizacionMP3(uint8_t modo)
+{
+    if (modo > 5)
+        modo = 0; // modo 0 es normal, sin ecualización
+
+    myDFPlayer.setEq(DfMp3_Eq(modo));
+    dPln("Ecualización: " + String(modo));
+}
+
 /*
 NOTIFICACIONES del DFPlayer Mini: depende del modelo.
 YX5200 - Soporte completo de eventos

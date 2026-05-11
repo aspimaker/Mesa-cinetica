@@ -22,10 +22,6 @@ struct __attribute__((packed)) DatosConfiguracion
     uint8_t ecualizador;      // 0-5
     uint8_t modoReproduccion; // 0-3
     uint16_t ultimaPista;
-    // uint16_t ultimaCarpeta;
-
-    // TPA3110 (amplificador)
-    uint8_t volumenAmplificador; // 0-100
     bool mute;
 
     // leds WS2812B
@@ -49,15 +45,13 @@ struct __attribute__((packed)) DatosConfiguracion
         ecualizador = 0;
         modoReproduccion = 0;
         ultimaPista = 1;
-        // ultimaCarpeta = 2;
-        volumenAmplificador = 70;
         mute = false;
         ledModo = 2;
         ledBrillo = 128;
         ledColor = 0x00FF00;
         ledVelocidad = 100;
         autoApagado = 0;
-        alarmaHora = 10;
+        alarmaHora = 0;
         alarmaMinuto = 0;
         alarmaActivada = false;
         checksum = 0;

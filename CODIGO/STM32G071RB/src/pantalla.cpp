@@ -167,3 +167,39 @@ void brilloPantalla(int brillo)
 {
     analogWrite(TFT_BLK, brillo);
 }
+
+void imprimir(const char* texto) {
+    tft.print(texto);
+}
+
+void imprimir(const String& texto) {
+    tft.print(texto);
+}
+
+void dibujarRectangulo(int x, int y, int ancho, int alto, uint16_t color) {
+    tft.drawRect(x, y, ancho, alto, color);
+}
+
+void dibujarRectanguloRelleno(int x, int y, int ancho, int alto, uint16_t color) {
+    tft.fillRect(x, y, ancho, alto, color);
+}
+
+void limpiarPantalla() {
+    tft.fillScreen(ST7735_BLACK);
+}
+
+void dibujarLinea(int x0, int y0, int x1, int y1, uint16_t color) {
+    tft.drawLine(x0, y0, x1, y1, color);
+}
+
+void dibujarCirculo(int x, int y, int radio, uint16_t color) {
+    tft.drawCircle(x, y, radio, color);
+}
+
+void dibujarCirculoRelleno(int x, int y, int radio, uint16_t color) {
+    tft.fillCircle(x, y, radio, color);
+}
+
+void dibujarTriangulo(int x0, int y0, int x1, int y1, int x2, int y2, uint16_t color) {
+    tft.drawTriangle(x0, y0, x1, y1, x2, y2, color);
+}

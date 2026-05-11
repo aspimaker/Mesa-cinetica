@@ -355,9 +355,28 @@ void procesarComandosBluetooth()
     {
         int nivel = constrain(cmd.substring(4).toInt(), 0, 30);
         volumenMP3((uint8_t)nivel);
-        //bt.sendString("OK " + cmd + "\n");
+        // bt.sendString("OK " + cmd + "\n");
     }
-    else if (cmd.startsWith("LED BRILLO "))
+    else if (cmd.startsWith("VOL "))
+    {
+        int nivel = constrain(cmd.substring(4).toInt(), 0, 30);
+        volumenMP3((uint8_t)nivel);
+        // bt.sendString("OK " + cmd + "\n");
+    }
+    else if (cmd.startsWith("GETEQ"))
+    {
+        char buffer[15];
+        int modo = myDFPlayer.getEq();
+        sprintf(buffer, "OK:GETEQ_%d", modo);
+        bt.sendString(buffer);
+    }
+    else if (cmd.startsWith("EQ "))
+    {
+        int modo = cmd.substring(3).toInt();
+        ecualizacionMP3((uint8_t)modo);
+        bt.sendString("OK:" + cmd);
+    }
+    else if (cmd.startsWith("LED_BRILLO "))
     {
         int brillo = constrain(cmd.substring(11).toInt(), 0, 255);
         config.setLedBrillo((uint8_t)brillo);
@@ -414,7 +433,7 @@ void procesarComandosBluetooth()
         }
         else if (cmd == "GETVOLUMEN")
         {
-            bt.sendString("OK:GETVOLUMEN_12");
+            bt.sendString("OK:GETVOLUMEN_" + String(config.get().volumen) + "\n");
         }
         else if (cmd == "LED ON")
         {

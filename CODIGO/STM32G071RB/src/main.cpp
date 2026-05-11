@@ -167,6 +167,12 @@ void setup()
 
     iniciarPantalla();
 
+    dInitPantalla();
+    dPln("Sistema iniciado");
+    dOkPantalla("Configuracion OK");
+    dInfoPantalla("Esperando comandos...");
+    dPf("Valor: %d", 42);
+    
     mostrarSplash(); // mientras se muestra, hacemos otras cosas...
 
     iniciarMP3();
