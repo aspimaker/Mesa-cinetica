@@ -143,3 +143,19 @@ desktop.ini
 *.list
 *.o
 *.d
+
+# Archivos de base de datos y caché de VS
+*.opendb
+*.sdf
+*.suo
+*.user
+*.userprefs
+*.db
+
+# Carpetas de VS Code que suelen dar problemas
+.history/
+.pdm/
+
+# Backup de editores
+*.bak
+*.old
