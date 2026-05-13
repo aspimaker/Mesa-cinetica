@@ -2,27 +2,27 @@
 
 #include <Arduino.h>
 #include "depuracion.h"
-//#include <DFRobotDFPlayerMini.h>
 #include <DFMiniMp3.h>
 #include "rtc.h"
 #include "qr.h"
 
-const unsigned long DEBOUNCE_DELAY = 150;
 
-#define UID_BASE_ADDR 0x1FFF7590UL
+inline constexpr uint8_t DEBOUNCE_DELAY_MS = 150;
 
-#define FRECUENCIA_PWM_BACKLIGHT 1000
-#define FRECUENCIA_SPI 27000000
+inline constexpr uintptr_t UID_BASE_ADDR = 0x1FFF7590UL;
 
-#define SCREEN_WIDTH 160
-#define SCREEN_HEIGHT 128
-#define STATUS_BAR_H 16
-#define STATUS_BAR_BG 0x0000 // color de fondo de la barra de estado
+inline constexpr uint16_t FRECUENCIA_PWM_BACKLIGHT = 1000;
+inline constexpr uint32_t FRECUENCIA_SPI = 27000000;
 
-#define NUMERO_LEDS_WS2812B 8
+inline constexpr uint8_t SCREEN_WIDTH = 160;
+inline constexpr uint8_t SCREEN_HEIGHT = 128;
+inline constexpr uint8_t STATUS_BAR_H = 16;
 
-#define pasoVolumen 1 // paso de aumento/disminución de volumen
+inline constexpr uint8_t STATUS_BAR_BG = 0x0000; // color de fondo de la barra de estado
 
+inline constexpr uint8_t NUMERO_LEDS_WS2812B = 8;
+
+inline constexpr uint8_t pasoVolumen =1; // paso de aumento/disminución de volumen
 
 // enumeración para el estados
 enum EstadoSistema

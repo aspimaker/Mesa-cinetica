@@ -4,7 +4,7 @@
 
 #include "configuracion.h"  // config
 #include "pantalla.h"       // barraVolumen, barraWS2812B, barraBrilloPantalla, brilloPantalla()
-#include "pines.h"          // TFT_BLK
+#include "pines.h"          // Pinout::TFT::BLK
 #include <Adafruit_NeoPixel.h>
 //#include <DFRobotDFPlayerMini.h>
 #include <DFMiniMp3.h>

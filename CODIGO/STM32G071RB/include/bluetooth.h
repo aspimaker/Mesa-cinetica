@@ -10,17 +10,17 @@
 #include "pines.h"
 #include "globals.h"
 
-#define BT_BUFFER_SIZE 128
-#define BT_TIMEOUT 1000
+inline constexpr uint8_t BT_BUFFER_SIZE = 128;
+inline constexpr uint16_t BT_TIMEOUT = 1000;
 
-#define BT_BAUD_DEFAULT 9600
-#define BT_BAUDRATE 115200
+inline constexpr uint16_t BT_BAUD_DEFAULT = 9600;
+inline constexpr uint32_t BT_BAUDRATE = 115200;
 
-#define BT_NOTIFY_CONN "OK+CONN"
-#define BT_NOTIFY_LOST "OK+LOST"
+inline constexpr const char* BT_NOTIFY_CONN = "OK+CONN";
+inline constexpr const char* BT_NOTIFY_LOST = "OK+LOST";
 
-#define BT_CMD_START '_'
-#define BT_CMD_END '#'
+inline constexpr char BT_CMD_START = '_';
+inline constexpr char BT_CMD_END = '#';
 
 class Bluetooth
 {

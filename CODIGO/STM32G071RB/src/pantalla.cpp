@@ -21,7 +21,7 @@
 extern Configuracion config;
 
 // crear objeto tft
-Adafruit_ST7735 tft = Adafruit_ST7735(TFT_CS, TFT_DC, TFT_RST);
+Adafruit_ST7735 tft = Adafruit_ST7735(Pinout::TFT::CS, Pinout::TFT::DC, Pinout::TFT::RST);
 
 // crear objeto menú
 Menu menu(tft);
@@ -36,13 +36,11 @@ extern Configuracion config;
 void iniciarPantalla()
 {
     analogWriteFrequency(FRECUENCIA_PWM_BACKLIGHT);
-    pinMode(TFT_BLK, OUTPUT);
+    pinMode(Pinout::TFT::BLK, OUTPUT);
 
-    uint8_t brillo = config.get().brillo;
-    if (brillo == 0)
-        brillo = 128;
-    analogWrite(TFT_BLK, brillo);
 
+    brilloPantalla(0); // apagamos inicialmente para evitar destellos al iniciar
+    
     tft.initR(INITR_BLACKTAB);
     tft.setSPISpeed(FRECUENCIA_SPI);
     tft.setRotation(1);
@@ -56,11 +54,41 @@ void iniciarPantalla()
     */
 }
 
-// void mostrarSplash(unsigned long duracion)
+/*
 void mostrarSplash()
 {
     tft.fillScreen(ST7735_BLACK);
     tft.drawRGBBitmap(0, 0, (uint16_t *)logo_aspimaker, LOGO_WIDTH, LOGO_HEIGHT);
+}
+*/
+
+// compresión RLE y paleta de 4 colores (2 bits por píxel)
+void mostrarSplash(uint16_t x, uint16_t y)
+{
+
+    brilloPantalla(255); // aseguramos brillo máximo para el splash
+
+    uint16_t currX = 0;
+    uint16_t currY = 0;
+    const uint16_t logoWidth = 160;
+
+    for (uint32_t i = 0; i < sizeof(Logos::logo_rle); i++) {
+        uint8_t registro = Logos::logo_rle[i];
+        uint8_t colorIdx = (registro >> 5) & 0x07;
+        uint8_t largo = registro & 0x1F;
+
+        if (largo == 0) continue; 
+
+        if (colorIdx > 0 && colorIdx < 5) {
+            tft.drawFastHLine(x + currX, y + currY, largo, Logos::paleta_logo[colorIdx]);
+        }
+
+        currX += largo;
+        while (currX >= logoWidth) {
+            currX -= logoWidth;
+            currY++;
+        }
+    }
 }
 
 void barraEstado()
@@ -165,41 +193,50 @@ void actualizarInterfaz()
 
 void brilloPantalla(int brillo)
 {
-    analogWrite(TFT_BLK, brillo);
+    analogWrite(Pinout::TFT::BLK, brillo);
 }
 
-void imprimir(const char* texto) {
+void imprimir(const char *texto)
+{
     tft.print(texto);
 }
 
-void imprimir(const String& texto) {
+void imprimir(const String &texto)
+{
     tft.print(texto);
 }
 
-void dibujarRectangulo(int x, int y, int ancho, int alto, uint16_t color) {
+void dibujarRectangulo(int x, int y, int ancho, int alto, uint16_t color)
+{
     tft.drawRect(x, y, ancho, alto, color);
 }
 
-void dibujarRectanguloRelleno(int x, int y, int ancho, int alto, uint16_t color) {
+void dibujarRectanguloRelleno(int x, int y, int ancho, int alto, uint16_t color)
+{
     tft.fillRect(x, y, ancho, alto, color);
 }
 
-void limpiarPantalla() {
+void limpiarPantalla()
+{
     tft.fillScreen(ST7735_BLACK);
 }
 
-void dibujarLinea(int x0, int y0, int x1, int y1, uint16_t color) {
+void dibujarLinea(int x0, int y0, int x1, int y1, uint16_t color)
+{
     tft.drawLine(x0, y0, x1, y1, color);
 }
 
-void dibujarCirculo(int x, int y, int radio, uint16_t color) {
+void dibujarCirculo(int x, int y, int radio, uint16_t color)
+{
     tft.drawCircle(x, y, radio, color);
 }
 
-void dibujarCirculoRelleno(int x, int y, int radio, uint16_t color) {
+void dibujarCirculoRelleno(int x, int y, int radio, uint16_t color)
+{
     tft.fillCircle(x, y, radio, color);
 }
 
-void dibujarTriangulo(int x0, int y0, int x1, int y1, int x2, int y2, uint16_t color) {
+void dibujarTriangulo(int x0, int y0, int x1, int y1, int x2, int y2, uint16_t color)
+{
     tft.drawTriangle(x0, y0, x1, y1, x2, y2, color);
 }

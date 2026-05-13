@@ -16,7 +16,7 @@ DFMiniMp3<HardwareSerial, Mp3Notify> myDFPlayer(mp3Serie);
 
 void iniciarMP3()
 {
-    pinMode(DFPLAYER_BUSY, INPUT); // para saber el estado del reproductor.
+    pinMode(Pinout::Audio::BUSY, INPUT); // para saber el estado del reproductor.
 
     myDFPlayer.begin();
     myDFPlayer.setVolume(0); // volumen mínimo al iniciar para evitar ruidos indeseados
@@ -114,7 +114,7 @@ void volumenMP3(uint8_t nivel)
 
 bool reproduciendoMP3()
 {
-    return digitalRead(DFPLAYER_BUSY) == LOW;
+    return digitalRead(Pinout::Audio::BUSY) == LOW;
 }
 
 void ecualizacionMP3(uint8_t modo)
@@ -125,6 +125,17 @@ void ecualizacionMP3(uint8_t modo)
     myDFPlayer.setEq(DfMp3_Eq(modo));
     dPln("Ecualización: " + String(modo));
 }
+
+void modoReproduccionMP3(uint8_t modo)
+{
+    if (modo > 4)
+        modo = 0; // modo 0 es normal, sin repetición ni aleatorio
+
+    myDFPlayer.setPlaybackMode(DfMp3_PlaybackMode(modo));
+    dPln("Modo reproducción: " + String(modo));
+}
+
+
 
 /*
 NOTIFICACIONES del DFPlayer Mini: depende del modelo.

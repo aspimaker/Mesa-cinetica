@@ -5,7 +5,7 @@
 #include "depuracion.h"
 // #include <DFRobotDFPlayerMini.h> // DFRobotDFPlayerMini
 #include <Adafruit_NeoPixel.h> // Adafruit_NeoPixel (usado en aplicarConfiguracion via rgb)
-#include "pines.h"             // TFT_BLK
+#include "pines.h"             // Pinout::TFT::BLK
 #include "audio.h"
 
 // extern DFRobotDFPlayerMini myDFPlayer;
@@ -158,7 +158,7 @@ public:
     void setBrillo(uint8_t valor)
     {
         _datos.brillo = (uint8_t)constrain(valor, 0, 255);
-        analogWrite(TFT_BLK, _datos.brillo);
+        analogWrite(Pinout::TFT::BLK, _datos.brillo);
         // save();
     }
 
@@ -218,7 +218,7 @@ public:
 
     void aplicarConfiguracion()
     {
-        analogWrite(TFT_BLK, _datos.brillo); // brillo de la pantalla tft
+        analogWrite(Pinout::TFT::BLK, _datos.brillo); // brillo de la pantalla tft
 
         myDFPlayer.setVolume(_datos.volumen);
         myDFPlayer.setEq((DfMp3_Eq)_datos.ecualizador);

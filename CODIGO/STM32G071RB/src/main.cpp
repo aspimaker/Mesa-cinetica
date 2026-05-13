@@ -8,7 +8,7 @@ https://github.com/aspimaker/Mesa-cinetica/
 Este software está bajo licencia Creative Commons
 Attribution-NonCommercial-ShareAlike 4.0 International
 CC BY-NC-SA 4.0
- 
+
 Usted es libre de:
   • Compartir: copiar y redistribuir el material
   • Adaptar: remezclar, transformar y construir sobre el material
@@ -27,7 +27,7 @@ exclusivamente bajo los siguientes términos:
 0x100000 - 0x7FFFFF   →  Miniaturas (500 x ~15 KB = 7.5 MB)
 0x800000 - 0xFFFFFF   →  Patrones (8 MB)
 */
-bool debugEnabled = true;
+bool debugEnabled = false;
 
 #include <Arduino.h>
 
@@ -73,10 +73,10 @@ Configuracion config;
 // HardwareSerial SerialDebug(UART_RX_DEBUG, UART_TX_DEBUG);
 
 // TMC2209 UART → D2/D3
-HardwareSerial SerialTMC(UART_RX_TMC2209, UART_TX_TMC2209);
+HardwareSerial SerialTMC(Pinout::Motores::UART::RX, Pinout::Motores::UART::TX);
 
 // mp3 DFPlayer Mini → D0/D1
-HardwareSerial mp3Serie(DFPLAYER_RX, DFPLAYER_TX);
+HardwareSerial mp3Serie(Pinout::Audio::RX, Pinout::Audio::TX);
 
 InformacionHardware mesaCinetica;
 bool sistemaEncendido = true;
@@ -146,7 +146,7 @@ void setup()
     dPln("");
     dPln("Iniciando Sistema...");
 
-    uint16_t tiempoSplash = 500;
+    uint16_t tiempoSplash = 100;
     uint32_t ahora = millis();
 
     // reloj para RTC
@@ -172,8 +172,8 @@ void setup()
     dOkPantalla("Configuracion OK");
     dInfoPantalla("Esperando comandos...");
     dPf("Valor: %d", 42);
-    
-    mostrarSplash(); // mientras se muestra, hacemos otras cosas...
+
+    mostrarSplash(0, 0); // mientras se muestra, hacemos otras cosas...
 
     iniciarMP3();
 
@@ -198,7 +198,13 @@ void setup()
     {
         delay(10);
     }
+
     tft.fillScreen(ST7735_BLACK);
+
+    uint8_t brillo = config.get().brillo; // brillo configurado
+    if (brillo == 0)
+        brillo = 200; // brillo por defecto si no se ha configurado
+    brilloPantalla(brillo);
 
     // mostrar barra de estado inicial
     barraEstado();
@@ -229,150 +235,148 @@ void loop()
     // dP("Botón ADC: ");
     // dPln(botonADC);
 
+    // ==============================================
+    // CONTROL SEGÚN ESTADO ACTUAL
+    // ==============================================
+    static unsigned long ultimoMovimiento = 0;
 
-        // ==============================================
-        // CONTROL SEGÚN ESTADO ACTUAL
-        // ==============================================
-        static unsigned long ultimoMovimiento = 0;
-
-        if (ahora - ultimoMovimiento >= DEBOUNCE_DELAY)
+    if (ahora - ultimoMovimiento >= DEBOUNCE_DELAY_MS)
+    {
+        switch (estadoActual)
         {
-            switch (estadoActual)
+
+        case ESTADO_MENU_PRINCIPAL:
+
+            switch (botonADC)
             {
-
-            case ESTADO_MENU_PRINCIPAL:
-
-                switch (botonADC)
-                {
-                case (BotonADC)BOTON_ARRIBA:
-                    dPln("arriba");
-                    menu.moverSeleccion(0); // arriba
-                    ultimoMovimiento = ahora;
-                    break;
-
-                case (BotonADC)BOTON_ABAJO:
-                    dPln("abajo");
-                    menu.moverSeleccion(1); // abajo
-                    ultimoMovimiento = ahora;
-                    break;
-
-                case (BotonADC)BOTON_IZQUIERDA:
-                    dPln("izquierda");
-                    menu.moverSeleccion(2); // izquierda
-                    ultimoMovimiento = ahora;
-                    break;
-
-                case (BotonADC)BOTON_DERECHA:
-                    dPln("derecha");
-                    menu.moverSeleccion(3); // derecha
-                    ultimoMovimiento = ahora;
-                    break;
-
-                case (BotonADC)BOTON_OK:
-                    dPln("OK");
-                    menu.ejecutarAccion();
-                    ultimoMovimiento = ahora;
-                    break;
-
-                default:
-                    break;
-                }
+            case (BotonADC)BOTON_ARRIBA:
+                dPln("arriba");
+                menu.moverSeleccion(0); // arriba
+                ultimoMovimiento = ahora;
                 break;
 
-            case ESTADO_AJUSTE_VOLUMEN:
-
-                switch (botonADC)
-                {
-                case (BotonADC)BOTON_IZQUIERDA:
-                    dPln("izquierda");
-                    aumentarVolumen();
-                    ultimoMovimiento = ahora;
-                    break;
-
-                case (BotonADC)BOTON_DERECHA:
-                    dPln("derecha");
-                    disminuirVolumen();
-                    ultimoMovimiento = ahora;
-                    break;
-
-                case (BotonADC)BOTON_OK:
-                    dPln("OK");
-                    estadoActual = ESTADO_MENU_PRINCIPAL;
-                    menu.dibujarIconos();
-                    menu.dibujarSeleccion(menu.getIconoActivo());
-                    ultimoMovimiento = ahora;
-                    break;
-
-                default:
-                    break;
-                }
+            case (BotonADC)BOTON_ABAJO:
+                dPln("abajo");
+                menu.moverSeleccion(1); // abajo
+                ultimoMovimiento = ahora;
                 break;
 
-            case ESTADO_AJUSTE_BRILLO_RGB:
-
-                switch (botonADC)
-                {
-                case (BotonADC)BOTON_IZQUIERDA:
-                    dPln("izquierda");
-                    aumentarBrilloRGB();
-                    ultimoMovimiento = ahora;
-                    break;
-
-                case (BotonADC)BOTON_DERECHA:
-                    dPln("derecha");
-                    disminuirBrilloRGB();
-                    ultimoMovimiento = ahora;
-                    break;
-
-                case (BotonADC)BOTON_OK:
-                    dPln("OK");
-                    estadoActual = ESTADO_MENU_PRINCIPAL;
-                    menu.dibujarIconos();
-                    menu.dibujarSeleccion(menu.getIconoActivo());
-                    ultimoMovimiento = ahora;
-                    break;
-
-                default:
-                    break;
-                }
+            case (BotonADC)BOTON_IZQUIERDA:
+                dPln("izquierda");
+                menu.moverSeleccion(2); // izquierda
+                ultimoMovimiento = ahora;
                 break;
 
-            case ESTADO_AJUSTE_ECUALIZADOR:
+            case (BotonADC)BOTON_DERECHA:
+                dPln("derecha");
+                menu.moverSeleccion(3); // derecha
+                ultimoMovimiento = ahora;
+                break;
 
-                switch (botonADC)
-                {
-                case (BotonADC)BOTON_IZQUIERDA:
-                    dPln("izquierda");
-                    // ecualizadorAnterior();
-                    ultimoMovimiento = ahora;
-                    break;
+            case (BotonADC)BOTON_OK:
+                dPln("OK");
+                menu.ejecutarAccion();
+                ultimoMovimiento = ahora;
+                break;
 
-                case (BotonADC)BOTON_DERECHA:
-                    dPln("derecha");
-                    // ecualizadorSiguiente();
-                    ultimoMovimiento = ahora;
-                    break;
-
-                case (BotonADC)BOTON_OK:
-                    dPln("OK");
-                    estadoActual = ESTADO_MENU_PRINCIPAL;
-                    menu.dibujarIconos();
-                    menu.dibujarSeleccion(menu.getIconoActivo());
-                    ultimoMovimiento = ahora;
-                    break;
-                }
+            default:
                 break;
             }
-        }
+            break;
 
-        // VERIFICAR ALARMA (cada segundo)
-        static unsigned long ultimaVerificacionAlarma = 0;
-        if (ahora - ultimaVerificacionAlarma >= 1000)
-        {
-            ultimaVerificacionAlarma = ahora;
-            verificarAlarma();
-        }
+        case ESTADO_AJUSTE_VOLUMEN:
 
+            switch (botonADC)
+            {
+            case (BotonADC)BOTON_IZQUIERDA:
+                dPln("izquierda");
+                aumentarVolumen();
+                ultimoMovimiento = ahora;
+                break;
+
+            case (BotonADC)BOTON_DERECHA:
+                dPln("derecha");
+                disminuirVolumen();
+                ultimoMovimiento = ahora;
+                break;
+
+            case (BotonADC)BOTON_OK:
+                dPln("OK");
+                estadoActual = ESTADO_MENU_PRINCIPAL;
+                menu.dibujarIconos();
+                menu.dibujarSeleccion(menu.getIconoActivo());
+                ultimoMovimiento = ahora;
+                break;
+
+            default:
+                break;
+            }
+            break;
+
+        case ESTADO_AJUSTE_BRILLO_RGB:
+
+            switch (botonADC)
+            {
+            case (BotonADC)BOTON_IZQUIERDA:
+                dPln("izquierda");
+                aumentarBrilloRGB();
+                ultimoMovimiento = ahora;
+                break;
+
+            case (BotonADC)BOTON_DERECHA:
+                dPln("derecha");
+                disminuirBrilloRGB();
+                ultimoMovimiento = ahora;
+                break;
+
+            case (BotonADC)BOTON_OK:
+                dPln("OK");
+                estadoActual = ESTADO_MENU_PRINCIPAL;
+                menu.dibujarIconos();
+                menu.dibujarSeleccion(menu.getIconoActivo());
+                ultimoMovimiento = ahora;
+                break;
+
+            default:
+                break;
+            }
+            break;
+
+        case ESTADO_AJUSTE_ECUALIZADOR:
+
+            switch (botonADC)
+            {
+            case (BotonADC)BOTON_IZQUIERDA:
+                dPln("izquierda");
+                // ecualizadorAnterior();
+                ultimoMovimiento = ahora;
+                break;
+
+            case (BotonADC)BOTON_DERECHA:
+                dPln("derecha");
+                // ecualizadorSiguiente();
+                ultimoMovimiento = ahora;
+                break;
+
+            case (BotonADC)BOTON_OK:
+                dPln("OK");
+                estadoActual = ESTADO_MENU_PRINCIPAL;
+                menu.dibujarIconos();
+                menu.dibujarSeleccion(menu.getIconoActivo());
+                ultimoMovimiento = ahora;
+                break;
+            }
+            break;
+        }
+    }
+
+    // VERIFICAR ALARMA (cada segundo)
+    static unsigned long ultimaVerificacionAlarma = 0;
+    if (ahora - ultimaVerificacionAlarma >= 1000)
+    {
+        ultimaVerificacionAlarma = ahora;
+        verificarAlarma();
+    }
 
     // VERIFICAR APAGADO y ENCENDIDO PROGRAMADO (cada minuto)
     static unsigned long ultimaVerificacionApagado = 0;
@@ -383,11 +387,10 @@ void loop()
         verificarEncendidoProgramado();
     }
 
-    
     // ACTUALIZAR LEDs según modo
     actualizarLEDs();
 
-    // PROCESAR COMANDOS BLUETOOTH
+    // BLUETOOTH
     bt.update();                 // 1. detecta conexión/desconexión
     procesarComandosBluetooth(); // 2. procesa comandos
 
@@ -395,5 +398,5 @@ void loop()
     procesarMP3();
 
     // PEQUEÑO DELAY para no saturar el CPU
-    //delay(10);
+    delay(10);
 }

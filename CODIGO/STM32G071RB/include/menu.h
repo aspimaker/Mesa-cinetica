@@ -5,34 +5,34 @@
 #include <Adafruit_ST7735.h>
 
 // colores del menú
-#define COLOR_FONDO ST7735_BLACK
-#define COLOR_SELECCION ST7735_YELLOW
-#define COLOR_BARRA ST7735_BLUE
-#define COLOR_TEXTO_BARRA ST7735_WHITE
-#define COLOR_ICONO_NORMAL ST7735_WHITE
-#define COLOR_ICONO_SELEC ST7735_BLACK
+inline constexpr uint16_t COLOR_FONDO = ST7735_BLACK;
+inline constexpr uint16_t COLOR_SELECCION = ST7735_YELLOW;
+inline constexpr uint16_t COLOR_BARRA = ST7735_BLUE;
+inline constexpr uint16_t COLOR_TEXTO_BARRA = ST7735_WHITE;
+inline constexpr uint16_t COLOR_ICONO_NORMAL = ST7735_WHITE;
+inline constexpr uint16_t COLOR_ICONO_SELEC = ST7735_BLACK;
 
 // dimensiones
-#define ANCHO_PANTALLA 160
-#define ALTO_PANTALLA 128
-#define ALTO_BARRA 16
-#define ALTO_ICONOS (ALTO_PANTALLA - ALTO_BARRA) // 112
-#define ANCHO_ICONO (ANCHO_PANTALLA / 3)         // 53
-#define ALTO_ICONO (ALTO_ICONOS / 2)             // 56
+inline constexpr uint8_t ANCHO_PANTALLA = 160;
+inline constexpr uint8_t ALTO_PANTALLA = 128;
+inline constexpr uint8_t ALTO_BARRA = 16;
+inline constexpr uint8_t ALTO_ICONOS(ALTO_PANTALLA - ALTO_BARRA); // 112
+inline constexpr uint8_t ANCHO_ICONO(ANCHO_PANTALLA / 3);         // 53
+inline constexpr uint8_t ALTO_ICONO(ALTO_ICONOS / 2);             // 56
 
 // márgenes para el cuadrado de selección
-#define MARGEN_SELECCION 4
-#define ANCHO_SELECCION (ANCHO_ICONO - MARGEN_SELECCION * 2) // 45
-#define ALTO_SELECCION (ALTO_ICONO - MARGEN_SELECCION * 2)   // 48
+inline constexpr uint8_t MARGEN_SELECCION = 4;
+inline constexpr uint8_t ANCHO_SELECCION(ANCHO_ICONO - MARGEN_SELECCION * 2); // 45
+inline constexpr uint8_t ALTO_SELECCION(ALTO_ICONO - MARGEN_SELECCION * 2);   // 48
 
 // posiciones X para cada columna
-#define POS_X_COL0 MARGEN_SELECCION
-#define POS_X_COL1 (ANCHO_ICONO + MARGEN_SELECCION)     // 57
-#define POS_X_COL2 (ANCHO_ICONO * 2 + MARGEN_SELECCION) // 110
+inline constexpr uint8_t POS_X_COL0 = MARGEN_SELECCION;
+inline constexpr uint8_t POS_X_COL1(ANCHO_ICONO + MARGEN_SELECCION);      // 57
+inline constexpr uint8_t POS_X_COL2(ANCHO_ICONO * 2 + MARGEN_SELECCION);  // 110
 
 // posiciones Y para cada fila
-#define POS_Y_FILA0 (ALTO_BARRA + MARGEN_SELECCION)              // 20
-#define POS_Y_FILA1 (ALTO_BARRA + ALTO_ICONO + MARGEN_SELECCION) // 76
+inline constexpr uint8_t POS_Y_FILA0(ALTO_BARRA + MARGEN_SELECCION);              // 20
+inline constexpr uint8_t POS_Y_FILA1(ALTO_BARRA + ALTO_ICONO + MARGEN_SELECCION); // 76
 
 class Menu
 {

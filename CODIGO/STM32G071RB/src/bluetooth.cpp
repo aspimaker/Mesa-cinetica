@@ -6,7 +6,7 @@
 #include "configuracion.h"
 #include "depuracion.h"
 
-HardwareSerial BTSerial(BT_RX, BT_TX);
+HardwareSerial BTSerial(Pinout::BT::RX, Pinout::BT::TX);
 Bluetooth bt;
 char nombreBT[30];
 String comandoBluetoothRecibido = "";
@@ -367,6 +367,8 @@ void procesarComandosBluetooth()
     {
         char buffer[15];
         int modo = myDFPlayer.getEq();
+        Serial.print("EQ: ");
+        Serial.println(modo);
         sprintf(buffer, "OK:GETEQ_%d", modo);
         bt.sendString(buffer);
     }
@@ -374,6 +376,19 @@ void procesarComandosBluetooth()
     {
         int modo = cmd.substring(3).toInt();
         ecualizacionMP3((uint8_t)modo);
+        bt.sendString("OK:" + cmd);
+    }
+    else if (cmd.startsWith("GETREP"))
+    {
+        char buffer[15];
+        int modo = myDFPlayer.getPlaybackMode();
+        sprintf(buffer, "OK:GETREP_%d", modo);
+        bt.sendString(buffer);
+    }
+    else if (cmd.startsWith("RP "))
+    {
+        int modo = cmd.substring(3).toInt();
+        modoReproduccionMP3((uint8_t)modo);
         bt.sendString("OK:" + cmd);
     }
     else if (cmd.startsWith("LED_BRILLO "))

@@ -31,4 +31,5 @@ void detenerMP3();
 void volumenMP3(uint8_t nivel);
 bool reproduciendoMP3();
 void ecualizacionMP3(uint8_t modo);
+void modoReproduccionMP3(uint8_t modo);
 //uint8_t getCarpetaActual();

@@ -4,12 +4,22 @@
 **/aspimaker
 
 # Archivos de keystore
-*.keystore
 local.properties
 Directory.Build.props
-*.jks
-*.key
+*.pfx
 *.p12
+*.pem
+*.crt
+*.cer
+*.der
+*.p7b
+*.p7c
+*.jks
+*.keystore
+*.pub
+*.key
+*.gpg
+*.asc
 
 # Archivos de propiedades con claves
 gradle.properties
@@ -105,3 +115,31 @@ desktop.ini
 *.temp
 *.zip
 *.rar
+.vs/                   # Ignora .vs en cualquier nivel
+[Dd]ebug/              # Ignora carpetas Debug
+[Rr]elease/           # Ignora carpetas Release
+bin/                   # Ignora binarios
+obj/                   # Ignora objetos intermedios
+*.mxproject            # Opcional: archivos de configuración local de CubeMX
+
+# Secretos y Entorno
+.env
+.env.local
+.env.*.local
+secrets.json
+appsettings.Development.json
+
+# Archivos de sistema
+[Tt]humbs.db
+desktop.ini
+.DS_Store
+
+# STM32 / CubeIDE (Si usas estas herramientas)
+/Debug/
+/Release/
+*.elf
+*.bin
+*.map
+*.list
+*.o
+*.d

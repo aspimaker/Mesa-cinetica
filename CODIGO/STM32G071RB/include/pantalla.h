@@ -28,7 +28,7 @@ extern BarraProgreso barraWS2812B;
 // Declaración de funciones básicas
 void iniciarPantalla();
 void limpiarPantalla();
-void mostrarSplash();
+void mostrarSplash(uint16_t x, uint16_t y);
 void barraEstado();
 void actualizarInterfaz();
 void actualizarReloj();

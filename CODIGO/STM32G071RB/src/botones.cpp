@@ -13,7 +13,7 @@
 
 BotonADC leerBotonADC()
 {
-    int v = analogRead(BTN_ADC);
+    int v = analogRead(Pinout::UI::BTN_ADC);
 
     if (v < 100)
         return (BotonADC)BOTON_NINGUNO;
@@ -30,7 +30,7 @@ BotonADC leerBotonADC()
 
 void iniciarBotonesTTP223()
 {
-    pinMode(BTN_ADC, INPUT);
+    pinMode(Pinout::UI::BTN_ADC, INPUT);
 }
 
 /*
