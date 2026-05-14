@@ -42,23 +42,8 @@ keystore.properties
 # ─────────────────────────────────────────
 #  ANDROID  —  Visual Studio / C# / MAUI
 # ─────────────────────────────────────────
-CODIGO/ANDROID/bin/
-CODIGO/ANDROID/obj/
-CODIGO/ANDROID/.vs/
-CODIGO/ANDROID/**/*.user
-CODIGO/ANDROID/**/*.suo
-CODIGO/ANDROID/**/*.userprefs
-CODIGO/ANDROID/**/TestResults/
-CODIGO/ANDROID/**/.idea/
-CODIGO/ANDROID/**/*.binlog
-
-# NuGet
-CODIGO/ANDROID/**/packages/
-CODIGO/ANDROID/**/*.nupkg
-CODIGO/ANDROID/**/.nuget/
-
-# Publicación
-CODIGO/ANDROID/**/publish/
+CODIGO/ANDROID/
+CODIGO/PC a microSD
 
 # ─────────────────────────────────────────
 #  CODIGO  —  VS Code + PlatformIO
