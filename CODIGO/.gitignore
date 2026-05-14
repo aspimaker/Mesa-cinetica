@@ -1,0 +1,37 @@
+STM32G071RB/
+
+# --- Visual Studio ---
+.vs/
+[Bb]in/
+[Oo]bj/
+*.user
+*.userosscache
+*.sln.docstates
+
+# --- .NET / C# / VB.NET ---
+*.exe
+*.pdb
+*.dll
+*.suo
+*.user
+*.userprefs
+*.vshost.exe
+*.vshost.exe.manifest
+*.xml
+*.log
+
+# --- MAUI Specific ---
+# Ignorar carpetas de compilación específicas de plataformas
+/platforms/*/bin/
+/platforms/*/obj/
+
+# --- Paquetes NuGet ---
+*.nupkg
+**/packages/*
+!**/packages/build/
+project.lock.json
+project.assets.json
+
+# --- Archivos temporales de Windows ---
+Thumbs.db
+desktop.ini

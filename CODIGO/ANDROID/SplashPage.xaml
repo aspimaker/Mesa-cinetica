@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="app_mesa_cinetica.SplashPage"
+             BackgroundColor="#242429">
+    <Grid>
+        <Image x:Name="LogoImage"
+               Source="splash_full.svg"
+               Aspect="AspectFill"
+               HorizontalOptions="Fill"
+               VerticalOptions="Fill" 
+               Opacity="0" />
+    </Grid>
+</ContentPage>

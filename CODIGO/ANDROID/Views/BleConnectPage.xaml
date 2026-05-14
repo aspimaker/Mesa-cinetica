@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="app_mesa_cinetica.Views.BleConnectPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    Title="Conectar mesa cinética"
+    BackgroundColor="{AppThemeBinding Light=#F2F2F7, Dark=#1C1C1E}">
+
+    <Grid RowDefinitions="Auto,*,Auto" Padding="16">
+
+        <!-- Estado -->
+        <Label
+            x:Name="StatusLabel"
+            Grid.Row="0"
+            Text="Pulsa Buscar para escanear"
+            FontSize="14"
+            HorizontalOptions="Center"
+            Margin="0,12"
+            TextColor="{AppThemeBinding Light=#8E8E93, Dark=#8E8E93}" />
+
+        <!-- Lista de dispositivos -->
+        <CollectionView
+            x:Name="DeviceList"
+            Grid.Row="1"
+            SelectionMode="Single"
+            SelectionChanged="OnDeviceSelected">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border
+                        Margin="0,4"
+                        Padding="16,12"
+                        BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#2C2C2E}"
+                        StrokeShape="RoundRectangle 10"
+                        StrokeThickness="0">
+                        <Grid ColumnDefinitions="*,Auto">
+                            <VerticalStackLayout Grid.Column="0" Spacing="2">
+                                <Label
+                                    Text="{Binding Name}"
+                                    FontSize="15"
+                                    FontAttributes="Bold"
+                                    TextColor="{AppThemeBinding Light=#000000, Dark=#FFFFFF}" />
+                                <Label
+                                    Text="{Binding Id}"
+                                    FontSize="11"
+                                    TextColor="{AppThemeBinding Light=#8E8E93, Dark=#8E8E93}" />
+                            </VerticalStackLayout>
+                            <Label
+                                Grid.Column="1"
+                                Text="●"
+                                FontSize="14"
+                                VerticalOptions="Center"
+                                TextColor="#30D158" />
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Botón Buscar -->
+        <Button
+            x:Name="ScanButton"
+            Grid.Row="2"
+            Text="Buscar"
+            Margin="0,12,0,0"
+            BackgroundColor="#007AFF"
+            TextColor="White"
+            CornerRadius="10"
+            HeightRequest="48"
+            Clicked="OnScanClicked" />
+
+    </Grid>
+</ContentPage>

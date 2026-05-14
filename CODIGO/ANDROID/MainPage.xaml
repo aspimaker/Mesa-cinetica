@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage
+    x:Class="app_mesa_cinetica.MainPage"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:sf="clr-namespace:Syncfusion.Maui.Toolkit.SegmentedControl;assembly=Syncfusion.Maui.Toolkit"
+    xmlns:views="clr-namespace:app_mesa_cinetica.Views"
+    Shell.NavBarIsVisible="False"
+    BackgroundColor="{AppThemeBinding Light=#F2F2F7, Dark=#1C1C1E}">
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- ═══════════════════════════════════════════════════════════ -->
+        <!--  TOPBAR FIJA                                                -->
+        <!-- ═══════════════════════════════════════════════════════════ -->
+        <Border
+            Grid.Row="0"
+            BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#2C2C2E}"
+            Stroke="{AppThemeBinding Light=#E5E5EA, Dark=#3A3A3C}"
+            StrokeThickness="0.5"
+            StrokeShape="Rectangle">
+
+            <Grid
+                ColumnDefinitions="*,Auto,Auto"
+                Padding="6,4,10,4"
+                HeightRequest="52">
+
+                <!-- Grupo de tabs de navegación -->
+                <HorizontalStackLayout
+                    Grid.Column="0"
+                    Spacing="2"
+                    VerticalOptions="Center">
+
+                    <!-- Tab Música -->
+                    <Border
+                        x:Name="TabMusic"
+                        BackgroundColor="{AppThemeBinding Light=#F2F2F7, Dark=#3A3A3C}"
+                        StrokeShape="RoundRectangle 8"
+                        StrokeThickness="0"
+                        Padding="8,4"
+                        WidthRequest="70"
+                        HeightRequest="48">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnTabMusic" />
+                        </Border.GestureRecognizers>
+                        <VerticalStackLayout Spacing="3" HorizontalOptions="Center">
+                            <Label Text="♪" FontSize="20" HorizontalOptions="Center"
+           TextColor="{AppThemeBinding Light=#000000, Dark=#FFFFFF}" />
+                            <Label Text="Música" FontSize="9" HorizontalOptions="Center"
+           FontAttributes="Bold"
+           TextColor="{AppThemeBinding Light=#000000, Dark=#FFFFFF}" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Tab Patrones -->
+                    <Border
+                        x:Name="TabPatterns"
+                        BackgroundColor="Transparent"
+                        StrokeShape="RoundRectangle 8"
+                        StrokeThickness="0"
+                        Padding="8,4"
+                        WidthRequest="70"
+                        HeightRequest="48">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnTabPatterns" />
+                        </Border.GestureRecognizers>
+                        <VerticalStackLayout Spacing="3" HorizontalOptions="Center">
+                            <Label Text="⊞" FontSize="20" 
+                                   HorizontalOptions="Center"
+                                   TextColor="{AppThemeBinding Light=#000000, Dark=#FFFFFF}" />
+                            <Label
+                                Text="Patrones"
+                                FontSize="12"
+                                HorizontalOptions="Center"
+                                TextColor="{AppThemeBinding Light=#8E8E93, Dark=#8E8E93}" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Tab Dibujo -->
+                    <Border
+                        x:Name="TabDraw"
+                        BackgroundColor="Transparent"
+                        StrokeShape="RoundRectangle 8"
+                        StrokeThickness="0"
+                        Padding="8,4"
+                        WidthRequest="70"
+                        HeightRequest="48">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnTabDraw" />
+                        </Border.GestureRecognizers>
+                        <VerticalStackLayout Spacing="3" HorizontalOptions="Center">
+                            <Label Text="✏" FontSize="20" 
+                                   HorizontalOptions="Center"
+                                   TextColor="{AppThemeBinding Light=#000000, Dark=#FFFFFF}" />
+                            <Label
+                                Text="Dibujo"
+                                FontSize="12"
+                                HorizontalOptions="Center"
+                                TextColor="{AppThemeBinding Light=#8E8E93, Dark=#8E8E93}" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                </HorizontalStackLayout>
+
+                <!-- Selector de tema (derecha) -->
+                <sf:SfSegmentedControl
+                    Grid.Column="1"
+                    x:Name="ThemeSegmentedControl"
+                    VerticalOptions="Center"
+                    HorizontalOptions="End"
+                    SelectionChanged="SfSegmentedControl_SelectionChanged"
+                    SegmentWidth="34"
+                    SegmentHeight="30">
+                    <sf:SfSegmentedControl.ItemsSource>
+                        <x:Array Type="{x:Type sf:SfSegmentItem}">
+                            <sf:SfSegmentItem
+                                ImageSource="{StaticResource IconLight}"
+                                SemanticProperties.Description="Light mode" />
+                            <sf:SfSegmentItem
+                                ImageSource="{StaticResource IconDark}"
+                                SemanticProperties.Description="Dark mode" />
+                        </x:Array>
+                    </sf:SfSegmentedControl.ItemsSource>
+                </sf:SfSegmentedControl>
+
+                <!-- Botón menú (derecha) -->
+                <Border
+                    Grid.Column="2"
+                    BackgroundColor="Transparent"
+                    StrokeThickness="0"
+                    StrokeShape="RoundRectangle 8"
+                    Padding="4,0"
+                    WidthRequest="36"
+                    HeightRequest="48"
+                    VerticalOptions="Center">
+                                    <Border.GestureRecognizers>
+                                    <TapGestureRecognizer Tapped="OnMenuTapped" />
+                                    </Border.GestureRecognizers>
+                                <Label
+                        Text="⋮"
+                        FontSize="22"
+                        HorizontalOptions="Center"
+                        VerticalOptions="Center"
+                        TextColor="{AppThemeBinding Light=#000000, Dark=#FFFFFF}" />        
+                </Border>
+                
+            </Grid>
+        </Border>
+
+        <!-- ═══════════════════════════════════════════════════════════ -->
+        <!--  ÁREA DE CONTENIDO — se intercambia según el tab activo    -->
+        <!-- ═══════════════════════════════════════════════════════════ -->
+        <ContentView
+            Grid.Row="1"
+            x:Name="MainContent" />
+
+    </Grid>
+</ContentPage>

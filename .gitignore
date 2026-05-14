@@ -3,6 +3,8 @@
 # ─────────────────────────────────────────
 **/aspimaker
 
+actualizar_git.bat
+
 # Archivos de keystore
 local.properties
 Directory.Build.props

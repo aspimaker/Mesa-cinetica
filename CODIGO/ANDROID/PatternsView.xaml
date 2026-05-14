@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView
+    x:Class="app_mesa_cinetica.Views.PatternsView"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="12">
+
+            <!-- Cabecera -->
+            <Border BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#2C2C2E}"
+                    StrokeShape="RoundRectangle 8"
+                    Stroke="{AppThemeBinding Light=#E5E5EA, Dark=#3A3A3C}"
+                    StrokeThickness="0.5" Padding="14,10">
+                <Label Text="SELECCIONAR PATRÓN" FontSize="11" CharacterSpacing="1"
+                       TextColor="{AppThemeBinding Light=#8E8E93, Dark=#8E8E93}" />
+            </Border>
+
+            <!-- Grid 2x3 de patrones -->
+            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto,Auto"
+                  ColumnSpacing="8" RowSpacing="8">
+
+                <Border x:Name="CardEspiral" Grid.Row="0" Grid.Column="0"
+                        BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#2C2C2E}"
+                        StrokeShape="RoundRectangle 10"
+                        Stroke="#007AFF" StrokeThickness="1.5" Padding="12">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnPatternSelected">
+                            <TapGestureRecognizer.CommandParameter>
+                                <x:String>Espiral 3x</x:String>
+                            </TapGestureRecognizer.CommandParameter>
+                        </TapGestureRecognizer>
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="Espiral 3x" FontSize="13" FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#000000, Dark=#FFFFFF}" />
+                        <Label Text="Expansión desde centro" FontSize="11"
+                               TextColor="{AppThemeBinding Light=#8E8E93, Dark=#8E8E93}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border x:Name="CardRoseta" Grid.Row="0" Grid.Column="1"
+                        BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#2C2C2E}"
+                        StrokeShape="RoundRectangle 10"
+                        Stroke="{AppThemeBinding Light=#E5E5EA, Dark=#3A3A3C}"
+                        StrokeThickness="0.5" Padding="12">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnPatternSelected">
+                            <TapGestureRecognizer.CommandParameter>
+                                <x:String>Roseta</x:String>
+                            </TapGestureRecognizer.CommandParameter>
+                        </TapGestureRecognizer>
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="Roseta" FontSize="13" FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#000000, Dark=#FFFFFF}" />
+                        <Label Text="Pétalos simétricos" FontSize="11"
+                               TextColor="{AppThemeBinding Light=#8E8E93, Dark=#8E8E93}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border x:Name="CardZigzag" Grid.Row="1" Grid.Column="0"
+                        BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#2C2C2E}"
+                        StrokeShape="RoundRectangle 10"
+                        Stroke="{AppThemeBinding Light=#E5E5EA, Dark=#3A3A3C}"
+                        StrokeThickness="0.5" Padding="12">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnPatternSelected">
+                            <TapGestureRecognizer.CommandParameter>
+                                <x:String>Zig-zag</x:String>
+                            </TapGestureRecognizer.CommandParameter>
+                        </TapGestureRecognizer>
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="Zig-zag" FontSize="13" FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#000000, Dark=#FFFFFF}" />
+                        <Label Text="Barrido diagonal" FontSize="11"
+                               TextColor="{AppThemeBinding Light=#8E8E93, Dark=#8E8E93}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border x:Name="CardLissajous" Grid.Row="1" Grid.Column="1"
+                        BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#2C2C2E}"
+                        StrokeShape="RoundRectangle 10"
+                        Stroke="{AppThemeBinding Light=#E5E5EA, Dark=#3A3A3C}"
+                        StrokeThickness="0.5" Padding="12">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnPatternSelected">
+                            <TapGestureRecognizer.CommandParameter>
+                                <x:String>Lissajous</x:String>
+                            </TapGestureRecognizer.CommandParameter>
+                        </TapGestureRecognizer>
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="Lissajous" FontSize="13" FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#000000, Dark=#FFFFFF}" />
+                        <Label Text="Curvas 3:2" FontSize="11"
+                               TextColor="{AppThemeBinding Light=#8E8E93, Dark=#8E8E93}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border x:Name="CardMandala" Grid.Row="2" Grid.Column="0"
+                        BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#2C2C2E}"
+                        StrokeShape="RoundRectangle 10"
+                        Stroke="{AppThemeBinding Light=#E5E5EA, Dark=#3A3A3C}"
+                        StrokeThickness="0.5" Padding="12">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnPatternSelected">
+                            <TapGestureRecognizer.CommandParameter>
+                                <x:String>Mandala</x:String>
+                            </TapGestureRecognizer.CommandParameter>
+                        </TapGestureRecognizer>
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="Mandala" FontSize="13" FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#000000, Dark=#FFFFFF}" />
+                        <Label Text="Simetría radial x8" FontSize="11"
+                               TextColor="{AppThemeBinding Light=#8E8E93, Dark=#8E8E93}" />
+                    </VerticalStackLayout>
+                </Border>
+
+                <Border x:Name="CardPersonalizado" Grid.Row="2" Grid.Column="1"
+                        BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#2C2C2E}"
+                        StrokeShape="RoundRectangle 10"
+                        Stroke="{AppThemeBinding Light=#E5E5EA, Dark=#3A3A3C}"
+                        StrokeThickness="0.5" Padding="12">
+                    <Border.GestureRecognizers>
+                        <TapGestureRecognizer Tapped="OnPatternSelected">
+                            <TapGestureRecognizer.CommandParameter>
+                                <x:String>Personalizado</x:String>
+                            </TapGestureRecognizer.CommandParameter>
+                        </TapGestureRecognizer>
+                    </Border.GestureRecognizers>
+                    <VerticalStackLayout Spacing="2">
+                        <Label Text="Personalizado" FontSize="13" FontAttributes="Bold"
+                               TextColor="{AppThemeBinding Light=#000000, Dark=#FFFFFF}" />
+                        <Label Text="Desde dibujo libre" FontSize="11"
+                               TextColor="{AppThemeBinding Light=#8E8E93, Dark=#8E8E93}" />
+                    </VerticalStackLayout>
+                </Border>
+
+            </Grid>
+
+            <!-- Al terminar -->
+            <Border BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#2C2C2E}"
+                    StrokeShape="RoundRectangle 12"
+                    Stroke="{AppThemeBinding Light=#E5E5EA, Dark=#3A3A3C}"
+                    StrokeThickness="0.5" Padding="14">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="AL TERMINAR" FontSize="11" CharacterSpacing="1"
+                           TextColor="{AppThemeBinding Light=#8E8E93, Dark=#8E8E93}" />
+                    <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
+                        <Border x:Name="FinishStop" Grid.Column="0"
+                                BackgroundColor="{AppThemeBinding Light=#F2F2F7, Dark=#3A3A3C}"
+                                StrokeShape="RoundRectangle 8"
+                                Stroke="{AppThemeBinding Light=#C7C7CC, Dark=#48484A}"
+                                StrokeThickness="0.5" Padding="10">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnFinishSelected">
+                                    <TapGestureRecognizer.CommandParameter>
+                                        <x:String>stop</x:String>
+                                    </TapGestureRecognizer.CommandParameter>
+                                </TapGestureRecognizer>
+                            </Border.GestureRecognizers>
+                            <Label Text="Parar" FontSize="12" HorizontalOptions="Center"
+                                   TextColor="{AppThemeBinding Light=#000000, Dark=#FFFFFF}" />
+                        </Border>
+                        <Border x:Name="FinishRepeat" Grid.Column="1"
+                                BackgroundColor="Transparent"
+                                StrokeShape="RoundRectangle 8"
+                                Stroke="{AppThemeBinding Light=#E5E5EA, Dark=#3A3A3C}"
+                                StrokeThickness="0.5" Padding="10">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnFinishSelected">
+                                    <TapGestureRecognizer.CommandParameter>
+                                        <x:String>repeat</x:String>
+                                    </TapGestureRecognizer.CommandParameter>
+                                </TapGestureRecognizer>
+                            </Border.GestureRecognizers>
+                            <Label Text="Repetir" FontSize="12" HorizontalOptions="Center"
+                                   TextColor="{AppThemeBinding Light=#8E8E93, Dark=#8E8E93}" />
+                        </Border>
+                        <Border x:Name="FinishNext" Grid.Column="2"
+                                BackgroundColor="Transparent"
+                                StrokeShape="RoundRectangle 8"
+                                Stroke="{AppThemeBinding Light=#E5E5EA, Dark=#3A3A3C}"
+                                StrokeThickness="0.5" Padding="10">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnFinishSelected">
+                                    <TapGestureRecognizer.CommandParameter>
+                                        <x:String>next</x:String>
+                                    </TapGestureRecognizer.CommandParameter>
+                                </TapGestureRecognizer>
+                            </Border.GestureRecognizers>
+                            <Label Text="Siguiente" FontSize="12" HorizontalOptions="Center"
+                                   TextColor="{AppThemeBinding Light=#8E8E93, Dark=#8E8E93}" />
+                        </Border>
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Cola de patrones -->
+            <Border BackgroundColor="{AppThemeBinding Light=#FFFFFF, Dark=#2C2C2E}"
+                    StrokeShape="RoundRectangle 12"
+                    Stroke="{AppThemeBinding Light=#E5E5EA, Dark=#3A3A3C}"
+                    StrokeThickness="0.5">
+                <VerticalStackLayout>
+                    <Grid ColumnDefinitions="*,Auto" Padding="14,10">
+                        <Label Text="COLA DE PATRONES" FontSize="11" CharacterSpacing="1"
+                               VerticalOptions="Center"
+                               TextColor="{AppThemeBinding Light=#8E8E93, Dark=#8E8E93}" />
+                        <Label Grid.Column="1" Text="+ Añadir" FontSize="12"
+                               VerticalOptions="Center"
+                               TextColor="{AppThemeBinding Light=#007AFF, Dark=#0A84FF}">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Tapped="OnAddToQueue" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </Grid>
+                    <BoxView HeightRequest="0.5" Color="{AppThemeBinding Light=#E5E5EA, Dark=#3A3A3C}" />
+                    <Grid ColumnDefinitions="Auto,*,Auto" Padding="14,10" ColumnSpacing="10">
+                        <Border Grid.Column="0"
+                                BackgroundColor="{AppThemeBinding Light=#F2F2F7, Dark=#3A3A3C}"
+                                StrokeShape="RoundRectangle 4"
+                                Stroke="{AppThemeBinding Light=#E5E5EA, Dark=#3A3A3C}"
+                                StrokeThickness="0.5" Padding="8,2">
+                            <Label Text="1" FontSize="11"
+                                   TextColor="{AppThemeBinding Light=#8E8E93, Dark=#8E8E93}" />
+                        </Border>
+                        <Label Grid.Column="1" Text="Espiral 3x" FontSize="13"
+                               VerticalOptions="Center"
+                               TextColor="{AppThemeBinding Light=#000000, Dark=#FFFFFF}" />
+                        <Label Grid.Column="2" Text="x" FontSize="14"
+                               VerticalOptions="Center"
+                               TextColor="{AppThemeBinding Light=#C7C7CC, Dark=#636366}" />
+                    </Grid>
+                    <BoxView HeightRequest="0.5" Color="{AppThemeBinding Light=#E5E5EA, Dark=#3A3A3C}" />
+                    <Grid ColumnDefinitions="Auto,*,Auto" Padding="14,10" ColumnSpacing="10">
+                        <Border Grid.Column="0"
+                                BackgroundColor="{AppThemeBinding Light=#F2F2F7, Dark=#3A3A3C}"
+                                StrokeShape="RoundRectangle 4"
+                                Stroke="{AppThemeBinding Light=#E5E5EA, Dark=#3A3A3C}"
+                                StrokeThickness="0.5" Padding="8,2">
+                            <Label Text="2" FontSize="11"
+                                   TextColor="{AppThemeBinding Light=#8E8E93, Dark=#8E8E93}" />
+                        </Border>
+                        <Label Grid.Column="1" Text="Roseta" FontSize="13"
+                               VerticalOptions="Center"
+                               TextColor="{AppThemeBinding Light=#000000, Dark=#FFFFFF}" />
+                        <Label Grid.Column="2" Text="x" FontSize="14"
+                               VerticalOptions="Center"
+                               TextColor="{AppThemeBinding Light=#C7C7CC, Dark=#636366}" />
+                    </Grid>
+                    <BoxView HeightRequest="0.5" Color="{AppThemeBinding Light=#E5E5EA, Dark=#3A3A3C}" />
+                    <Grid ColumnDefinitions="Auto,*,Auto" Padding="14,10" ColumnSpacing="10">
+                        <Border Grid.Column="0"
+                                BackgroundColor="{AppThemeBinding Light=#F2F2F7, Dark=#3A3A3C}"
+                                StrokeShape="RoundRectangle 4"
+                                Stroke="{AppThemeBinding Light=#E5E5EA, Dark=#3A3A3C}"
+                                StrokeThickness="0.5" Padding="8,2">
+                            <Label Text="3" FontSize="11"
+                                   TextColor="{AppThemeBinding Light=#8E8E93, Dark=#8E8E93}" />
+                        </Border>
+                        <Label Grid.Column="1" Text="Mandala" FontSize="13"
+                               VerticalOptions="Center"
+                               TextColor="{AppThemeBinding Light=#000000, Dark=#FFFFFF}" />
+                        <Label Grid.Column="2" Text="x" FontSize="14"
+                               VerticalOptions="Center"
+                               TextColor="{AppThemeBinding Light=#C7C7CC, Dark=#636366}" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Ejecutar -->
+            <Button Text="Ejecutar patron seleccionado"
+                    FontSize="14" FontAttributes="Bold"
+                    BackgroundColor="{AppThemeBinding Light=#000000, Dark=#FFFFFF}"
+                    TextColor="{AppThemeBinding Light=#FFFFFF, Dark=#000000}"
+                    CornerRadius="10" HeightRequest="50"
+                    Clicked="OnRunPattern" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentView>
